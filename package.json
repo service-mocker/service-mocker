@@ -1,0 +1,60 @@
+{
+  "name": "service-mocker",
+  "version": "0.0.1",
+  "description": "Next generation api mocker.",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "clean:build": "rimraf ./build",
+    "clean:dist": "rimraf ./dist",
+    "predist": "npm run clean:dist",
+    "dist": "webpack --config ./webpack/production.js --display-error-details --color",
+    "preghpages": "npm run clean:build",
+    "ghpages": "webpack --config ./webpack/ghpages.js --display-error-details --color",
+    "start": "node serve.js",
+    "pretest": "npm run lint",
+    "test": "webpack --config ./webpack/test.js --display-error-details --color"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idiotWu/service-mocker.git"
+  },
+  "keywords": [
+    "mock",
+    "service",
+    "worker"
+  ],
+  "author": "Dolphin Wood <dolphin.w.e@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/idiotWu/service-mocker/issues"
+  },
+  "homepage": "https://github.com/idiotWu/service-mocker#readme",
+  "devDependencies": {
+    "autoprefixer": "^6.5.3",
+    "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.2.8",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "circular-dependency-plugin": "^2.0.0",
+    "eslint": "^3.11.1",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-friendly-formatter": "^2.0.6",
+    "eslint-loader": "^1.6.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1",
+    "ip": "^1.1.4",
+    "node-sass": "^3.13.0",
+    "postcss-loader": "^1.1.1",
+    "rimraf": "^2.5.4",
+    "sass-loader": "^4.0.2",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.3",
+    "webpack-dashboard": "^0.2.0",
+    "webpack-dev-server": "^1.16.2"
+  }
+}

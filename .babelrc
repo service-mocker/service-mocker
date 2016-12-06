@@ -1,0 +1,11 @@
+{
+  "presets": [ "latest", "stage-0" ],
+  "plugins": [
+    "add-module-exports",
+    ["transform-runtime", {
+      "helpers": false,
+      "polyfill": false,
+      "regenerator": true
+    }]
+  ]
+}
