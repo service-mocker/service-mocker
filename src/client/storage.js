@@ -23,14 +23,18 @@ export const clientStorage = {
   async clear() {
     return store.clear();
   },
-  start() {
+  start(useLegacy) {
     if (this.activated) {
       return;
     }
 
     this.activated = true;
 
-    self.addEventListener('message', ::this._handler);
+    if (useLegacy) {
+      self.addEventListener('message', ::this._handler);
+    } else {
+      navigator.serviceWorker.addEventListener('message', ::this._handler);
+    }
   },
   async _handler(evt) {
     const {
@@ -63,11 +67,13 @@ export const clientStorage = {
       ports[0].postMessage({
         result,
         action: ACTION.SUCCESS,
+        request: data.action,
       });
     } catch (e) {
       ports[0].postMessage({
         error: e,
         action: ACTION.FAILED,
+        request: data.action,
       });
     }
   },

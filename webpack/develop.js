@@ -16,7 +16,7 @@ module.exports = {
   devtool: 'inline-source-map',
   entry: {
     app: [
-      // `webpack-dev-server/client?http://${ip.address()}:3000`,
+      `webpack-dev-server/client?http://${ip.address()}:3000`,
       join('demo/app/index.js'),
     ],
     sw: [
@@ -50,6 +50,10 @@ module.exports = {
         'sass?sourceMap',
       ],
     }],
+    noParse: [
+      // remove "Critical dependency" warning
+      require.resolve('localforage'),
+    ],
   },
   postcss: [autoprefixer],
   plugins: [

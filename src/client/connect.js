@@ -39,7 +39,7 @@ async function handshake(registration) {
 
   const response = await oneOffMessage({
     target: controller,
-    body: {
+    message: {
       action: ACTION.PING,
     },
   });
@@ -56,7 +56,7 @@ async function handshake(registration) {
 async function requestClaim(worker) {
   const response = await oneOffMessage({
     target: worker,
-    body: {
+    message: {
       action: ACTION.REQUEST_CLAIM,
     },
   });

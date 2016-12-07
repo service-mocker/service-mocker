@@ -1,16 +1,16 @@
 export async function oneOffMessage({
   target,
-  body,
+  message,
   timeout = 3 * 1e3,
 } = {}) {
   const { port1, port2 } = new MessageChannel();
 
   return new Promise((resolve, reject) => {
     const timer = timeout && setTimeout(() => {
-      reject(new Error(`messaging timeout: ${JSON.stringify(body)}`));
+      reject(new Error(`messaging timeout: ${JSON.stringify(message)}`));
     }, timeout);
 
-    port1.onmessage = (evt) => {
+    port1.onmessage = ({ data }) => {
       clearTimeout(timer);
 
       // avoid high transient memory usage
@@ -19,14 +19,19 @@ export async function oneOffMessage({
       port1.close();
       port2.close();
 
-      resolve(evt.data);
+      if (data.error) {
+        reject(data);
+      } else {
+        resolve(data);
+      }
     };
 
     if (target === self.window) {
-      // legacy mode
-      target.postMessage(body, '*', [port2]);
+      // posting message to self => legacy mode
+      // add `origin` param to `window.postMessage(message, targetOrigin, [transfer])`
+      target.postMessage(message, '*', [port2]);
     } else {
-      target.postMessage(body, [port2]);
+      target.postMessage(message, [port2]);
     }
   });
 }

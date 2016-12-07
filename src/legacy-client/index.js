@@ -25,7 +25,7 @@ export class LegacyClient {
   }
 
   async unregister() {
-    throw new Error('legacy mode can\'t be unregistered');
+    throw new Error('mocker in legacy mode can\'t be unregistered');
   }
 
   _load(path) {

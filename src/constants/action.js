@@ -1,6 +1,8 @@
 const ACTION = {
   PING: 'ping',
   PONG: 'pong',
+  SUCCESS: 'success',
+  FAILED: 'failed',
   SET_STORAGE: 'set_storage',
   GET_STORAGE: 'get_storage',
   CLEAR_STORAGE: 'clear_storage',

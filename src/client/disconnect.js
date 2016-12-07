@@ -18,7 +18,7 @@ export async function disconnect() {
   return oneOffMessage({
     timeout: 0,
     target: serviceWorker.controller,
-    body: {
+    message: {
       action: ACTION.DISCONNECT,
     },
   });

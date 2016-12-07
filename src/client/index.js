@@ -7,24 +7,30 @@ import { clientStorage } from './storage';
 import { debug } from '../utils/';
 import { LegacyClient } from '../legacy-client/';
 
+function isLegacyClient() {
+  if (!('serviceWorker' in navigator)) {
+    console.warn('Service worker is not supported in your browser, please check: http://caniuse.com/#feat=serviceworkers');
+
+    return true;
+  }
+
+  if (location.protocol !== 'https' && location.hostname !== 'localhost') {
+    console.warn('Service workers should be registered in secure pages, further information: https://github.com/w3c/ServiceWorker/blob/master/explainer.md#getting-started');
+
+    return true;
+  }
+
+  return true;
+}
+
 export class Client {
   controller = null;
   ready = null;
 
   constructor(path, options) {
-    clientStorage.start();
+    const useLegacy = isLegacyClient();
 
-    let useLegacy = false;
-
-    if (!('serviceWorker' in navigator)) {
-      console.warn('Service worker is not supported in your browser, please check: http://caniuse.com/#feat=serviceworkers');
-
-      useLegacy = true;
-    } else if (location.protocol !== 'https' && location.hostname !== 'localhost') {
-      console.warn('Service workers should be registered in secure pages, further information: https://github.com/w3c/ServiceWorker/blob/master/explainer.md#getting-started');
-
-      useLegacy = true;
-    }
+    clientStorage.start(useLegacy);
 
     if (useLegacy) {
       console.warn('Switching to legacy mode...');
