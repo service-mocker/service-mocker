@@ -23,7 +23,6 @@ function createFetchEvent(request) {
 
   fetchEvt.request = request;
   fetchEvt.clientId = LEGACY_CLIENT_ID;
-  fetchEvt._promise = deferred.promise;
   fetchEvt.respondWith = (response) => {
     deferred.resolve(response);
   };
@@ -33,7 +32,10 @@ function createFetchEvent(request) {
     deferred.resolve(fetch(request));
   }, 300);
 
-  return fetchEvt;
+  return {
+    event: fetchEvt,
+    promise: deferred.promise,
+  };
 }
 
 export function patchFetch() {
@@ -51,11 +53,11 @@ export function patchFetch() {
 
   self.fetch = function patchedFetch(input, init) {
     const request = new Request(input, init);
-    const fetchEvt = createFetchEvent(request);
+    const { event, promise } = createFetchEvent(request);
 
-    self.dispatchEvent(fetchEvt);
+    self.dispatchEvent(event);
 
-    return fetchEvt._promise;
+    return promise;
   };
 
   self.fetch.mockerPatched = true;
