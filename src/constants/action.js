@@ -1,6 +1,10 @@
 export const ACTION = {
   PING: 'ping',
   PONG: 'pong',
+  SET_STORAGE: 'set_storage',
+  GET_STORAGE: 'get_storage',
+  CLEAR_STORAGE: 'clear_storage',
+  REMOVE_STORAGE: 'remove_storage',
   DISCONNECT: 'disconnect',
   ESTABLISHED: 'established',
   REQUEST_CLAIM: 'request_claim',

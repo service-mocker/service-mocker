@@ -22,6 +22,11 @@ export async function oneOffMessage({
       resolve(evt.data);
     };
 
-    target.postMessage(body, [port2]);
+    if (target === self.window) {
+      // legacy mode
+      target.postMessage(body, '*', [port2]);
+    } else {
+      target.postMessage(body, [port2]);
+    }
   });
 }

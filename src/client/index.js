@@ -2,15 +2,18 @@ import { register } from './register';
 import { connect } from './connect';
 import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
+import { clientStorage } from './storage';
 
 import { debug } from '../utils/';
-import { LegacyClient } from '../legacy-client';
+import { LegacyClient } from '../legacy-client/';
 
 export class Client {
   controller = null;
   ready = null;
 
   constructor(path, options) {
+    clientStorage.start();
+
     let useLegacy = false;
 
     if (!('serviceWorker' in navigator)) {
