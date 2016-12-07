@@ -1,10 +1,10 @@
 import {
   Defer,
-} from '../utils/';
+} from '../../utils/';
 
 import {
   LEGACY_CLIENT_ID,
-} from '../constants/';
+} from '../../constants/';
 
 function createFetchEvent(request) {
   let fetchEvt = {};

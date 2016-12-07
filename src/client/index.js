@@ -3,9 +3,9 @@ import { connect } from './connect';
 import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
 import { clientStorage } from './storage';
+import { LegacyClient } from './legacy/client';
 
 import { debug } from '../utils/';
-import { LegacyClient } from '../legacy-client/';
 
 function isLegacyClient() {
   if (!('serviceWorker' in navigator)) {
