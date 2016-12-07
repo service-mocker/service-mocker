@@ -50,14 +50,16 @@
     "ip": "^1.1.4",
     "node-sass": "^3.13.0",
     "postcss-loader": "^1.1.1",
+    "promise-polyfill": "^6.0.2",
     "rimraf": "^2.5.4",
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.3",
     "webpack-dashboard": "^0.2.0",
-    "webpack-dev-server": "^1.16.2"
+    "webpack-dev-server": "^1.16.2",
+    "whatwg-fetch": "^2.0.1"
   },
   "dependencies": {
-    "idb-keyval": "^2.2.0"
+    "localforage": "^1.4.3"
   }
 }

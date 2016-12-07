@@ -1,7 +1,10 @@
 import {
-  ACTION,
   oneOffMessage,
-} from '../shared/';
+} from '../utils/';
+
+import {
+  ACTION,
+} from '../constants/';
 
 export async function disconnect() {
   const {

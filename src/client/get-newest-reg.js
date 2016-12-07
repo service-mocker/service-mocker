@@ -1,7 +1,7 @@
 import {
   debug,
   eventWaitUntil,
-} from '../shared/';
+} from '../utils/';
 
 const updateLog = debug.scope('update');
 

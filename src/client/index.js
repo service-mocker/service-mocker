@@ -3,21 +3,34 @@ import { connect } from './connect';
 import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
 
-import { debug } from '../shared/';
+import { debug } from '../utils/';
+import { LegacyClient } from '../legacy-client';
 
 export class Client {
   controller = null;
   ready = null;
 
   constructor(path, options) {
+    let useLegacy = false;
+
     if (!('serviceWorker' in navigator)) {
-      throw new Error('service worker is not supported in your browser, further information: http://caniuse.com/#feat=serviceworkers');
+      console.warn('Service worker is not supported in your browser, please check: http://caniuse.com/#feat=serviceworkers');
+
+      useLegacy = true;
+    } else if (location.protocol !== 'https' && location.hostname !== 'localhost') {
+      console.warn('Service workers should be registered in secure pages, further information: https://github.com/w3c/ServiceWorker/blob/master/explainer.md#getting-started');
+
+      useLegacy = true;
+    }
+
+    if (useLegacy) {
+      console.warn('Switching to legacy mode...');
+      return new LegacyClient(path);
     }
 
     Object.defineProperties(this, {
       _updateListeners: {
         value: [],
-        configurable: true,
       },
     });
 
@@ -44,14 +57,6 @@ export class Client {
         }
       },
     };
-  }
-
-  async connect() {
-    return connect();
-  }
-
-  async disconnect() {
-    return disconnect();
   }
 
   async update() {
@@ -104,7 +109,7 @@ export class Client {
         })
         .catch(error => {
           this.controller = null;
-          debug.error('mocker initialization failed', error);
+          debug.error('mocker initialization failed: ', error);
         });
     });
   }
