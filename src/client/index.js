@@ -20,7 +20,7 @@ function isLegacyClient() {
     return true;
   }
 
-  return true;
+  return false;
 }
 
 export class Client {

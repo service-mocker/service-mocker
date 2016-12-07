@@ -67,13 +67,11 @@ export const clientStorage = {
       ports[0].postMessage({
         result,
         action: ACTION.SUCCESS,
-        request: data.action,
       });
     } catch (e) {
       ports[0].postMessage({
         error: e,
         action: ACTION.FAILED,
-        request: data.action,
       });
     }
   },

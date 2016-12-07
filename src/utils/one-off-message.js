@@ -19,6 +19,10 @@ export async function oneOffMessage({
       port1.close();
       port2.close();
 
+      if (typeof data === 'object') {
+        data.request = message.action;
+      }
+
       if (data.error) {
         reject(data);
       } else {
