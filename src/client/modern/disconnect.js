@@ -1,10 +1,10 @@
 import {
   oneOffMessage,
-} from '../utils/';
+} from '../../utils/';
 
 import {
   ACTION,
-} from '../constants/';
+} from '../../constants/';
 
 export async function disconnect() {
   const {

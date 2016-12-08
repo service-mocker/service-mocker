@@ -1,11 +1,11 @@
 import {
   debug,
   oneOffMessage,
-} from '../utils/';
+} from '../../utils/';
 
 import {
   ACTION,
-} from '../constants/';
+} from '../../constants/';
 
 import { getNewestReg } from './get-newest-reg';
 

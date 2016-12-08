@@ -1,4 +1,4 @@
-import { Client } from '../../src/client/';
+import { createClient } from '../../src/client/';
 
 import Promise from 'promise-polyfill';
 import 'whatwg-fetch';
@@ -7,7 +7,7 @@ if (!window.Promise) {
   window.Promise = Promise;
 }
 
-const client = new Client('sw.js', { scope: '/' });
+const client = createClient('sw.js', { scope: '/' });
 window.client = client;
 
 client.ready.then(reg => {

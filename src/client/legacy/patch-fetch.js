@@ -6,7 +6,7 @@ import {
   LEGACY_CLIENT_ID,
 } from '../../constants/';
 
-function createFetchEvent(request) {
+function dispatchFetchEvent(request) {
   let fetchEvt = {};
 
   try {
@@ -27,15 +27,14 @@ function createFetchEvent(request) {
     deferred.resolve(response);
   };
 
+  self.dispatchEvent(fetchEvt);
+
   setTimeout(() => {
     if (deferred.done) return;
     deferred.resolve(fetch(request));
   }, 300);
 
-  return {
-    event: fetchEvt,
-    promise: deferred.promise,
-  };
+  return deferred.promise;
 }
 
 export function patchFetch() {
@@ -53,11 +52,8 @@ export function patchFetch() {
 
   self.fetch = function patchedFetch(input, init) {
     const request = new Request(input, init);
-    const { event, promise } = createFetchEvent(request);
 
-    self.dispatchEvent(event);
-
-    return promise;
+    return dispatchFetchEvent(request);
   };
 
   self.fetch.mockerPatched = true;

@@ -1,8 +1,9 @@
 import { patchFetch } from './patch-fetch';
 
 export class LegacyClient {
-  ready = null;
   legacy = true;
+
+  ready = null;
   controller = window;
   _registration = {
     active: window,
