@@ -1,19 +1,15 @@
 import {
   MockerClient,
-} from './client.d';
+} from './client';
 
 import { ModernClient } from './modern/client';
 import { LegacyClient } from './legacy/client';
-
-import { clientStorage } from './storage';
 
 export function createClient(
   scriptURL: string,
   options?: ServiceWorkerRegisterOptions,
 ): MockerClient {
   const useLegacy = isLegacyMode();
-
-  clientStorage.start(useLegacy);
 
   if (useLegacy) {
     console.warn('Switching to legacy mode...');

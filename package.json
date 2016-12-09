@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Next generation api mocker.",
   "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "lint": "tslint -t stylish '{src, demo}/**/*.ts'",
     "clean:build": "rimraf ./build",

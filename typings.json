@@ -1,4 +1,7 @@
 {
+  "name": "service-mocker",
+  "version": "0.0.1",
+  "homepage": "https://github.com/idiotWu/service-mocker",
   "globalDependencies": {
     "localforage": "registry:dt/localforage#0.0.0+20161102134758",
     "service-worker": "file:./src/service-worker.d.ts",

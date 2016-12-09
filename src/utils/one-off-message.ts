@@ -1,6 +1,6 @@
-type Messagable = ServiceWorker | ServiceWorkerClient | Window /* legacy mode */;
+export type Messagable = ServiceWorker | ServiceWorkerClient | Window /* legacy mode */;
 
-type Message = {
+export type Message = {
   action: string,
   [key: string]: any,
 };

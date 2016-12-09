@@ -1,17 +1,19 @@
-import * as localforage from 'localforage';
+import * as localforage from 'localforage/dist/localforage.nopromises';
 
 import {
   ACTION,
 } from '../constants/';
+
+import {
+  runOnce,
+} from '../utils/';
 
 const store = localforage.createInstance({
   name: 'ServiceMocker',
   description: 'storage space for service mocker',
 });
 
-class ClientStorageService {
-  private activated = false;
-
+export class ClientStorageService {
   async get(key: string): Promise<any> {
     return store.getItem(key);
   }
@@ -28,20 +30,20 @@ class ClientStorageService {
     return store.clear();
   }
 
-  start(useLegacy: boolean): void {
-    if (this.activated) {
-      return;
-    }
+  @runOnce
+  start() {
+    navigator.serviceWorker.addEventListener(
+      'message',
+      this._listener.bind(this),
+    );
+  }
 
-    this.activated = true;
-
-    const listener = this._listener.bind(this);
-
-    if (useLegacy) {
-      self.addEventListener('message', listener);
-    } else {
-      navigator.serviceWorker.addEventListener('message', listener);
-    }
+  @runOnce
+  startLegacy() {
+    self.addEventListener(
+      'message',
+      this._listener.bind(this),
+    );
   }
 
   private async _listener(evt: MessageEvent): Promise<void> {
@@ -86,5 +88,3 @@ class ClientStorageService {
     }
   }
 };
-
-export const clientStorage = new ClientStorageService();

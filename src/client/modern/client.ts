@@ -1,20 +1,28 @@
 import {
+  debug,
+  runOnce,
+} from '../../utils/';
+
+import {
   MockerClient,
-} from '../client.d';
+} from '../client';
 
 import { register } from './register';
 import { connect } from './connect';
 import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
+import { ClientStorageService } from '../storage';
 
-import { debug } from '../../utils/';
+const clientStorage = new ClientStorageService();
 
 export class ModernClient implements MockerClient {
   legacy = false;
   controller: ServiceWorker = null;
   ready: Promise<ServiceWorkerRegistration> = null;
+  storage: ClientStorageService = clientStorage;
 
   constructor(scriptURL: string, options?: ServiceWorkerRegisterOptions) {
+    clientStorage.start();
     this._setReady(this._init(scriptURL, options));
   }
 
@@ -39,11 +47,8 @@ export class ModernClient implements MockerClient {
     return result;
   }
 
+  @runOnce
   private async _init(scriptURL: string, options: ServiceWorkerRegisterOptions): Promise<ServiceWorkerRegistration> {
-    if (this._hasInitialized()) {
-      return this.getRegistration();
-    }
-
     const registration = await register(scriptURL, options);
 
     this._autoSyncClient();
@@ -52,15 +57,8 @@ export class ModernClient implements MockerClient {
     return registration;
   }
 
-  private _hasInitialized(): boolean {
-    return this.ready !== null;
-  }
-
+  @runOnce
   private _setReady(updater: Promise<ServiceWorkerRegistration>) {
-    if (this._hasInitialized()) {
-      return;
-    }
-
     this.ready = new Promise(resolve => {
       updater
         .then(registration => {
@@ -74,6 +72,7 @@ export class ModernClient implements MockerClient {
     });
   }
 
+  @runOnce
   private _autoSyncClient() {
     const {
       serviceWorker,
@@ -94,6 +93,7 @@ export class ModernClient implements MockerClient {
     });
   }
 
+  @runOnce
   private _handleUnload() {
     window.addEventListener('beforeunload', disconnect);
   }

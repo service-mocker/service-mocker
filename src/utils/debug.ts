@@ -7,7 +7,7 @@ const colorPresets = {
   error: 'crimson',
 };
 
-class PrefixedConsole {
+export class PrefixedConsole {
   constructor(
     private _namespace = 'mocker',
     private _color = colorPresets.log,
