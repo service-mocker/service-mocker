@@ -28,7 +28,11 @@ interface ServiceWorkerClients {
 
 interface Window {
   addEventListener(
-    type: 'install' | 'activate' | 'message',
+    type: 'install',
+    listener: (event: InstallEvent) => void,
+  ): void;
+  addEventListener(
+    type: 'activate',
     listener: (event: ExtendableEvent) => void,
   ): void;
   addEventListener(
