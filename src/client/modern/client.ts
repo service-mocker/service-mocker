@@ -1,3 +1,7 @@
+import {
+  MockerClient,
+} from '../client.d';
+
 import { register } from './register';
 import { connect } from './connect';
 import { disconnect } from './disconnect';
@@ -5,70 +9,42 @@ import { getNewestReg } from './get-newest-reg';
 
 import { debug } from '../../utils/';
 
-export class ModernClient {
+export class ModernClient implements MockerClient {
   legacy = false;
+  controller: ServiceWorker = null;
+  ready: Promise<ServiceWorkerRegistration> = null;
 
-  controller = null;
-  ready = null;
-
-  constructor(path, options) {
-    Object.defineProperties(this, {
-      _updateListeners: {
-        value: [],
-      },
-    });
-
-    this._setReady(this._init(path, options));
+  constructor(scriptURL: string, options: ServiceWorkerRegisterOptions) {
+    this._setReady(this._init(scriptURL, options));
   }
 
-  onUpdate(fn) {
-    if (typeof fn !== 'function') {
-      throw new TypeError('handler must be a function');
-    }
-
-    const {
-      _updateListeners: listeners,
-    } = this;
-
-    listeners.push(fn);
-
-    return {
-      remove() {
-        for (let i = 0, max = listeners.length; i < max; i++) {
-          if (listeners[i] === fn) {
-            return listeners.splice(i, 1);
-          }
-        }
-      },
-    };
-  }
-
-  async update() {
+  async update(): Promise<ServiceWorkerRegistration> {
     return getNewestReg();
   }
 
-  async getRegistration() {
+  async getRegistration(): Promise<ServiceWorkerRegistration> {
     return this.ready;
   }
 
-  async unregister() {
+  async unregister(): Promise<boolean | never> {
     const registration = await this.getRegistration();
 
     const result = await registration.unregister();
 
     if (!result) {
+      // tslint:disable-next-line max-line-length
       throw new Error('this service worker has already been unregistered, you may need to close all relative tabs to remove it');
     }
 
     return result;
   }
 
-  async _init(path, options) {
+  private async _init(scriptURL: string, options: ServiceWorkerRegisterOptions): Promise<ServiceWorkerRegistration> {
     if (this._hasInitialized()) {
       return this.getRegistration();
     }
 
-    const registration = await register(path, options);
+    const registration = await register(scriptURL, options);
 
     this._autoSyncClient();
     this._handleUnload();
@@ -76,11 +52,11 @@ export class ModernClient {
     return registration;
   }
 
-  _hasInitialized() {
+  private _hasInitialized(): boolean {
     return this.ready !== null;
   }
 
-  _setReady(updater) {
+  private _setReady(updater: Promise<ServiceWorkerRegistration>) {
     if (this._hasInitialized()) {
       return;
     }
@@ -98,35 +74,27 @@ export class ModernClient {
     });
   }
 
-  _autoSyncClient() {
+  private _autoSyncClient() {
     const {
       serviceWorker,
     } = navigator;
 
     const updateLog = debug.scope('update');
 
-    serviceWorker.addEventListener('controllerchange', async (evt) => {
-      let error = null;
-      let registration = null;
-
+    serviceWorker.addEventListener('controllerchange', async () => {
       try {
-        registration = await connect(true);
+        const registration = await connect(true);
         this.controller = registration.active;
 
         updateLog.color('crimson')
           .warn('mocker updated, reload your requests to take effect');
-      } catch (e) {
-        error = e;
-        updateLog.error('connecting to new mocker failed', e);
+      } catch (error) {
+        updateLog.error('connecting to new mocker failed', error);
       }
-
-      this._updateListeners.forEach((fn) => {
-        fn(error, registration);
-      });
     });
   }
 
-  _handleUnload() {
+  private _handleUnload() {
     window.addEventListener('beforeunload', disconnect);
   }
 }

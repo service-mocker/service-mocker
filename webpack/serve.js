@@ -1,12 +1,13 @@
 /* eslint-disable no-console */
 const ip = require('ip');
+const path = require('path');
 const webpack = require('webpack');
 const Server = require('webpack-dev-server');
-const config = require('./webpack/develop');
+const config = require('./develop');
 
 new Server(webpack(config), {
   quiet: true,
-  contentBase: './demo/',
+  contentBase: path.join(__dirname, '..', 'demo'),
   publicPath: config.output.publicPath,
 }).listen(3000, '0.0.0.0', (err) => {
   if (err) {

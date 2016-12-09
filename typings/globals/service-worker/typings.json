@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "/Users/Dolphin_Wood/Desktop/Project/service-mocker/src/service-worker.d.ts",
+    "raw": "file:./src/service-worker.d.ts",
+    "typings": "/Users/Dolphin_Wood/Desktop/Project/service-mocker/src/service-worker.d.ts"
+  }
+}

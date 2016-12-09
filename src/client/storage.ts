@@ -1,4 +1,4 @@
-import localforage from 'localforage';
+import * as localforage from 'localforage';
 
 import {
   ACTION,
@@ -9,40 +9,50 @@ const store = localforage.createInstance({
   description: 'storage space for service mocker',
 });
 
-export const clientStorage = {
-  activated: false,
-  async get(key) {
+class ClientStorageService {
+  private activated = false;
+
+  public async get(key: string): Promise<any> {
     return store.getItem(key);
-  },
-  async set(key, value) {
+  }
+
+  public async set<T>(key: string, value: T): Promise<T> {
     return store.setItem(key, value);
-  },
-  async remove(key) {
+  }
+
+  public async remove(key: string): Promise<void> {
     return store.removeItem(key);
-  },
-  async clear() {
+  }
+
+  public async clear(): Promise<void> {
     return store.clear();
-  },
-  start(useLegacy) {
+  }
+
+  public start(useLegacy: boolean): void {
     if (this.activated) {
       return;
     }
 
     this.activated = true;
 
+    const listener = this._listener.bind(this);
+
     if (useLegacy) {
-      self.addEventListener('message', ::this._handler);
+      self.addEventListener('message', listener);
     } else {
-      navigator.serviceWorker.addEventListener('message', ::this._handler);
+      navigator.serviceWorker.addEventListener('message', listener);
     }
-  },
-  async _handler(evt) {
+  }
+
+  private async _listener(evt: MessageEvent): Promise<void> {
     const {
       data,
       ports,
     } = evt;
 
-    if (!ports.length) return;
+    if (!ports.length) {
+      return;
+    }
 
     try {
       let result;
@@ -74,5 +84,7 @@ export const clientStorage = {
         action: ACTION.FAILED,
       });
     }
-  },
+  }
 };
+
+export const clientStorage = new ClientStorageService();

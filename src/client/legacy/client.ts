@@ -1,37 +1,41 @@
+import {
+  MockerController,
+  MockerRegistration,
+  MockerClient,
+} from '../client.d';
+
 import { patchFetch } from './patch-fetch';
 
-export class LegacyClient {
+export class LegacyClient implements MockerClient {
   legacy = true;
+  controller: MockerController = window;
+  ready: Promise<MockerRegistration> = null;
 
-  ready = null;
-  controller = window;
-  _registration = {
+  private _registration: MockerRegistration = {
     active: window,
     scope: `${location.protocol}://${location.host}`,
   };
 
-  constructor(path) {
+  constructor(scriptURL: string) {
     patchFetch();
-    this._load(path);
+    this._load(scriptURL);
   }
 
-  onUpdate() {}
-
-  async update() {
+  async update(): Promise<MockerRegistration> {
     return Promise.resolve(this._registration);
   }
 
-  async getRegistration() {
+  async getRegistration(): Promise<MockerRegistration> {
     return Promise.resolve(this._registration);
   }
 
-  async unregister() {
+  async unregister(): Promise<never> {
     throw new Error('mocker in legacy mode can\'t be unregistered');
   }
 
-  _load(path) {
+  private _load(scriptURL: string) {
     const script = document.createElement('script');
-    script.src = path;
+    script.src = scriptURL;
 
     this.ready = new Promise((resolve, reject) => {
       script.onload = () => {

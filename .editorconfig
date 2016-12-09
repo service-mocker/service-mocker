@@ -7,6 +7,6 @@ end_of_line = lf
 insert_final_newline = true
 
 # indent
-[*.{js, scss}]
+[*.{js, ts, scss}]
 indent_style = space
 indent_size = 2

@@ -6,7 +6,7 @@ import {
   ACTION,
 } from '../../constants/';
 
-export async function disconnect() {
+export async function disconnect(): Promise<void> {
   const {
     serviceWorker,
   } = navigator;
@@ -15,11 +15,7 @@ export async function disconnect() {
     return;
   }
 
-  return oneOffMessage({
-    timeout: 0,
-    target: serviceWorker.controller,
-    message: {
-      action: ACTION.DISCONNECT,
-    },
+  return oneOffMessage(serviceWorker.controller, {
+    action: ACTION.DISCONNECT,
   });
 }

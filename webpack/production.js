@@ -1,43 +1,36 @@
-const ip = require('ip');
 const path = require('path');
 const autoprefixer = require('autoprefixer');
-const Dashboard = require('webpack-dashboard');
-const DashboardPlugin = require('webpack-dashboard/plugin');
+const eslintFriendlyFormatter = require('eslint-friendly-formatter');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-
-const dashboard = new Dashboard();
 
 const join = path.join.bind(path, __dirname, '..');
 
-const sources = ['src', 'demo'].map(dir => join(dir));
+const sources = ['src'].map(dir => join(dir));
 
 module.exports = {
-  devtool: 'inline-source-map',
   entry: {
-    app: [
-      `webpack-dev-server/client?http://${ip.address()}:3000`,
-      join('demo/app/index.ts'),
-    ],
-    sw: [
-      join('demo/sw/index.ts'),
-    ],
+    client: join('src/client/index.js'),
+    server: join('src/server/index.js'),
   },
   output: {
-    path: join('build/'),
+    path: join('dist/'),
     filename: '[name].js',
+    library: 'Mocker',
+    libraryTarget: 'umd',
   },
   resolve: {
-    extensions: ['', '.js', '.ts', '.scss'],
+    extensions: ['', '.js', '.styl'],
   },
   module: {
     preLoaders: [{
-      test: /\.ts$/,
-      loader: 'tslint',
+      test: /\.js$/,
+      loaders: ['eslint'],
       include: sources,
+      formatter: eslintFriendlyFormatter,
     }],
     loaders: [{
-      test: /\.ts$/,
-      loader: 'ts',
+      test: /\.js$/,
+      loaders: ['babel'],
       include: sources,
     }, {
       test: /\.scss/,
@@ -54,18 +47,12 @@ module.exports = {
     ],
   },
   postcss: [autoprefixer],
-  tslint: {
-    formatter: 'stylish',
-  },
-  ts: {
-    silent: true,
-  },
   plugins: [
     new CircularDependencyPlugin({
       // exclude detection of files based on a RegExp
       exclude: /node_modules/,
+      // add errors to webpack instead of warnings
       failOnError: true,
     }),
-    new DashboardPlugin(dashboard.setData),
   ],
 };

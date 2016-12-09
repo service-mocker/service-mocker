@@ -5,7 +5,11 @@ import {
 
 const updateLog = debug.scope('update');
 
-export async function getNewestReg() {
+/**
+ * Update and get the newest registration.
+ * @async
+ */
+export async function getNewestReg(): Promise<ServiceWorkerRegistration> {
   const {
     serviceWorker,
   } = navigator;

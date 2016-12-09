@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "lib": [
+        "dom",
+        "es2017"
+    ],
+    "noUnusedParameters": true,
+    "noUnusedLocals": true
+  }
+}

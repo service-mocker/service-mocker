@@ -11,7 +11,7 @@ import { getNewestReg } from './get-newest-reg';
 
 const connectLog = debug.scope('connect');
 
-export async function connect(skipUpdateCheck = false) {
+export async function connect(skipUpdateCheck = false): Promise<ServiceWorkerRegistration> {
   const {
     serviceWorker,
   } = navigator;
@@ -24,7 +24,7 @@ export async function connect(skipUpdateCheck = false) {
   return serviceWorker.ready.then(handshake);
 }
 
-async function handshake(registration) {
+async function handshake(registration: ServiceWorkerRegistration): Promise<ServiceWorkerRegistration> {
   const controller = registration.active;
 
   if (!controller) {
@@ -37,11 +37,8 @@ async function handshake(registration) {
     await requestClaim(controller);
   }
 
-  const response = await oneOffMessage({
-    target: controller,
-    message: {
-      action: ACTION.PING,
-    },
+  const response = await oneOffMessage(controller, {
+    action: ACTION.PING,
   });
 
   if (response.action !== ACTION.PONG) {
@@ -53,12 +50,9 @@ async function handshake(registration) {
   return registration;
 }
 
-async function requestClaim(worker) {
-  const response = await oneOffMessage({
-    target: worker,
-    message: {
-      action: ACTION.REQUEST_CLAIM,
-    },
+async function requestClaim(worker: ServiceWorker): Promise<void> {
+  const response = await oneOffMessage(worker, {
+    action: ACTION.REQUEST_CLAIM,
   });
 
   if (response.action !== ACTION.ESTABLISHED) {

@@ -1,8 +1,21 @@
-export async function oneOffMessage({
+type Messagable = ServiceWorker | ServiceWorkerClient | Window /* legacy mode */;
+
+type Message = {
+  action: string,
+  [key: string]: any,
+};
+
+export async function oneOffMessage(
+  target: Messagable,
+  message: Message,
+  timeout?: number,
+): Promise<any>;
+
+export async function oneOffMessage(
   target,
   message,
   timeout = 3 * 1e3,
-} = {}) {
+) {
   const { port1, port2 } = new MessageChannel();
 
   return new Promise((resolve, reject) => {
@@ -13,8 +26,8 @@ export async function oneOffMessage({
     port1.onmessage = ({ data }) => {
       clearTimeout(timer);
 
-      // avoid high transient memory usage
-      // see <https://html.spec.whatwg.org/multipage/comms.html#message-channels>
+      // avoid high transient memory usage, see
+      // https://html.spec.whatwg.org/multipage/comms.html#message-channels
       port1.onmessage = null;
       port1.close();
       port2.close();
@@ -23,7 +36,7 @@ export async function oneOffMessage({
         data.request = message.action;
       }
 
-      if (data.error) {
+      if (data && data.error) {
         reject(data);
       } else {
         resolve(data);

@@ -3,12 +3,12 @@ import { createClient } from '../../src/client/';
 import Promise from 'promise-polyfill';
 import 'whatwg-fetch';
 
-if (!window.Promise) {
-  window.Promise = Promise;
+if (!(window as any).Promise) {
+  (window as any).Promise = Promise;
 }
 
 const client = createClient('sw.js', { scope: '/' });
-window.client = client;
+(window as any).client = client;
 
 client.ready.then(reg => {
   console.log(reg);

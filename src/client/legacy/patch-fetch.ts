@@ -6,8 +6,11 @@ import {
   LEGACY_CLIENT_ID,
 } from '../../constants/';
 
-function dispatchFetchEvent(request) {
-  let fetchEvt = {};
+let originalFetch: any;
+let mockerPatched: boolean;
+
+function dispatchFetchEvent(request: Request): Promise<Response> {
+  let fetchEvt: any;
 
   try {
     fetchEvt = new Event('fetch', {
@@ -19,7 +22,7 @@ function dispatchFetchEvent(request) {
   }
 
   const deferred = new Defer();
-  const fetch = self.fetch.origin || self.fetch;
+  const fetch = originalFetch || self.fetch;
 
   fetchEvt.request = request;
   fetchEvt.clientId = LEGACY_CLIENT_ID;
@@ -30,14 +33,15 @@ function dispatchFetchEvent(request) {
   self.dispatchEvent(fetchEvt);
 
   setTimeout(() => {
-    if (deferred.done) return;
-    deferred.resolve(fetch(request));
+    if (!deferred.done) {
+      deferred.resolve(fetch(request));
+    }
   }, 300);
 
   return deferred.promise;
 }
 
-export function patchFetch() {
+export function patchFetch(): void {
   const {
     fetch,
   } = self;
@@ -46,7 +50,7 @@ export function patchFetch() {
     throw new Error('fetch is required for legacy mode');
   }
 
-  if (fetch.mockerPatched) {
+  if (mockerPatched) {
     return;
   }
 
@@ -56,6 +60,6 @@ export function patchFetch() {
     return dispatchFetchEvent(request);
   };
 
-  self.fetch.mockerPatched = true;
-  self.fetch.origin = fetch;
+  mockerPatched = true;
+  originalFetch = fetch;
 }
