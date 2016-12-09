@@ -50,7 +50,7 @@ module.exports = {
     }],
     noParse: [
       // remove "Critical dependency" warning
-      require.resolve('localforage'),
+      require.resolve('localforage/dist/localforage.nopromises.js'),
     ],
   },
   postcss: [autoprefixer],
