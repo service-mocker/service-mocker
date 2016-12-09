@@ -7,7 +7,7 @@ if (!(window as any).Promise) {
   (window as any).Promise = Promise;
 }
 
-const client = createClient('sw.js', { scope: '/' });
+const client = createClient('sw.js');
 (window as any).client = client;
 
 client.ready.then(reg => {

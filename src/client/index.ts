@@ -9,7 +9,7 @@ import { clientStorage } from './storage';
 
 export function createClient(
   scriptURL: string,
-  options: ServiceWorkerRegisterOptions,
+  options?: ServiceWorkerRegisterOptions,
 ): MockerClient {
   const useLegacy = isLegacyMode();
 

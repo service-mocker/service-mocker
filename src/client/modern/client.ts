@@ -14,7 +14,7 @@ export class ModernClient implements MockerClient {
   controller: ServiceWorker = null;
   ready: Promise<ServiceWorkerRegistration> = null;
 
-  constructor(scriptURL: string, options: ServiceWorkerRegisterOptions) {
+  constructor(scriptURL: string, options?: ServiceWorkerRegisterOptions) {
     this._setReady(this._init(scriptURL, options));
   }
 
