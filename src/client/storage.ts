@@ -12,23 +12,23 @@ const store = localforage.createInstance({
 class ClientStorageService {
   private activated = false;
 
-  public async get(key: string): Promise<any> {
+  async get(key: string): Promise<any> {
     return store.getItem(key);
   }
 
-  public async set<T>(key: string, value: T): Promise<T> {
+  async set<T>(key: string, value: T): Promise<T> {
     return store.setItem(key, value);
   }
 
-  public async remove(key: string): Promise<void> {
+  async remove(key: string): Promise<void> {
     return store.removeItem(key);
   }
 
-  public async clear(): Promise<void> {
+  async clear(): Promise<void> {
     return store.clear();
   }
 
-  public start(useLegacy: boolean): void {
+  start(useLegacy: boolean): void {
     if (this.activated) {
       return;
     }

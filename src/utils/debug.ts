@@ -13,27 +13,27 @@ class PrefixedConsole {
     private _color = colorPresets.log,
   ) {}
 
-  public color(c: string): PrefixedConsole {
+  color(c: string): PrefixedConsole {
     return new PrefixedConsole(`${this._namespace}`, c);
   }
 
-  public scope(ns: string): PrefixedConsole {
+  scope(ns: string): PrefixedConsole {
     return new PrefixedConsole(`${this._namespace}:${ns}`);
   }
 
-  public log(...args): PrefixedConsole {
+  log(...args): PrefixedConsole {
     return this._print('log', ...args);
   }
 
-  public info(...args): PrefixedConsole {
+  info(...args): PrefixedConsole {
     return this._print('info', ...args);
   }
 
-  public warn(...args): PrefixedConsole {
+  warn(...args): PrefixedConsole {
     return this._print('warn', ...args);
   }
 
-  public error(...args): PrefixedConsole {
+  error(...args): PrefixedConsole {
     return this._print('error', ...args);
   }
 

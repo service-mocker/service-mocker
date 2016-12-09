@@ -7,7 +7,7 @@ import {
 } from '../../constants/';
 
 let originalFetch: any;
-let mockerPatched: boolean;
+let fetchPatched: boolean;
 
 function dispatchFetchEvent(request: Request): Promise<Response> {
   let fetchEvt: any;
@@ -50,7 +50,7 @@ export function patchFetch(): void {
     throw new Error('fetch is required for legacy mode');
   }
 
-  if (mockerPatched) {
+  if (fetchPatched) {
     return;
   }
 
@@ -60,6 +60,6 @@ export function patchFetch(): void {
     return dispatchFetchEvent(request);
   };
 
-  mockerPatched = true;
+  fetchPatched = true;
   originalFetch = fetch;
 }
