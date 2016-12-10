@@ -59,6 +59,9 @@ module.exports = {
   },
   ts: {
     silent: true,
+    compilerOptions: {
+      declaration: false,
+    },
   },
   plugins: [
     new CircularDependencyPlugin({
