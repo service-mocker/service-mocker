@@ -53,6 +53,7 @@
     "whatwg-fetch": "^2.0.1"
   },
   "dependencies": {
-    "localforage": "^1.4.3"
+    "localforage": "^1.4.3",
+    "tslib": "^1.2.0"
   }
 }
