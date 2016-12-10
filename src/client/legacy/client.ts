@@ -16,7 +16,7 @@ export class LegacyClient implements MockerClient {
 
   private _registration: MockerRegistration = {
     active: window,
-    scope: `${location.protocol}://${location.host}`,
+    scope: `${location.protocol}://${location.host}${location.pathname}`,
   };
 
   constructor(scriptURL: string) {
