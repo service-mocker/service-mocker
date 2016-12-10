@@ -1,10 +1,8 @@
 export async function eventWaitUntil(
-   target: any,
-   event: string,
-   comparer: (event: any) => boolean,
-): Promise<any>;
-
-export async function eventWaitUntil(target, event, comparer) {
+  target: any,
+  event: string,
+  comparer: (event: any) => boolean,
+): Promise<any> {
   return new Promise((resolve) => {
     target.addEventListener(event, function handler(evt) {
       if (comparer(evt)) {
