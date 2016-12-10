@@ -59,6 +59,7 @@ module.exports = {
   },
   ts: {
     silent: true,
+    transpileOnly: true,
     compilerOptions: {
       declaration: false,
     },
