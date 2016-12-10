@@ -7,40 +7,38 @@ const colorPresets = {
   error: 'crimson',
 };
 
+// merge console interface
+export interface PrefixedConsole extends Console {
+  color(c?: string): PrefixedConsole;
+  scope(ns?: string): PrefixedConsole;
+}
+
 export class PrefixedConsole {
   constructor(
     private _namespace = 'mocker',
     private _color = colorPresets.log,
   ) {}
 
-  color(c: string): PrefixedConsole {
+  color(c = this._color) {
     return new PrefixedConsole(`${this._namespace}`, c);
   }
 
-  scope(ns: string): PrefixedConsole {
+  scope(ns = this._namespace) {
     return new PrefixedConsole(`${this._namespace}:${ns}`);
   }
+}
 
-  log(...args): PrefixedConsole {
-    return this._print('log', ...args);
-  }
+export const debug = new PrefixedConsole();
 
-  info(...args): PrefixedConsole {
-    return this._print('info', ...args);
-  }
+const proto = PrefixedConsole.prototype;
 
-  warn(...args): PrefixedConsole {
-    return this._print('warn', ...args);
-  }
-
-  error(...args): PrefixedConsole {
-    return this._print('error', ...args);
-  }
-
-  private _print(
-    method: 'log' | 'info' | 'warn' | 'error',
-    ...messages: any[],
-  ): PrefixedConsole {
+[
+  'log',
+  'info',
+  'warn',
+  'error',
+].forEach((method) => {
+  proto[method] = function logger(...messages) {
     const {
       _namespace,
       _color,
@@ -55,9 +53,11 @@ export class PrefixedConsole {
     const color = _color === defaultColor ? colorPresets[method] : _color;
 
     console[method](head, `color: ${color}`, 'color: #000', ...messages);
+  };
+});
 
-    return this;
-  }
-}
-
-export const debug = new PrefixedConsole();
+Object.keys(console)
+  .filter(method => !proto.hasOwnProperty(method))
+  .forEach(method => {
+    proto[method] = console[method].bind(console);
+  });
