@@ -12,7 +12,7 @@ const join = path.join.bind(path, __dirname, '..');
 const sources = ['src', 'demo'].map(dir => join(dir));
 
 module.exports = {
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   entry: {
     app: [
       `webpack-dev-server/client?http://${ip.address()}:3000`,
