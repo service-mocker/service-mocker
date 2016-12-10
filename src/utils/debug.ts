@@ -20,7 +20,7 @@ export class PrefixedConsole {
   ) {}
 
   color(c: string) {
-    return new PrefixedConsole(`${this._namespace}`, c);
+    return new PrefixedConsole(this._namespace, c);
   }
 
   scope(ns: string) {
