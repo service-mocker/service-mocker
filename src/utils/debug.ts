@@ -9,8 +9,8 @@ const colorPresets = {
 
 // merge console interface
 export interface PrefixedConsole extends Console {
-  color(c?: string): PrefixedConsole;
-  scope(ns?: string): PrefixedConsole;
+  color(c: string): PrefixedConsole;
+  scope(ns: string): PrefixedConsole;
 }
 
 export class PrefixedConsole {
@@ -19,12 +19,12 @@ export class PrefixedConsole {
     private _color = colorPresets.log,
   ) {}
 
-  color(c = this._color) {
+  color(c: string) {
     return new PrefixedConsole(`${this._namespace}`, c);
   }
 
-  scope(ns = this._namespace) {
-    return new PrefixedConsole(`${this._namespace}:${ns}`);
+  scope(ns: string) {
+    return new PrefixedConsole(`${this._namespace}:${ns}`, this._color);
   }
 }
 
