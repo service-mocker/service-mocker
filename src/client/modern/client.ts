@@ -1,6 +1,5 @@
 import {
   debug,
-  runOnce,
 } from '../../utils/';
 
 import {
@@ -13,16 +12,13 @@ import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
 import { ClientStorageService } from '../storage';
 
-const clientStorage = new ClientStorageService();
-
 export class ModernClient implements MockerClient {
   legacy = false;
   controller: ServiceWorker = null;
   ready: Promise<ServiceWorkerRegistration> = null;
-  storage: ClientStorageService = clientStorage;
+  storage = new ClientStorageService();
 
   constructor(scriptURL: string, options?: ServiceWorkerRegisterOptions) {
-    clientStorage.start();
     this._setReady(this._init(scriptURL, options));
   }
 
@@ -47,7 +43,6 @@ export class ModernClient implements MockerClient {
     return result;
   }
 
-  @runOnce
   private async _init(scriptURL: string, options: ServiceWorkerRegisterOptions): Promise<ServiceWorkerRegistration> {
     const registration = await register(scriptURL, options);
 
@@ -57,7 +52,6 @@ export class ModernClient implements MockerClient {
     return registration;
   }
 
-  @runOnce
   private _setReady(updater: Promise<ServiceWorkerRegistration>) {
     this.ready = new Promise(resolve => {
       updater
@@ -72,7 +66,6 @@ export class ModernClient implements MockerClient {
     });
   }
 
-  @runOnce
   private _autoSyncClient() {
     const {
       serviceWorker,
@@ -93,7 +86,6 @@ export class ModernClient implements MockerClient {
     });
   }
 
-  @runOnce
   private _handleUnload() {
     window.addEventListener('beforeunload', disconnect);
   }

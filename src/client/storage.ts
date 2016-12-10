@@ -4,16 +4,20 @@ import {
   ACTION,
 } from '../constants/';
 
-import {
-  runOnce,
-} from '../utils/';
-
 const store = localforage.createInstance({
   name: 'ServiceMocker',
   description: 'storage space for service mocker',
 });
 
 export class ClientStorageService {
+  constructor(useLegacy?: boolean) {
+    if (useLegacy) {
+      this._startLegacy();
+    } else {
+      this._start();
+    }
+  }
+
   async get(key: string): Promise<any> {
     return store.getItem(key);
   }
@@ -30,16 +34,14 @@ export class ClientStorageService {
     return store.clear();
   }
 
-  @runOnce
-  start() {
+  private _start() {
     navigator.serviceWorker.addEventListener(
       'message',
       this._listener.bind(this),
     );
   }
 
-  @runOnce
-  startLegacy() {
+  private _startLegacy() {
     self.addEventListener(
       'message',
       this._listener.bind(this),

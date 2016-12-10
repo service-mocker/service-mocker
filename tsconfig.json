@@ -4,9 +4,7 @@
         "dom",
         "es2017"
     ],
-    "target": "ES5",
     "noUnusedLocals": true,
-    "experimentalDecorators": true,
     "declaration": true,
     "outDir": "dist"
   },
