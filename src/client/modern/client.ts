@@ -30,7 +30,7 @@ export class ModernClient implements MockerClient {
     return this.ready;
   }
 
-  async unregister(): Promise<boolean | never> {
+  async unregister(): Promise<boolean> {
     const registration = await this.getRegistration();
 
     const result = await registration.unregister();

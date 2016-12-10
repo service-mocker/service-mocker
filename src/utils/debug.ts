@@ -54,7 +54,7 @@ export class PrefixedConsole {
 
     const color = _color === defaultColor ? colorPresets[method] : _color;
 
-    console[method](head, `color: ${color}`, `color: #000`, ...messages);
+    console[method](head, `color: ${color}`, 'color: #000', ...messages);
 
     return this;
   }
