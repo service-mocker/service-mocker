@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
+    "target": "es5",
     "lib": [
         "dom",
         "es2017"
     ],
+    "moduleResolution": "node",
+    "noImplicitReturns": true,
     "noUnusedLocals": true,
     "declaration": true,
+    "sourceMap": true,
     "outDir": "dist"
   },
   "include": [

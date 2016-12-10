@@ -59,7 +59,9 @@ module.exports = {
   },
   ts: {
     silent: true,
-    transpileOnly: true,
+    // with `transpileOnly` enabled, we can cache result and speed up compilation
+    // but modules are marked as isolated thus some typing checks will be bypassed
+    // transpileOnly: true,
     compilerOptions: {
       declaration: false,
     },
