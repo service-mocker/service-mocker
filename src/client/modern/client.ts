@@ -13,13 +13,24 @@ import { getNewestReg } from './get-newest-reg';
 import { ClientStorageService } from '../storage';
 
 export class ModernClient implements MockerClient {
-  legacy = false;
+  readonly legacy = false;
+  readonly storage = new ClientStorageService();
+  readonly ready: Promise<ServiceWorkerRegistration> = null;
+
   controller: ServiceWorker = null;
-  ready: Promise<ServiceWorkerRegistration> = null;
-  storage = new ClientStorageService();
 
   constructor(scriptURL: string, options?: ServiceWorkerRegisterOptions) {
-    this._setReady(this._init(scriptURL, options));
+    this.ready = new Promise(resolve => {
+      this._init(scriptURL, options)
+        .then(registration => {
+          this.controller = registration.active;
+          resolve(registration);
+        })
+        .catch(error => {
+          this.controller = null;
+          debug.error('mocker initialization failed: ', error);
+        });
+    });
   }
 
   async update(): Promise<ServiceWorkerRegistration> {
@@ -50,20 +61,6 @@ export class ModernClient implements MockerClient {
     this._handleUnload();
 
     return registration;
-  }
-
-  private _setReady(updater: Promise<ServiceWorkerRegistration>) {
-    this.ready = new Promise(resolve => {
-      updater
-        .then(registration => {
-          this.controller = registration.active;
-          resolve(registration);
-        })
-        .catch(error => {
-          this.controller = null;
-          debug.error('mocker initialization failed: ', error);
-        });
-    });
   }
 
   private _autoSyncClient() {

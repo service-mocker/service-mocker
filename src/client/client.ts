@@ -8,10 +8,11 @@ export type MockerRegistration = ServiceWorkerRegistration | {
 };
 
 export interface MockerClient {
-    legacy: boolean;
-    ready: Promise<MockerRegistration>;
+    readonly legacy: boolean;
+    readonly storage: ClientStorageService;
+    readonly ready: Promise<MockerRegistration>;
+
     controller: MockerController;
-    storage: ClientStorageService;
 
     update(): Promise<MockerRegistration>;
     getRegistration(): Promise<MockerRegistration>;

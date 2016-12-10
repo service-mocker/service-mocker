@@ -8,10 +8,11 @@ import { ClientStorageService } from '../storage';
 import { patchFetch } from './patch-fetch';
 
 export class LegacyClient implements MockerClient {
-  legacy = true;
+  readonly legacy = true;
+  readonly ready: Promise<MockerRegistration> = null;
+  readonly storage = new ClientStorageService(true);
+
   controller: MockerController = window;
-  ready: Promise<MockerRegistration> = null;
-  storage = new ClientStorageService(true);
 
   private _registration: MockerRegistration = {
     active: window,
@@ -20,22 +21,7 @@ export class LegacyClient implements MockerClient {
 
   constructor(scriptURL: string) {
     patchFetch();
-    this._load(scriptURL);
-  }
 
-  async update(): Promise<MockerRegistration> {
-    return Promise.resolve(this._registration);
-  }
-
-  async getRegistration(): Promise<MockerRegistration> {
-    return Promise.resolve(this._registration);
-  }
-
-  async unregister(): Promise<never> {
-    throw new Error('mocker in legacy mode can\'t be unregistered');
-  }
-
-  private _load(scriptURL: string) {
     const script = document.createElement('script');
     script.src = scriptURL;
 
@@ -50,5 +36,17 @@ export class LegacyClient implements MockerClient {
     });
 
     document.body.appendChild(script);
+  }
+
+  async update(): Promise<MockerRegistration> {
+    return Promise.resolve(this._registration);
+  }
+
+  async getRegistration(): Promise<MockerRegistration> {
+    return Promise.resolve(this._registration);
+  }
+
+  async unregister(): Promise<never> {
+    throw new Error('mocker in legacy mode can\'t be unregistered');
   }
 }
