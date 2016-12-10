@@ -59,5 +59,11 @@ const proto = PrefixedConsole.prototype;
 Object.keys(console)
   .filter(method => !proto.hasOwnProperty(method))
   .forEach(method => {
-    proto[method] = console[method].bind(console);
+    const fn = console[method];
+
+    if (typeof fn !== 'function') {
+      return;
+    }
+
+    proto[method] = fn.bind(console);
   });
