@@ -32,6 +32,13 @@ export const debug = new PrefixedConsole();
 
 const proto = PrefixedConsole.prototype;
 
+// inherit console methods
+if (typeof Object.setPrototypeOf === 'function') {
+  Object.setPrototypeOf(proto, console);
+} else {
+  (proto as any).__proto__ = console;
+}
+
 [
   'log',
   'info',
@@ -55,15 +62,3 @@ const proto = PrefixedConsole.prototype;
     console[method](head, `color: ${color}`, 'color: #000', ...messages);
   };
 });
-
-Object.keys(console)
-  .filter(method => !proto.hasOwnProperty(method))
-  .forEach(method => {
-    const fn = console[method];
-
-    if (typeof fn !== 'function') {
-      return;
-    }
-
-    proto[method] = fn.bind(console);
-  });
