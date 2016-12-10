@@ -33,7 +33,6 @@
   "homepage": "https://github.com/idiotWu/service-mocker#readme",
   "devDependencies": {
     "autoprefixer": "^6.5.3",
-    "awesome-typescript-loader": "^3.0.0-beta.10",
     "circular-dependency-plugin": "^2.0.0",
     "ip": "^1.1.4",
     "node-sass": "^3.13.0",
