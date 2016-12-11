@@ -2,8 +2,8 @@
   "name": "service-mocker",
   "version": "0.0.1",
   "description": "Next generation api mocker.",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "index.js",
+  "typings": "index.d.ts",
   "scripts": {
     "lint": "tslint -t stylish '{src, demo}/**/*.ts'",
     "clean:build": "rimraf ./build",
