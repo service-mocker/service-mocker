@@ -93,10 +93,10 @@ inquirer.prompt(questions)
 
     shell.echo('publishing to npm...');
     shell.cd(DIST_DIR);
-    // shell.exec('npm publish');
+    shell.exec('npm publish');
 
     shell.echo('pushing new tag...');
-    // shell.cd('..');
-    // shell.exec(`git tag v${pkg.version}`);
-    // shell.exec('git push --tags');
+    shell.cd('..');
+    shell.exec(`git tag v${pkg.version}`);
+    shell.exec('git push --tags');
   })
