@@ -10,11 +10,9 @@
     "noUnusedLocals": true,
     "importHelpers": true,
     "declaration": true,
-    "sourceMap": true,
-    "outDir": "dist"
+    "sourceMap": true
   },
-  "include": [
-    "src/**/*.ts",
-    "typings/**/*.ts"
+  "exclude": [
+    "node_modules"
   ]
 }
