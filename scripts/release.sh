@@ -82,6 +82,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
   echo "Publishing $NPM_VERSION"
   git push origin refs/tags/v$VERSION
-  cd dist
+  cd ..
   npm publish
 fi
