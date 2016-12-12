@@ -7,23 +7,23 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const dashboard = new Dashboard();
 
-const join = path.join.bind(path, __dirname, '..');
+const joinRoot = path.join.bind(path, __dirname, '..');
 
-const sources = ['src', 'demo'].map(dir => join(dir));
+const sources = ['src', 'demo'].map(dir => joinRoot(dir));
 
 module.exports = {
   devtool: 'source-map',
   entry: {
     app: [
       `webpack-dev-server/client?http://${ip.address()}:3000`,
-      join('demo/app/index.ts'),
+      joinRoot('demo/app/index.ts'),
     ],
     sw: [
-      join('demo/sw/index.ts'),
+      joinRoot('demo/sw/index.ts'),
     ],
   },
   output: {
-    path: join('build/'),
+    path: joinRoot('build/'),
     filename: '[name].js',
   },
   resolve: {
