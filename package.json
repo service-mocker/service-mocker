@@ -15,7 +15,7 @@
     "release": "node ./scripts/release",
     "preghpages": "npm run clean:build",
     "ghpages": "webpack --config ./webpack/ghpages.js --display-error-details --color",
-    "start": "node ./webpack/serve.js",
+    "start": "node ./scripts/serve.js",
     "pretest": "npm run lint",
     "test": "webpack --config ./webpack/test.js --display-error-details --color"
   },

@@ -3,7 +3,7 @@ const ip = require('ip');
 const path = require('path');
 const webpack = require('webpack');
 const Server = require('webpack-dev-server');
-const config = require('./develop');
+const config = require('./wepack.config.develop');
 
 new Server(webpack(config), {
   quiet: true,
