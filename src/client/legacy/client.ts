@@ -7,7 +7,7 @@ import {
 import { ClientStorageService } from '../storage';
 import { patchFetch } from './patch-fetch';
 
-export class LegacyClient implements MockerClient {
+export class LegacyClient extends MockerClient {
   readonly legacy = true;
   readonly ready: Promise<MockerRegistration> = null;
   readonly storage = new ClientStorageService(true);
@@ -20,6 +20,7 @@ export class LegacyClient implements MockerClient {
   };
 
   constructor(scriptURL: string) {
+    super();
     patchFetch();
 
     const script = document.createElement('script');
