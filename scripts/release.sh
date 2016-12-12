@@ -71,7 +71,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   # Alignment!
   echo 'exports.createClient = require("./client").createClient;'      >  index.js
   echo 'exports.createServer = require("./server").createServer;'      >> index.js
-
   echo 'export { createClient } from "./client";'                      >  index.d.ts
   echo 'export { createServer } from "./server";'                      >> index.d.ts
 
