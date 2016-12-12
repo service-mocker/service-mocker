@@ -9,6 +9,10 @@ const DIST_DIR = 'dist';
 const version = pkg.version;
 const versionList = version.match(/\d+/g).slice(0, 3).map(Number);
 
+if (shell.exec('git diff-files --name-only').stdout) {
+  throw new Error('Please commit local changes before releasing.');
+}
+
 const indexMap = {
   patch: 2,
   minor: 1,
