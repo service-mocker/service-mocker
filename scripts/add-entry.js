@@ -5,25 +5,23 @@ const joinRoot = path.join.bind(path, __dirname, '..', 'dist');
 
 const entries = {
   'index.js':
-`var Mocker = {};
-Object.assign(Mocker, require('./client'));
-Object.assign(Mocker, require('./server'));
-module.exports = exports = Mocker;`,
+`exports.createClient = require('./client').createClient;
+exports.createServer = require('./server').createServer;`,
 
   'index.d.ts':
-`export * from './client';
-export * from './server';`,
+`export { createClient } from './client';
+export { createServer } from './server';`,
 
-  'client.js': `module.exports = exports = require('./lib/client/');`,
-  'client.d.ts': `export * from './lib/client/';`,
+  'client.js': `exports.createClient = require('./lib/client/').createClient;`,
+  'client.d.ts': `export { createClient } from './lib/client/';`,
 
-  'server.js': `module.exports = exports = require('./lib/server/');`,
-  'server.d.ts': `export * from './lib/server/';`,
+  'server.js': `exports.createServer = require('./lib/server/').createServer;`,
+  'server.d.ts': `export { createServer } from './lib/server/';`,
 };
 
 Object.keys(entries).forEach((filename) => {
   fs.writeFileSync(
     joinRoot(filename),
-    entries[filename] + '\n'
+    entries[filename]
   );
 });
