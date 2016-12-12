@@ -19,24 +19,28 @@ export class PrefixedConsole {
     private _color = colorPresets.log,
   ) {}
 
-  color(c: string) {
+  color(c: string): PrefixedConsole {
     return new PrefixedConsole(this._namespace, c);
   }
 
-  scope(ns: string) {
+  scope(ns: string): PrefixedConsole {
     return new PrefixedConsole(`${this._namespace}:${ns}`, this._color);
   }
 }
 
 export const debug = new PrefixedConsole();
 
-const proto = PrefixedConsole.prototype;
-
 // inherit console methods
 if (typeof Object.setPrototypeOf === 'function') {
-  Object.setPrototypeOf(proto, console);
+  Object.setPrototypeOf(PrefixedConsole.prototype, console);
 } else {
-  (proto as any).__proto__ = console;
+  const desc: any = {};
+
+  Object.getOwnPropertyNames(PrefixedConsole.prototype).forEach((prop) => {
+    desc[prop] = Object.getOwnPropertyDescriptor(PrefixedConsole.prototype, prop);
+  });
+
+  PrefixedConsole.prototype = Object.create(console, desc);
 }
 
 [
@@ -45,7 +49,7 @@ if (typeof Object.setPrototypeOf === 'function') {
   'warn',
   'error',
 ].forEach((method) => {
-  proto[method] = function logger(...messages) {
+  PrefixedConsole.prototype[method] = function logger(...messages) {
     const {
       _namespace,
       _color,
