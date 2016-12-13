@@ -1,6 +1,6 @@
 import {
   debug,
-  oneOffMessage,
+  sendMessageRequest,
 } from '../../utils/';
 
 import {
@@ -37,7 +37,7 @@ async function handshake(registration: ServiceWorkerRegistration): Promise<Servi
     await requestClaim(controller);
   }
 
-  const response = await oneOffMessage(controller, {
+  const response = await sendMessageRequest(controller, {
     action: ACTION.PING,
   });
 
@@ -51,7 +51,7 @@ async function handshake(registration: ServiceWorkerRegistration): Promise<Servi
 }
 
 async function requestClaim(worker: ServiceWorker): Promise<void> {
-  const response = await oneOffMessage(worker, {
+  const response = await sendMessageRequest(worker, {
     action: ACTION.REQUEST_CLAIM,
   });
 

@@ -4,7 +4,7 @@ import {
 } from '../constants/';
 
 import {
-  oneOffMessage,
+  sendMessageRequest,
 } from '../utils/';
 
 export class Server {
@@ -21,7 +21,7 @@ export class Server {
     }
 
     const client = self === self.window ? self : await self.clients.get(clientId);
-    const setRes = await oneOffMessage(client, {
+    const setRes = await sendMessageRequest(client, {
       action: ACTION.SET_STORAGE,
       key: 'whoami',
       value: {
@@ -32,7 +32,7 @@ export class Server {
 
     console.log(setRes);
 
-    const getRes = await oneOffMessage(client, {
+    const getRes = await sendMessageRequest(client, {
       action: ACTION.GET_STORAGE,
       key: 'whoami',
     });

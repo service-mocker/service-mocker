@@ -5,13 +5,13 @@ export type Message = {
   [key: string]: any,
 };
 
-export async function oneOffMessage(
+export async function sendMessageRequest(
   target: Messagable,
   message: Message,
   timeout?: number,
 ): Promise<any>;
 
-export async function oneOffMessage(
+export async function sendMessageRequest(
   target,
   message,
   timeout = 3 * 1e3,

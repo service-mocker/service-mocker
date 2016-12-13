@@ -1,5 +1,5 @@
 import {
-  oneOffMessage,
+  sendMessageRequest,
 } from '../../utils/';
 
 import {
@@ -15,7 +15,7 @@ export async function disconnect(): Promise<void> {
     return;
   }
 
-  return oneOffMessage(serviceWorker.controller, {
+  return sendMessageRequest(serviceWorker.controller, {
     action: ACTION.DISCONNECT,
   });
 }
