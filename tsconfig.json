@@ -16,5 +16,8 @@
     "node_modules",
     "lib",
     "dist"
+  ],
+  "typeRoots": [
+    "./typings"
   ]
 }
