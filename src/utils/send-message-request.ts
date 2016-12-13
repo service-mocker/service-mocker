@@ -3,8 +3,16 @@ export type Message = {
   [key: string]: any,
 };
 
+// Client => Server
 export async function sendMessageRequest(
-  target: ServiceWorker | ServiceWorkerClient | Window /* legacy mode */,
+  target: ServiceWorker | Window /* legacy mode */,
+  message: Message,
+  timeout?: number,
+): Promise<any>;
+
+// Server => Client
+export async function sendMessageRequest(
+  target: ServiceWorkerClient | Window /* legacy mode */,
   message: Message,
   timeout?: number,
 ): Promise<any>;
