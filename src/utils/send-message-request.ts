@@ -1,12 +1,10 @@
-export type Messagable = ServiceWorker | ServiceWorkerClient | Window /* legacy mode */;
-
 export type Message = {
   action: string,
   [key: string]: any,
 };
 
 export async function sendMessageRequest(
-  target: Messagable,
+  target: ServiceWorker | ServiceWorkerClient | Window /* legacy mode */,
   message: Message,
   timeout?: number,
 ): Promise<any>;
