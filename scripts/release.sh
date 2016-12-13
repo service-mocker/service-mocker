@@ -44,15 +44,15 @@ done
 
 if [[ $VERSION == "" ]]; then
   read -p "Please enter the version: "
-  echo $REPLY
+  VERSION=$REPLY
 fi
 
 read -r -p "Releaing version:$VERSION - are you sure? (y/N) "
 
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo "Releasing version $VERSION"
-  # npm run lint
-  # npm run test
+  npm run lint
+  npm run test
   npm run clean
   npm run compile
 
