@@ -1,11 +1,7 @@
-import { createClient } from '../../src/client/';
-
-import Promise from 'promise-polyfill';
+import 'es6-promise/auto';
 import 'whatwg-fetch';
 
-if (!(window as any).Promise) {
-  (window as any).Promise = Promise;
-}
+import { createClient } from '../../src/client/';
 
 const client = createClient('sw.js');
 (window as any).client = client;
