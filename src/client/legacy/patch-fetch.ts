@@ -26,11 +26,11 @@ export function patchFetch(): void {
 
     return new Promise((resolve, reject) => {
       dispatchFetchEvent(request).then((response) => {
-        if (!response) {
-          return nativeFetch(request).then(resolve, reject);
+        if (response) {
+          resolve(response);
+        } else {
+          nativeFetch(request).then(resolve, reject);
         }
-
-        resolve(response);
       });
     });
   }

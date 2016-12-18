@@ -103,10 +103,10 @@ class MockerXHR {
     }
 
     this._mockFetch(data).then(result => {
-      if (!result) {
-        this._nativeXHR.send(data);
-      } else {
+      if (result) {
         this._processResponse(result);
+      } else {
+        this._nativeXHR.send(data);
       }
     });
   }

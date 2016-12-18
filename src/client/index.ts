@@ -37,5 +37,5 @@ function isLegacyMode(): boolean {
     return true;
   }
 
-  return true;
+  return false;
 }

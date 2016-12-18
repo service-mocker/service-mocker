@@ -11,30 +11,11 @@ export class Server {
     this._start();
   }
 
-  // temporary restore native context
-  // for any use of `fetch` or `XMLHttpRequest`
-  private _setNativeContext() {
+  public fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
     const globalContext: any = self;
+    const nativeFetch = globalContext.fetch.native || globalContext.fetch;
 
-    if (globalContext.fetch.mockerPatched) {
-      const { fetch, XMLHttpRequest } = globalContext;
-
-      globalContext._fetch = fetch;
-      globalContext._XMLHttpRequest = XMLHttpRequest;
-      globalContext.fetch = fetch.native;
-      globalContext.XMLHttpRequest = XMLHttpRequest.native;
-    }
-  }
-
-  // restore patched context
-  private _restoreMockerContext() {
-    const globalContext: any = self;
-
-    if (globalContext._fetch) {
-      const { _fetch, _XMLHttpRequest } = globalContext;
-      globalContext.fetch = _fetch;
-      globalContext.XMLHttpRequest = _XMLHttpRequest;
-    }
+    return nativeFetch(input, init);
   }
 
   private _start() {
@@ -113,9 +94,14 @@ export class Server {
     } = evt;
 
     if (/api/.test(request.url)) {
-      evt.respondWith(new Response('Hello new world!'));
+      evt.respondWith(new Promise((res) => {
+        setTimeout(() => {
+          res(new Response('Hello new world!'));
+        }, 3000);
+      }));
     }
-    // return Promise.all([...]);
+
+    // do some fetches with this.fetch(...)
   }
 
   private _filterRequest() {
@@ -131,9 +117,7 @@ export class Server {
         return;
       }
 
-      this._setNativeContext();
       evt.waitUntil(this._router(evt));
-      this._restoreMockerContext();
     });
   }
 }

@@ -12,17 +12,27 @@ export function dispatchFetchEvent(request: Request): Promise<Response | null> {
   const fetchEvt = createEvent(self, 'fetch');
   const deferred = new Defer();
 
-  let res = null;
+  let done = false;
 
   fetchEvt.request = request;
   fetchEvt.clientId = LEGACY_CLIENT_ID;
-  fetchEvt.respondWith = (response) => {
-    res = response;
+
+  fetchEvt.respondWith = (response: Response | Promise<Response>) => {
+    if (done) {
+      // tslint:disable-next-line max-line-length
+      throw new Error(`Failed to execute 'respondWith' on 'FetchEvent': The fetch event has already been responded to.`);
+    }
+
+    done = true;
     deferred.resolve(response);
   };
+
   fetchEvt.waitUntil = (promise: any) => {
     Promise.resolve(promise).then(() => {
-      deferred.resolve(res);
+      if (!done) {
+        done = true;
+        deferred.resolve(null);
+      }
     });
   };
 
