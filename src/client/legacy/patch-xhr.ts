@@ -1,15 +1,6 @@
 /**
  * Wrap native XMLHttpRequest
  */
-
-import {
-  sleep,
-} from '../../utils/';
-
-import {
-  LEGACY_MODE_TIMEOUT,
-} from '../../constants/';
-
 import { createEvent } from './create-event';
 import { dispatchFetchEvent } from './dispatch-fetch-event';
 
@@ -111,10 +102,7 @@ class MockerXHR {
       throw new Error(`Failed to execute 'send' on 'XMLHttpRequest': The object's state must be OPENED.`);
     }
 
-    Promise.race([
-      this._mockFetch(data),
-      sleep(LEGACY_MODE_TIMEOUT),
-    ]).then(result => {
+    this._mockFetch(data).then(result => {
       if (!result) {
         this._nativeXHR.send(data);
       } else {

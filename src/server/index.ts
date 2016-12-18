@@ -3,10 +3,6 @@ import {
   LEGACY_CLIENT_ID,
 } from '../constants/';
 
-import {
-  sendMessageRequest,
-} from '../utils/';
-
 export class Server {
   private _running = false;
   private _clients = new Set<string>([ LEGACY_CLIENT_ID ]);
@@ -15,29 +11,30 @@ export class Server {
     this._start();
   }
 
-  async test(clientId) {
-    if (!clientId) {
-      return;
+  // temporary restore native context
+  // for any use of `fetch` or `XMLHttpRequest`
+  private _setNativeContext() {
+    const globalContext: any = self;
+
+    if (globalContext.fetch.mockerPatched) {
+      const { fetch, XMLHttpRequest } = globalContext;
+
+      globalContext._fetch = fetch;
+      globalContext._XMLHttpRequest = XMLHttpRequest;
+      globalContext.fetch = fetch.native;
+      globalContext.XMLHttpRequest = XMLHttpRequest.native;
     }
+  }
 
-    const client = self === self.window ? self : await self.clients.get(clientId);
-    const setRes = await sendMessageRequest(client, {
-      action: ACTION.SET_STORAGE,
-      key: 'whoami',
-      value: {
-        name: 'Dolphin',
-        date: new Date(),
-      },
-    });
+  // restore patched context
+  private _restoreMockerContext() {
+    const globalContext: any = self;
 
-    console.log(setRes);
-
-    const getRes = await sendMessageRequest(client, {
-      action: ACTION.GET_STORAGE,
-      key: 'whoami',
-    });
-
-    console.log(getRes);
+    if (globalContext._fetch) {
+      const { _fetch, _XMLHttpRequest } = globalContext;
+      globalContext.fetch = _fetch;
+      globalContext.XMLHttpRequest = _XMLHttpRequest;
+    }
   }
 
   private _start() {
@@ -110,11 +107,21 @@ export class Server {
     });
   }
 
+  private _router(evt) {
+    const {
+      request,
+    } = evt;
+
+    if (/api/.test(request.url)) {
+      evt.respondWith(new Response('Hello new world!'));
+    }
+    // return Promise.all([...]);
+  }
+
   private _filterRequest() {
     self.addEventListener('fetch', evt => {
       const {
         clientId,
-        request,
       } = evt;
 
       console.log(evt);
@@ -124,12 +131,9 @@ export class Server {
         return;
       }
 
-      this.test(clientId);
-
-      // TEST
-      if (/api/.test(request.url)) {
-        evt.respondWith(new Response('Hello new world!'));
-      }
+      this._setNativeContext();
+      evt.waitUntil(this._router(evt));
+      this._restoreMockerContext();
     });
   }
 }

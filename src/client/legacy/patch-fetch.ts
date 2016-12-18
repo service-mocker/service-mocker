@@ -1,7 +1,3 @@
-import {
-  LEGACY_MODE_TIMEOUT,
-} from '../../constants/';
-
 import { dispatchFetchEvent } from './dispatch-fetch-event';
 
 export function patchFetch(): void {
@@ -28,13 +24,12 @@ export function patchFetch(): void {
   function patchedFetch(input: RequestInfo, init: RequestInit): Promise<Response> {
     const request = new Request(input, init);
 
-    return new Promise(resolve => {
-      const timer = setTimeout(() => {
-        resolve(nativeFetch(request));
-      }, LEGACY_MODE_TIMEOUT);
-
+    return new Promise((resolve, reject) => {
       dispatchFetchEvent(request).then((response) => {
-        clearTimeout(timer);
+        if (!response) {
+          return nativeFetch(request).then(resolve, reject);
+        }
+
         resolve(response);
       });
     });

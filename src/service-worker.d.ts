@@ -5,7 +5,7 @@
  */
 
 // extend new APIs
-interface FetchEvent {
+interface FetchEvent extends ExtendableEvent {
   readonly clientId: string;
 }
 
