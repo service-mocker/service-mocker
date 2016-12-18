@@ -5,6 +5,7 @@ import {
 } from '../client';
 
 import { ClientStorageService } from '../storage';
+import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
 
 export class LegacyClient extends MockerClient {
@@ -21,6 +22,8 @@ export class LegacyClient extends MockerClient {
 
   constructor(scriptURL: string) {
     super();
+
+    patchXHR();
     patchFetch();
 
     const script = document.createElement('script');

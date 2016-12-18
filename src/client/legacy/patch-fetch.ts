@@ -1,65 +1,46 @@
 import {
-  Defer,
-} from '../../utils/';
-
-import {
-  LEGACY_CLIENT_ID,
+  LEGACY_MODE_TIMEOUT,
 } from '../../constants/';
 
-let originalFetch: any;
-let fetchPatched: boolean;
-
-function dispatchFetchEvent(request: Request): Promise<Response> {
-  let fetchEvt: any;
-
-  try {
-    fetchEvt = new Event('fetch', {
-      bubbles: true,
-    });
-  } catch (e) {
-    fetchEvt = document.createEvent('Event');
-    fetchEvt.initEvent('fetch', true, false);
-  }
-
-  const deferred = new Defer();
-  const fetch = originalFetch || self.fetch;
-
-  fetchEvt.request = request;
-  fetchEvt.clientId = LEGACY_CLIENT_ID;
-  fetchEvt.respondWith = (response) => {
-    deferred.resolve(response);
-  };
-
-  self.dispatchEvent(fetchEvt);
-
-  setTimeout(() => {
-    if (!deferred.done) {
-      deferred.resolve(fetch(request));
-    }
-  }, 300);
-
-  return deferred.promise;
-}
+import { dispatchFetchEvent } from './dispatch-fetch-event';
 
 export function patchFetch(): void {
-  const {
-    fetch,
-  } = self;
+  const nativeFetch: any = self.fetch;
 
-  if (!fetch) {
+  if (!nativeFetch) {
     throw new Error('fetch is required for legacy mode');
   }
 
-  if (fetchPatched) {
+  // only patch once
+  if (nativeFetch.mockerPatched) {
     return;
   }
 
-  self.fetch = function patchedFetch(input, init) {
+  // don't patch polyfills
+  // tslint:disable-next-line no-multi-spaces
+  if (nativeFetch.polyfill                                || // github fetch polyfill
+     nativeFetch.toString !== Function.prototype.toString || // `toString` method is overrided to pretend it's native XD
+     !/\[native code\]/.test(nativeFetch.toString())         // fetch is replaced
+  ) {
+    return;
+  }
+
+  function patchedFetch(input: RequestInfo, init: RequestInit): Promise<Response> {
     const request = new Request(input, init);
 
-    return dispatchFetchEvent(request);
-  };
+    return new Promise(resolve => {
+      const timer = setTimeout(() => {
+        resolve(nativeFetch(request));
+      }, LEGACY_MODE_TIMEOUT);
 
-  fetchPatched = true;
-  originalFetch = fetch;
+      dispatchFetchEvent(request).then((response) => {
+        clearTimeout(timer);
+        resolve(response);
+      });
+    });
+  }
+
+  (patchedFetch as any).native = fetch;
+  (patchedFetch as any).mockerPatched = fetch;
+  self.fetch = patchedFetch;
 }
