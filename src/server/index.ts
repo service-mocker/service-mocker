@@ -88,26 +88,11 @@ export class Server {
     });
   }
 
-  private _router(evt) {
-    const {
-      request,
-    } = evt;
-
-    if (/api/.test(request.url)) {
-      evt.respondWith(new Promise((res) => {
-        setTimeout(() => {
-          res(new Response('Hello new world!'));
-        }, 3000);
-      }));
-    }
-
-    // do some fetches with this.fetch(...)
-  }
-
   private _filterRequest() {
-    self.addEventListener('fetch', evt => {
+    self.addEventListener('fetch', (evt: any) => {
       const {
         clientId,
+        request,
       } = evt;
 
       console.log(evt);
@@ -117,7 +102,14 @@ export class Server {
         return;
       }
 
-      evt.waitUntil(this._router(evt));
+      if (/api/.test(request.url)) {
+        // do some fetches with this.fetch(...)
+        evt.respondWith(new Response('Hello new world!'));
+      }
+
+      if (evt.isLegacy) {
+        evt.end();
+      }
     });
   }
 }
