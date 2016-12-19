@@ -5,7 +5,9 @@ import {
 
 export class Server {
   private _running = false;
-  private _clients = new Set<string>([ LEGACY_CLIENT_ID ]);
+  private _clients: any = {
+    [LEGACY_CLIENT_ID]: true,
+  };
 
   constructor() {
     this._start();
@@ -34,6 +36,18 @@ export class Server {
     }
 
     return fetch(input, init);
+  }
+
+  private _hasClient(id) {
+    return !!this._clients[id];
+  }
+
+  private _addClient(id) {
+    this._clients[id] = true;
+  }
+
+  private _deleteClient(id) {
+    delete this._clients[id];
   }
 
   private _start() {
@@ -66,10 +80,6 @@ export class Server {
     });
   }
 
-  private _hasClient(id) {
-    return this._clients.has(id);
-  }
-
   private _handleMessage() {
     self.addEventListener('message', evt => {
       const {
@@ -86,7 +96,7 @@ export class Server {
 
       switch (data.action) {
         case ACTION.PING:
-          this._clients.add(source.id);
+          this._addClient(source.id);
 
           return ports[0].postMessage({
             action: ACTION.PONG,
@@ -101,7 +111,7 @@ export class Server {
             });
 
         case ACTION.DISCONNECT:
-          return this._clients.delete(source.id);
+          return this._deleteClient(source.id);
       }
     });
   }
@@ -113,16 +123,18 @@ export class Server {
         request,
       } = evt;
 
-      console.log(evt);
-
       if (clientId && !this._hasClient(clientId)) {
         console.warn(`unknown client: ${clientId}`);
         return;
       }
 
       if (/api/.test(request.url)) {
-        // do some fetches with this.fetch(...)
         evt.respondWith(new Response('Hello new world!'));
+      }
+
+      if (/jsondata/.test(request.url)) {
+        // do some fetches with this.fetch(...)
+        evt.respondWith(this.fetch('/legacy/data.json'));
       }
 
       if (evt.isLegacy) {

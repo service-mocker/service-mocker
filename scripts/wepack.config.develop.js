@@ -10,21 +10,28 @@ const dashboard = new Dashboard();
 const joinRoot = path.join.bind(path, __dirname, '..');
 
 const sources = ['src', 'demo'].map(dir => joinRoot(dir));
+const webpackServerScript = `webpack-dev-server/client?http://${ip.address()}:3000`;
 
 module.exports = {
   devtool: 'source-map',
   entry: {
     app: [
-      `webpack-dev-server/client?http://${ip.address()}:3000`,
+      webpackServerScript,
       joinRoot('demo/app/index.ts'),
     ],
     sw: [
       joinRoot('demo/sw/index.ts'),
     ],
+    legacy: [
+      webpackServerScript,
+      joinRoot('demo/legacy/index.ts'),
+    ],
   },
   output: {
     path: joinRoot('build/'),
     filename: '[name].js',
+    // service workers requires top scope
+    // publicPath: '/build/',
   },
   resolve: {
     extensions: ['', '.js', '.ts', '.scss'],

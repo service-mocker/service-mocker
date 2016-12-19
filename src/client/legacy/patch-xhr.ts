@@ -82,7 +82,6 @@ class MockerXHR {
     }
 
     this._mockFetch(data).then(result => {
-      console.log(result);
       if (result) {
         this._processResponse(result);
       } else {
