@@ -13,9 +13,27 @@ export class Server {
 
   public fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
     const globalContext: any = self;
-    const nativeFetch = globalContext.fetch.native || globalContext.fetch;
 
-    return nativeFetch(input, init);
+    const {
+      fetch,
+      XMLHttpRequest: XHR,
+    } = globalContext;
+
+    // native fetch
+    if (fetch.mockerPatched) {
+      return fetch.native.fetch(input, init);
+    }
+
+    // fetch polyfills
+    if (XHR && XHR.mockerPatched) {
+      globalContext.XMLHttpRequest = XHR.native;
+      const promise = fetch(input, init);
+      globalContext.XMLHttpRequest = XHR;
+
+      return promise;
+    }
+
+    return fetch(input, init);
   }
 
   private _start() {
