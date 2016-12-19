@@ -20,6 +20,14 @@ export function patchXHR() {
   (self as any).XMLHttpRequest = MockerXHR;
 }
 
+const EVENTS_LIST = [
+  'readystatechange',
+  'loadstart',
+  'progress',
+  'load',
+  'loadend',
+];
+
 interface MockerXHR extends XMLHttpRequest {}
 
 // we can not extends `XMLHttpRequest`
@@ -30,13 +38,6 @@ class MockerXHR {
 
   private _nativeXHR = new MockerXHR.native();
   private _requestHeaders = new Headers();
-  private _eventHandlers = {
-    readystatechange: [],
-    loadstart: [],
-    progress: [],
-    load: [],
-    loadend: [],
-  };
 
   private _responseHeaders: Headers;
   private _responseMIME: string;
@@ -67,28 +68,6 @@ class MockerXHR {
     this._responseMIME = mime;
   }
 
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void {
-    this._nativeXHR.addEventListener(type, listener, useCapture);
-
-    const { _eventHandlers } = this;
-
-    if (_eventHandlers.hasOwnProperty(type)) {
-      _eventHandlers[type].push(listener);
-    }
-  }
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject): void {
-    this._nativeXHR.removeEventListener(type, listener);
-
-    const { _eventHandlers } = this;
-
-    if (_eventHandlers.hasOwnProperty(type)) {
-      _eventHandlers[type].some((fn, idx, all) => {
-        return fn === listener && all.splice(idx, 1);
-      });
-    }
-  }
-
   // using rest parameter `method, url, ...rest` here raises a typescript error report, see:
   // https://github.com/Microsoft/TypeScript/issues/4130
   open(method: string, url: string, async?: boolean, user?: string, password?: string): void {
@@ -103,6 +82,7 @@ class MockerXHR {
     }
 
     this._mockFetch(data).then(result => {
+      console.log(result);
       if (result) {
         this._processResponse(result);
       } else {
@@ -148,7 +128,7 @@ class MockerXHR {
       this._setProperty('responseXML', result);
     }
 
-    this._invokeEvents();
+    this._dispatchEvents();
   }
 
   private _setProperty(name: string, value?: any): void {
@@ -161,34 +141,23 @@ class MockerXHR {
   }
 
   // events handlers
-  private _invokeEvents(): void {
-    Object.keys(this._eventHandlers).forEach(type => {
-      const handlers = this._getHandlers(type);
-
-      if (!handlers.length) {
-        return;
-      }
-
-      const event = createEvent(this, type);
+  private _dispatchEvents(): void {
+    EVENTS_LIST.forEach(type => {
+      const event = createEvent(type);
 
       if (type !== 'readystatechange') {
         // progress event
         event.total = event.loaded = 1;
       }
 
-      handlers.forEach(fn => fn(event));
+      this.dispatchEvent(event);
+
+      // no need to invoke listeners manually
+      // const handler = this[`on${type}`];
+      // if (handler) {
+      //   handler.call(this._nativeXHR, event);
+      // }
     });
-  }
-
-  private _getHandlers(type: string): any[] {
-    const handlers = [...this._eventHandlers[type]];
-    const fn = this[`on${type}`];
-
-    if (fn) {
-      handlers.unshift(fn);
-    }
-
-    return handlers;
   }
 }
 

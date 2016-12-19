@@ -1,27 +1,9 @@
-export function createEvent(from: any, name: string): any {
-  let event: any;
-
+export function createEvent(name: string): any {
   try {
-    event = new Event(name);
+    return new Event(name);
   } catch (e) {
-    event = document.createEvent('Event');
+    const event = document.createEvent('Event');
     event.initEvent(name, false, false);
+    return event;
   }
-
-  Object.defineProperties(event, {
-    srcElement: {
-      value: from,
-      writable: false,
-      enumerable: true,
-      configurable: true,
-    },
-    target: {
-      value: from,
-      writable: false,
-      enumerable: true,
-      configurable: true,
-    },
-  });
-
-  return event;
 }

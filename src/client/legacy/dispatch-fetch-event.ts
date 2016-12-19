@@ -9,7 +9,7 @@ import {
 import { createEvent } from './create-event';
 
 export function dispatchFetchEvent(request: Request): Promise<Response | null> {
-  const fetchEvt = createEvent(self, 'fetch');
+  const fetchEvt = createEvent('fetch');
   const deferred = new Defer();
 
   let finished = false;
