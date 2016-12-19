@@ -1,3 +1,6 @@
+/**
+ * Create an custom event
+ */
 export function createEvent(name: string): any {
   try {
     return new Event(name);

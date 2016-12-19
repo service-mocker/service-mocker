@@ -1,6 +1,58 @@
-/**
- * Wrap native XMLHttpRequest
+/*!
+ * Patch native `XMLHttpRequest`
+ * @author Dolphin Wood
+ *
+ * Notes:
+ * - Main concepts:
+ *   1. Implement another XHR is considered tough and meaningless, FYI:
+ *      <https://github.com/nuysoft/Mock/blob/refactoring/src/mock/xhr/xhr.js>
+ *   2. The best way to make another XHR is extending native constructor with
+ *      overriding some methods. However, extending XMLHttpRequest raises an error
+ *      <Failed to construct 'XMLHttpRequest': Please use the 'new' operator,
+ *      this DOM object constructor cannot be called as a function.>
+ *   3. So we should extend `XMLHttpRequest` in some ways that are not constructing
+ *      XHR with `XMLHttpRequest.call(this)`:
+ *      3.1. Look back to JavaScript inheritance, no matter which method we choose to
+ *           use, we are almost doing the same thing: let the execution context of
+ *           `SuperClass.prototype.method` be the instance of `SubClass`.
+ *      3.2. Thus if we bind `XMLHttpRequest.prototype.method` with a XHR instance,
+ *           we can be free to invoke all methods in prototype! Then attaching these
+ *           methods to the `SubXHR.prototype`, the instances of `SubXHR` will act
+ *           as if they're real XHR instances!
+ *
+ * - Implementation of `SubXHR`:
+ *   1. Create a normal class with `this.nativeXHR` pointing to a XHR instance,
+ *   2. Iterate through the descriptors of `XMLHttpRequest.prototype`:
+ *      2.1. If the property is a primitive value, do nothing,
+ *      2.2. If the property is an accessor, bind `get` and `set` with `this.nativeXHR`,
+ *      2.3. If the property is a function, bind it with `this.nativeXHR`,
+ *      2.4. Copy the descriptor to `SubXHR.prototype`
+ *   3. Iterate through the descriptors of `XMLHttpRequest`, copy them to `SubXHR` as
+ *      static methods.
+ *
+ * - When and how to dispatch fetch event:
+ *   1. A XMLHttpRequest won't be sent until we call `xhr.send()`, so we should dispatch a
+ *   fetch event when `xhr.send()` is invoked,
+ *   2. By overriding `xhr.open()` method, we can get `request_method` and `request_url`,
+ *   3. By overriding `xhr.setRequestHeader()`, we can get `request_headers`,
+ *   4. Create a request instance with `request_method`, `request_url`, `request_headers`,
+ *      and other options got from `this[xhrProp]` like `this.withCredentials` (will be
+ *      delegated to `this.nativeXHR[xhrProp]`).
+ *   5. Dispatch fetch event with the request.
+ *   6. If fetch event responds with a `Response`, parse it and dispatch `readystatechange`
+ *      event and progress events via `this.dispatchEvent()` (will be delegated to
+ *      `this.nativeXHR.dispatchEvent()`).
+ *   7. Or, re-send native requeust via `this.nativeXHR.send()`.
+ *
+ * - About events handling:
+ *   1. Since we delegate all `XMLHttpRequest.prototype` methods to `this.nativeXHR`, there's
+ *   no need to create an event emitter, simply calling `this.dispatchEvent()` and all
+ *   registered listeners will be invoked, including those are set by `instance#on[event]`.
+ *   2. Meanwhile, all the event handlers you registered on `SubXHR` instance will actually be
+ *   registered on `this.nativeXHR`, so even if we send native request, all the handlers will
+ *   be called properly.
  */
+
 import { createEvent } from './create-event';
 import { dispatchFetchEvent } from './dispatch-fetch-event';
 
@@ -9,6 +61,7 @@ export function patchXHR() {
     return;
   }
 
+  // copy all static properties
   Object.keys(XMLHttpRequest).forEach(prop => {
     Object.defineProperty(
       MockerXHR, prop,
@@ -16,10 +69,12 @@ export function patchXHR() {
     );
   });
 
+  // copy all prototype properties
   mapPrototypeMethods(XMLHttpRequest.prototype, MockerXHR.prototype);
   (self as any).XMLHttpRequest = MockerXHR;
 }
 
+// only `readystatechange` event and progress events are need to be dispatched
 const EVENTS_LIST = [
   'readystatechange',
   'loadstart',
@@ -28,19 +83,29 @@ const EVENTS_LIST = [
   'loadend',
 ];
 
+// merge XMLHttpRequest interface
 interface MockerXHR extends XMLHttpRequest {}
 
-// we can not extends `XMLHttpRequest`
-// class MockerXHR extends XMLHttpRequest {
 class MockerXHR {
+  // marked with `mockerPatched` symbol
   static readonly mockerPatched = true;
+
+  // keep a native reference
   static readonly native = XMLHttpRequest;
 
+  // init a real XHR instance
   private _nativeXHR = new MockerXHR.native();
+
+  // record request headers via `setRequestHeader` method
   private _requestHeaders = new Headers();
 
+  // save response headers for `getResponseHeader(s)` methods
   private _responseHeaders: Headers;
+
+  // override response 'Content-Type' header via `overrideMimeType` method
   private _responseMIME: string;
+
+  // save request method and url via `open` method
   private _method: string;
   private _url: string;
 
@@ -83,15 +148,21 @@ class MockerXHR {
 
     this._mockFetch(data).then(result => {
       if (result) {
+        // `event.respondWith` called
+        // resolve with mock response
         this._processResponse(result);
       } else {
+        // send real XMLHttpRequest
         this._nativeXHR.send(data);
       }
     });
   }
 
   private _mockFetch(data?: any): Promise<Response> {
+    // GET|HEAD requests cannot include body
     const body = (this._method === 'GET' || this._method === 'HEAD') ? null : data;
+
+    // omit credentials by default
     const credentials = this.withCredentials ? 'include' : 'omit';
 
     const request = new Request(this._url, {
@@ -106,6 +177,7 @@ class MockerXHR {
 
   private async _processResponse(response: Response): Promise<void> {
     if (this._responseMIME) {
+      // apply `overrideMimeType`
       response.headers.set('content-type', this._responseMIME);
     }
 
@@ -113,6 +185,7 @@ class MockerXHR {
 
     this._responseHeaders = response.headers;
 
+    // pretend this request is DONE
     this._setProperty('readyState', this.DONE);
     this._setProperty('responseURL', response.url);
     this._setProperty('status', response.status);
@@ -160,6 +233,11 @@ class MockerXHR {
   }
 }
 
+/**
+ * Parse response with the specified `responseType`,
+ * return `null` if any error occurs, see:
+ * https://xhr.spec.whatwg.org/#the-response-attribute
+ */
 async function parseResponse(response: Response, responseType?: string): Promise<any> {
   try {
     const res = response.clone();
@@ -188,7 +266,7 @@ async function parseResponse(response: Response, responseType?: string): Promise
   }
 }
 
-// proxy all unset properties to `_nativeXHR`
+// delegate all unset properties to `_nativeXHR`
 function mapPrototypeMethods(
   source: any = XMLHttpRequest.prototype,
   target: any = MockerXHR.prototype,
@@ -230,5 +308,6 @@ function mapPrototypeMethods(
     Object.defineProperty(target, name, descriptor);
   });
 
+  // recursively look-up
   mapPrototypeMethods(Object.getPrototypeOf(source), target);
 }
