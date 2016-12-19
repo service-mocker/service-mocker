@@ -1,41 +1,42 @@
 import { dispatchFetchEvent } from './dispatch-fetch-event';
 
-export function patchFetch(): void {
-  const nativeFetch: any = self.fetch;
+function isNativeFetch() {
+  const fetch: any = self.fetch;
 
-  if (!nativeFetch) {
+  /* tslint:disable no-multi-spaces max-line-length */
+  return !fetch.mockerPatched                           && // haven't been patched
+         !fetch.polyfill                                && // github fetch polyfill
+         fetch.toString === Function.prototype.toString && // sometimes `toString` method is overrided to pretend it's native XD
+         /\[native code\]/.test(fetch.toString());         // fetch is overrided
+  /* tslint:enable no-multi-spaces max-line-length */
+}
+
+export function patchFetch(): void {
+  if (!self.fetch) {
     throw new Error('fetch is required for legacy mode');
   }
 
-  // only patch once
-  if (nativeFetch.mockerPatched) {
+  // don't patch polyfills
+  if (!isNativeFetch()) {
     return;
   }
 
-  // don't patch polyfills
-  // tslint:disable-next-line no-multi-spaces
-  if (nativeFetch.polyfill                                || // github fetch polyfill
-     nativeFetch.toString !== Function.prototype.toString || // `toString` method is overrided to pretend it's native XD
-     !/\[native code\]/.test(nativeFetch.toString())         // fetch is replaced
-  ) {
-    return;
-  }
+  // fetch should be called within Window context
+  const nativeFetch = self.fetch.bind(self);
 
   function patchedFetch(input: RequestInfo, init: RequestInit): Promise<Response> {
     const request = new Request(input, init);
 
-    return new Promise((resolve, reject) => {
-      dispatchFetchEvent(request).then((response) => {
-        if (response) {
-          resolve(response);
-        } else {
-          nativeFetch(request).then(resolve, reject);
-        }
-      });
+    return dispatchFetchEvent(request).then((response) => {
+      if (response) {
+        return response;
+      } else {
+        return nativeFetch(request);
+      }
     });
   }
 
-  (patchedFetch as any).native = fetch;
-  (patchedFetch as any).mockerPatched = fetch;
+  (patchedFetch as any).mockerPatched = true;
+  (patchedFetch as any).native = nativeFetch;
   self.fetch = patchedFetch;
 }

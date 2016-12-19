@@ -21,7 +21,7 @@ export class Server {
 
     // native fetch
     if (fetch.mockerPatched) {
-      return fetch.native.fetch(input, init);
+      return fetch.native(input, init);
     }
 
     // fetch polyfills

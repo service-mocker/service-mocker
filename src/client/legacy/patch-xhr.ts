@@ -112,8 +112,8 @@ class MockerXHR {
   }
 
   private _mockFetch(data?: any): Promise<Response> {
-    const body = (this._method === 'GET' || this._method === 'HEAD') ? undefined : data;
-    const credentials = this.withCredentials ? 'include' : undefined;
+    const body = (this._method === 'GET' || this._method === 'HEAD') ? null : data;
+    const credentials = this.withCredentials ? 'include' : 'omit';
 
     const request = new Request(this._url, {
       body,
