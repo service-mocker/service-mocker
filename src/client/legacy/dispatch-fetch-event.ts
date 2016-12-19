@@ -11,7 +11,7 @@
  *   No.
  *   When a XHR fails, we invoke `nativeXHR.send()`;
  *   But when a fetch fails, we call `nativeFetch()` again to fetch response.
- *   They are handled differently, so I think we should not do a re-fetch when event resolved with `null`.
+ *   They are handled respectively, so I think we should not do a re-fetch when `respondWith` is not invoked.
  */
 
 import {
