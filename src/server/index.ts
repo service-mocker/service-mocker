@@ -17,7 +17,7 @@ export class Server {
    * Fetch with native `fetch`
    *
    * 1. If `fetch.mockerPatched` is found, it means you're running on
-   *    legacy mode with fetch supportes, return with `fetch.native`.
+   *    legacy mode with fetch support, return with `fetch.native`.
    *
    * 2. Else if `XMLHttpRequest.mockerPatched` is found, you're possibly
    *    using a fetch polyfill, processing as following:
@@ -26,7 +26,7 @@ export class Server {
    *    2.3. Restore `XMLHttpRequest` to patched one,
    *    2.4. Return the fetch promise.
    *
-   * 3. Or, you may be running in service worker contenxt, return `fetch`.
+   * 3. Or, you may be running in service worker context, return `fetch`.
    */
   public async fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
     const globalContext: any = self;

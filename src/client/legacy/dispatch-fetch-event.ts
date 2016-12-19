@@ -4,8 +4,8 @@
  *
  * Notes:
  * - 300ms timeout VS `end()` hook:
- *    Both of them work well, but if every request is delaied for 300ms,
- *    it would be a huge burden for daily devlopment.
+ *    Both of them work well, but if every request is delayed for 300ms,
+ *    it would be a huge burden for daily development.
  *
  * - Re-fetch unhandled events or not:
  *   No.
