@@ -6,7 +6,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-if [[ `git status -s` != "" ]]; then
+if [[ -n `git status -s` ]]; then
   echo "${RED}Please commit local changes before releasing.${NC}"
   exit 1
 fi
@@ -42,7 +42,7 @@ select opt in "${TYPES[@]}"; do
     esac
 done
 
-if [[ $VERSION == "" ]]; then
+if [[ -z $VERSION ]]; then
   read -p "Please enter the version: "
   VERSION=$REPLY
 fi
@@ -81,7 +81,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo 'export { createServer } from "./lib/server/";'                 > server.d.ts
 
   echo "Publishing $NPM_VERSION"
-  git push origin refs/tags/v$VERSION
-  cd ..
   npm publish
+  cd ..
+  git push origin refs/tags/v$VERSION
 fi
