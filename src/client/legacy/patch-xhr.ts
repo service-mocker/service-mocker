@@ -162,12 +162,12 @@ class MockerXHR {
     // GET|HEAD requests cannot include body
     const body = (this._method === 'GET' || this._method === 'HEAD') ? null : data;
 
-    // omit credentials by default
-    const credentials = this.withCredentials ? 'include' : 'omit';
+    // we are not able to handling cookies
+    // const credentials = this.withCredentials ? 'include' : 'omit';
 
     const request = new Request(this._url, {
       body,
-      credentials,
+      // credentials,
       method: this._method,
       headers: this._requestHeaders,
     });
