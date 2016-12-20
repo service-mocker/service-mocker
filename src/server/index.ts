@@ -3,6 +3,12 @@ import {
   LEGACY_CLIENT_ID,
 } from '../constants/';
 
+import {
+  debug,
+} from '../utils/';
+
+const serverLog = debug.scope('server');
+
 export class Server {
   private _running = false;
   private _clients: any = {
@@ -29,6 +35,8 @@ export class Server {
    * 3. Or, you may be running in service worker context, return `fetch`.
    */
   async fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
+    this._detachFetchWarning();
+
     const globalContext: any = self;
 
     const {
@@ -51,6 +59,44 @@ export class Server {
     }
 
     return fetch(input, init);
+  }
+
+  private _isLegacyMode() {
+    return self === self.window;
+  }
+
+  private _fetchWithWarning(input: RequestInfo, init?: RequestInit): Promise<Response> {
+    serverLog.warn('invoking `fetch` directly is considered potentially dangerous, please use `server#fetch` instead');
+
+    return this.fetch(input, init);
+  }
+
+  private _attachFetchWarning() {
+    if (!this._isLegacyMode()) {
+      return;
+    }
+
+    const originalFetch: any = self.fetch;
+
+    const tempFetch = this._fetchWithWarning.bind(this);
+
+    tempFetch.origin = originalFetch;
+
+    self.fetch = tempFetch;
+  }
+
+  private _detachFetchWarning() {
+    if (!this._isLegacyMode()) {
+      return;
+    }
+
+    const originalFetch = (self.fetch as any).origin;
+
+    if (!originalFetch) {
+      return;
+    }
+
+    self.fetch = originalFetch;
   }
 
   private _hasClient(id) {
@@ -143,14 +189,19 @@ export class Server {
         return;
       }
 
+      this._attachFetchWarning();
+
       if (/api/.test(request.url)) {
         evt.respondWith(new Response('Hello new world!'));
+        // evt.respondWith(fetch('api'));
       }
 
       if (/jsondata/.test(request.url)) {
         // do some fetches with this.fetch(...)
         evt.respondWith(this.fetch('/legacy/data.json'));
       }
+
+      this._detachFetchWarning();
 
       if (evt.isLegacy) {
         evt.end();
