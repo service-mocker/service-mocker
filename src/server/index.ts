@@ -28,7 +28,7 @@ export class Server {
    *
    * 3. Or, you may be running in service worker context, return `fetch`.
    */
-  public async fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
+  async fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
     const globalContext: any = self;
 
     const {
