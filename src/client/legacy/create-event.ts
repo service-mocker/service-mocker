@@ -1,5 +1,5 @@
 /**
- * Create an custom event
+ * Create a custom event
  */
 export function createEvent(name: string): any {
   try {

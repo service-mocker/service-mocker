@@ -3,33 +3,6 @@
  * @author Dolphin Wood
  *
  * Notes:
- * - Main concepts:
- *   1. Implement another XHR is considered tough and meaningless, FYI:
- *      <https://github.com/nuysoft/Mock/blob/refactoring/src/mock/xhr/xhr.js>
- *   2. The best way to make another XHR is extending native constructor with
- *      overriding some methods. However, extending XMLHttpRequest raises an error
- *      <Failed to construct 'XMLHttpRequest': Please use the 'new' operator,
- *      this DOM object constructor cannot be called as a function.>
- *   3. So we should extend `XMLHttpRequest` in some ways that are not constructing
- *      XHR with `XMLHttpRequest.call(this)`:
- *      3.1. Look back to JavaScript inheritance, no matter which method we choose to
- *           use, we are almost doing the same thing: let the execution context of
- *           `SuperClass.prototype.method` be the instance of `SubClass`.
- *      3.2. Thus if we bind `XMLHttpRequest.prototype.method` with a XHR instance,
- *           we can be free to invoke all methods in prototype! Then attaching these
- *           methods to the `SubXHR.prototype`, the instances of `SubXHR` will act
- *           as if they're real XHR instances!
- *
- * - Implementation of `SubXHR`:
- *   1. Create a normal class with `this.nativeXHR` pointing to a XHR instance,
- *   2. Iterate through the descriptors of `XMLHttpRequest.prototype`:
- *      2.1. If the property is a primitive value, do nothing,
- *      2.2. If the property is an accessor, bind `get` and `set` with `this.nativeXHR`,
- *      2.3. If the property is a function, bind it with `this.nativeXHR`,
- *      2.4. Copy the descriptor to `SubXHR.prototype`
- *   3. Iterate through the descriptors of `XMLHttpRequest`, copy them to `SubXHR` as
- *      static methods.
- *
  * - When and how to dispatch fetch event:
  *   1. A XMLHttpRequest won't be sent until we call `xhr.send()`, so we should dispatch a
  *   fetch event when `xhr.send()` is invoked,
@@ -48,12 +21,13 @@
  *   1. Since we delegate all `XMLHttpRequest.prototype` methods to `this.nativeXHR`, there's
  *   no need to create an event emitter, simply calling `this.dispatchEvent()` and all
  *   registered listeners will be invoked, including those are set by `instance#on[event]`.
- *   2. Meanwhile, all the event handlers you registered on `SubXHR` instance will actually be
- *   registered on `this.nativeXHR`, so even if we send native request, all the handlers will
+ *   2. Meanwhile, all the event handlers you registered on `ExtandableXHR` instance will actually be
+ *   registered on `this.nativeXHR`. So even if we re-send the native request, all the handlers will
  *   be called properly.
  */
 
 import { createEvent } from './create-event';
+import { ExtandableXHR } from './extendable-xhr';
 import { dispatchFetchEvent } from './dispatch-fetch-event';
 
 export function patchXHR() {
@@ -61,16 +35,6 @@ export function patchXHR() {
     return;
   }
 
-  // copy all static properties
-  Object.keys(XMLHttpRequest).forEach(prop => {
-    Object.defineProperty(
-      MockerXHR, prop,
-      Object.getOwnPropertyDescriptor(XMLHttpRequest, prop),
-    );
-  });
-
-  // copy all prototype properties
-  mapPrototypeMethods(XMLHttpRequest.prototype, MockerXHR.prototype);
   (self as any).XMLHttpRequest = MockerXHR;
 }
 
@@ -83,18 +47,12 @@ const EVENTS_LIST = [
   'loadend',
 ];
 
-// merge XMLHttpRequest interface
-interface MockerXHR extends XMLHttpRequest {}
-
-class MockerXHR {
+class MockerXHR extends ExtandableXHR {
   // marked with `mockerPatched` symbol
   static readonly mockerPatched = true;
 
   // keep a native reference
   static readonly native = XMLHttpRequest;
-
-  // init a real XHR instance
-  private _nativeXHR = new MockerXHR.native();
 
   // record request headers via `setRequestHeader` method
   private _requestHeaders = new Headers();
@@ -110,7 +68,7 @@ class MockerXHR {
   private _url: string;
 
   setRequestHeader(header: string, value: string): void {
-    this._nativeXHR.setRequestHeader(header, value);
+    super.setRequestHeader(header, value);
     this._requestHeaders.append(header, value);
   }
 
@@ -129,14 +87,14 @@ class MockerXHR {
   }
 
   overrideMimeType(mime: string): void {
-    this._nativeXHR.overrideMimeType(mime);
+    super.overrideMimeType(mime);
     this._responseMIME = mime;
   }
 
   // using rest parameter `method, url, ...rest` here raises a typescript error report, see:
   // https://github.com/Microsoft/TypeScript/issues/4130
   open(method: string, url: string, async?: boolean, user?: string, password?: string): void {
-    this._nativeXHR.open(method, url, async, user, password);
+    super.open(method, url, async, user, password);
     this._method = method;
     this._url = url;
   }
@@ -153,7 +111,7 @@ class MockerXHR {
         this._processResponse(result);
       } else {
         // send real XMLHttpRequest
-        this._nativeXHR.send(data);
+        super.send(data);
       }
     });
   }
@@ -227,7 +185,7 @@ class MockerXHR {
       // no need to invoke listeners manually
       // const handler = this[`on${type}`];
       // if (handler) {
-      //   handler.call(this._nativeXHR, event);
+      //   handler.call(this.nativeXHR, event);
       // }
     });
   }
@@ -264,50 +222,4 @@ async function parseResponse(response: Response, responseType?: string): Promise
   } catch (e) {
     return null;
   }
-}
-
-// delegate all unset properties to `_nativeXHR`
-function mapPrototypeMethods(
-  source: any = XMLHttpRequest.prototype,
-  target: any = MockerXHR.prototype,
-): void {
-  if (source.constructor === Object) {
-    // exit recursion
-    return;
-  }
-
-  Object.keys(source).forEach(name => {
-    if (target.hasOwnProperty(name)) {
-      return;
-    }
-
-    const descriptor = Object.getOwnPropertyDescriptor(source, name);
-
-    if (descriptor.set || descriptor.get) {
-      // getter
-      const {
-        get: nativeGet,
-        set: nativeSet,
-      } = descriptor;
-
-      descriptor.get = nativeGet && function get() {
-        return nativeGet.call(this._nativeXHR);
-      };
-
-      descriptor.set = nativeSet && function set(value) {
-        return nativeSet.call(this._nativeXHR, value);
-      };
-    } else if (typeof descriptor.value === 'function') {
-      // method
-      const nativeFn = descriptor.value;
-      descriptor.value = function wrapped(...args) {
-        return nativeFn.apply(this._nativeXHR, args);
-      };
-    }
-
-    Object.defineProperty(target, name, descriptor);
-  });
-
-  // recursively look-up
-  mapPrototypeMethods(Object.getPrototypeOf(source), target);
 }
