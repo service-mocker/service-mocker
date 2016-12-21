@@ -55,8 +55,8 @@ try {
 
 client.ready.then((reg) => {
   debug.info(reg);
-  assert(client.controller === window, 'Legacy controller should be window');
-  assert(reg.active === client.controller, 'Active worker should be equal to client controller');
+  assert(client.controller === null, 'Legacy controller should be null');
+  assert(reg === null, 'Legacy registration should be null');
 
   // fetch
   fetch('api').then(res => res.text()).then(res => {

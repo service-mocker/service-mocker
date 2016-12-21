@@ -33,8 +33,7 @@ export async function sendMessageRequest(
       clearTimeout(timer);
 
       // avoid high transient memory usage, see
-      // https://html.spec.whatwg.org/multipage/comms.html#message-channels
-      port1.onmessage = null;
+      // https://html.spec.whatwg.org/multipage/comms.html#ports-and-garbage-collection
       port1.close();
       port2.close();
 

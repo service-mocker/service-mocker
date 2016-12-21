@@ -77,7 +77,7 @@ class MockerXHR extends ExtandableXHR {
   }
 
   getAllResponseHeaders(): string {
-    const results = [];
+    const results: Array<string> = [];
 
     this._requestHeaders.forEach((value, name) => {
       results.push(`${name}: ${value}`);

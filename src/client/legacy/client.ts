@@ -1,6 +1,4 @@
 import {
-  MockerController,
-  MockerRegistration,
   MockerClient,
 } from '../client';
 
@@ -8,30 +6,24 @@ import { ClientStorageService } from '../storage';
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
 
-export class LegacyClient extends MockerClient {
+export class LegacyClient implements MockerClient {
   readonly legacy = true;
-  readonly ready: Promise<MockerRegistration> = null;
+  readonly ready: Promise<null>;
   readonly storage = new ClientStorageService(true);
 
-  controller: MockerController = window;
-
-  private _registration: MockerRegistration = {
-    active: window,
-    scope: `${location.protocol}://${location.host}${location.pathname}`,
-  };
+  controller = null;
+  private _registration = null;
 
   constructor(scriptURL: string) {
-    super();
-
     patchXHR();
     patchFetch();
 
     const script = document.createElement('script');
     script.src = scriptURL;
 
-    this.ready = new Promise((resolve, reject) => {
+    this.ready = new Promise<null>((resolve, reject) => {
       script.onload = () => {
-        resolve(this._registration);
+        resolve(null);
       };
 
       script.onerror = () => {
@@ -42,11 +34,11 @@ export class LegacyClient extends MockerClient {
     document.body.appendChild(script);
   }
 
-  async update(): Promise<MockerRegistration> {
+  async update(): Promise<null> {
     return Promise.resolve(this._registration);
   }
 
-  async getRegistration(): Promise<MockerRegistration> {
+  async getRegistration(): Promise<null> {
     return Promise.resolve(this._registration);
   }
 

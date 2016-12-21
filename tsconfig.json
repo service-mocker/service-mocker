@@ -7,6 +7,7 @@
     ],
     "moduleResolution": "node",
     "noImplicitReturns": true,
+    "strictNullChecks": true,
     "noUnusedLocals": true,
     "importHelpers": true,
     "declaration": true,
