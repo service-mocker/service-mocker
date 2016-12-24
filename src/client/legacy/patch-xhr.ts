@@ -73,10 +73,18 @@ class MockerXHR extends ExtandableXHR {
   }
 
   getResponseHeader(header: string): string | null {
+    if (!this._responseHeaders) {
+      return super.getResponseHeader(header);
+    }
+
     return this._responseHeaders.get(header);
   }
 
   getAllResponseHeaders(): string {
+    if (!this._responseHeaders) {
+      return super.getAllResponseHeaders();
+    }
+
     const results: Array<string> = [];
 
     this._requestHeaders.forEach((value, name) => {
