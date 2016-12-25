@@ -1,4 +1,4 @@
-const isIE = self.navigator && /Trident/.test(navigator.userAgent);
+const isIE = /Trident/.test(navigator.userAgent);
 
 const defaultColor = 'dodgerblue';
 
