@@ -1,3 +1,5 @@
+const isIE = /Trident/.test(navigator.userAgent);
+
 const defaultColor = 'dodgerblue';
 
 const colorPresets = {
@@ -54,6 +56,10 @@ if (typeof Object.setPrototypeOf === 'function') {
       _namespace,
       _color,
     } = this;
+
+    if (isIE) {
+      return console[method](`[${_namespace}]`, ...messages);
+    }
 
     let head = `%c[${_namespace}]%c`;
 

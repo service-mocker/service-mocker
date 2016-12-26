@@ -12,15 +12,14 @@ import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
 import { ClientStorageService } from '../storage';
 
-export class ModernClient extends MockerClient {
+export class ModernClient implements MockerClient {
   readonly legacy = false;
   readonly storage = new ClientStorageService();
-  readonly ready: Promise<ServiceWorkerRegistration> = null;
+  readonly ready: Promise<ServiceWorkerRegistration>;
 
-  controller: ServiceWorker = null;
+  controller: ServiceWorker | null;
 
   constructor(scriptURL: string, options?: ServiceWorkerRegisterOptions) {
-    super();
     this.ready = new Promise(resolve => {
       this._init(scriptURL, options)
         .then(registration => {
@@ -55,7 +54,7 @@ export class ModernClient extends MockerClient {
     return result;
   }
 
-  private async _init(scriptURL: string, options: ServiceWorkerRegisterOptions): Promise<ServiceWorkerRegistration> {
+  private async _init(scriptURL: string, options?: ServiceWorkerRegisterOptions): Promise<ServiceWorkerRegistration> {
     const registration = await register(scriptURL, options);
 
     this._autoSyncClient();
