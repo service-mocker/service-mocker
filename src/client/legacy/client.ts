@@ -1,12 +1,12 @@
 import {
-  MockerClient,
+  IMockerClient,
 } from '../client';
 
 import { ClientStorageService } from '../storage';
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
 
-export class LegacyClient implements MockerClient {
+export class LegacyClient implements IMockerClient {
   readonly legacy = true;
   readonly ready: Promise<null>;
   readonly storage = new ClientStorageService(true);

@@ -3,7 +3,7 @@ import {
 } from '../../utils/';
 
 import {
-  MockerClient,
+  IMockerClient,
 } from '../client';
 
 import { register } from './register';
@@ -12,12 +12,12 @@ import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
 import { ClientStorageService } from '../storage';
 
-export class ModernClient implements MockerClient {
+export class ModernClient implements IMockerClient {
   readonly legacy = false;
   readonly storage = new ClientStorageService();
   readonly ready: Promise<ServiceWorkerRegistration>;
 
-  controller: ServiceWorker | null;
+  controller: ServiceWorker;
 
   constructor(scriptURL: string, options?: ServiceWorkerRegisterOptions) {
     this.ready = new Promise(resolve => {
@@ -27,7 +27,6 @@ export class ModernClient implements MockerClient {
           resolve(registration);
         })
         .catch(error => {
-          this.controller = null;
           debug.error('mocker initialization failed: ', error);
         });
     });
