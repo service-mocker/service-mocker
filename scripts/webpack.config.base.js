@@ -50,6 +50,7 @@ module.exports = {
     noParse: [
       // remove "Critical dependency" warning
       require.resolve('localforage/dist/localforage.nopromises.js'),
+      require.resolve('source-map-support/browser-source-map-support.js'),
     ],
   },
   postcss: [autoprefixer],

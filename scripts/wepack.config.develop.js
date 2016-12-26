@@ -7,14 +7,15 @@ const config = require('./webpack.config.test');
 const dashboard = new Dashboard();
 
 const webpackServerScript = `webpack-dev-server/client?http://${ip.address()}:3000`;
+const sourceMapSupport = require.resolve('./sourcemap');
 
 const entry = config.entry;
 
-// add auto-reload
+// add auto-reload & source map
 Object.keys(entry).forEach((name) => {
   if (name === 'sw') return;
 
-  entry[name].unshift(webpackServerScript);
+  entry[name].unshift(webpackServerScript, sourceMapSupport);
 });
 
 // webpack dashboard
