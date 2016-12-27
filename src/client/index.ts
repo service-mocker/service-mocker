@@ -9,8 +9,16 @@ export { IMockerClient };
 
 export function createClient(
   scriptURL: string,
-  options?: ServiceWorkerRegisterOptions,
+  force?: 'legacy' | 'modern',
 ): IMockerClient {
+  if (force === 'legacy') {
+    return new LegacyClient(scriptURL);
+  }
+
+  if (force === 'modern') {
+    return new ModernClient(scriptURL);
+  }
+
   const useLegacy = isLegacyMode();
 
   if (useLegacy) {
@@ -18,7 +26,7 @@ export function createClient(
     return new LegacyClient(scriptURL);
   }
 
-  return new ModernClient(scriptURL, options);
+  return new ModernClient(scriptURL);
 }
 
 function isLegacyMode(): boolean {
