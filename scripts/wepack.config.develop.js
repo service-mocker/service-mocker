@@ -1,24 +1,35 @@
 const ip = require('ip');
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const Dashboard = require('webpack-dashboard');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 
-const config = require('./webpack.config.test');
+const config = require('./webpack.config.base');
 
 const dashboard = new Dashboard();
-
-const webpackServerScript = `webpack-dev-server/client?http://${ip.address()}:3000`;
-const sourceMapSupport = require.resolve('./sourcemap');
-
-const entry = config.entry;
+const joinRoot = path.join.bind(path, __dirname, '..');
 
 // add auto-reload & source map
-Object.keys(entry).forEach((name) => {
-  if (name === 'sw') return;
+config.entry.client.unshift(
+  `webpack-dev-server/client?http://${ip.address()}:3000`,
+  require.resolve('./sourcemap')
+);
 
-  entry[name].unshift(webpackServerScript, sourceMapSupport);
+// mocha env
+config.module.loaders.unshift({
+  test: /\.ts$/,
+  loader: 'mocha',
+  include: joinRoot('test/client.ts'),
 });
 
-// webpack dashboard
-config.plugins.push(new DashboardPlugin(dashboard.setData));
+// html plugin & webpack dashboard
+config.plugins.push(
+  new HtmlWebpackPlugin({
+    title: 'Service Mocker',
+    chunks: ['client'],
+  }),
+  new DashboardPlugin(dashboard.setData)
+);
 
 module.exports = config;

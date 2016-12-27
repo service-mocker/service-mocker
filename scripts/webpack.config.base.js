@@ -10,14 +10,11 @@ const sources = ['src', 'test'].map(dir => joinRoot(dir));
 module.exports = {
   devtool: 'source-map',
   entry: {
-    modern: [
-      joinRoot('test/modern/index.ts'),
+    client: [
+      joinRoot('test/client.ts'),
     ],
-    legacy: [
-      joinRoot('test/legacy/index.ts'),
-    ],
-    sw: [
-      joinRoot('test/sw/index.ts'),
+    server: [
+      joinRoot('test/server.ts'),
     ],
   },
   output: {

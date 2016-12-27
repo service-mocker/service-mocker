@@ -2,7 +2,7 @@ export class Defer {
   public done: boolean;
   public promise: Promise<any>;
 
-  public resolve: (result: any) => void;
+  public resolve: (result?: any) => void;
   public reject: (reason: any) => void;
 
   constructor() {

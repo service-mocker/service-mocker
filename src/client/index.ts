@@ -9,14 +9,10 @@ export { IMockerClient };
 
 export function createClient(
   scriptURL: string,
-  force?: 'legacy' | 'modern',
+  forceLegacy?: boolean,
 ): IMockerClient {
-  if (force === 'legacy') {
+  if (forceLegacy) {
     return new LegacyClient(scriptURL);
-  }
-
-  if (force === 'modern') {
-    return new ModernClient(scriptURL);
   }
 
   const useLegacy = isLegacyMode();

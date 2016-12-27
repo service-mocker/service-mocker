@@ -20,6 +20,7 @@ interface ExtendableMessageEvent extends ExtendableEvent {
 
 interface ServiceWorkerContainer {
   addEventListener(type: string, listener: (event: any) => void): void;
+  removeEventListener(type: string, listener: (event: any) => void): void;
 }
 
 interface ServiceWorkerClients {
@@ -205,7 +206,7 @@ interface ServiceWorkerClient {
      * @param [transfer] A transferable object such as, for example, a reference
      * to a port.
      */
-    postMessage(message: string, transfer?: Object): void;
+    postMessage(message: any, transfer?: Object): void;
 
     /**
      * Indicates the type of browsing context of the current client.
@@ -266,7 +267,7 @@ interface ServiceWorkerClients {
      *
      * @param options
      */
-    matchAll(options: ServiceWorkerClientsMatchOptions): Promise<Array<ServiceWorkerClient>>;
+    matchAll(options?: ServiceWorkerClientsMatchOptions): Promise<Array<ServiceWorkerClient>>;
 
     /**
      * Opens a service worker Client in a new browser window.

@@ -9,6 +9,11 @@ import {
 
 const serverLog = debug.scope('server');
 
+// todo: createServer & IMockerServer
+export function createServer(): Server {
+  return new Server();
+}
+
 export class Server {
   private _running = false;
   private _clients: any = {
@@ -59,6 +64,22 @@ export class Server {
     }
 
     return fetch(input, init);
+  }
+
+  onmessage(handler: (evt: ExtendableMessageEvent, respondWith: (message: any) => void) => void) {
+    self.addEventListener('message', (evt) => {
+      handler(evt, respondWith);
+
+      function respondWith(message: any) {
+        const port = evt.ports[0] || evt.source;
+
+        if (!port) {
+          throw new ReferenceError('no port is found');
+        }
+
+        port.postMessage(message);
+      }
+    });
   }
 
   private _isLegacyMode() {
@@ -142,14 +163,13 @@ export class Server {
   }
 
   private _handleMessage() {
-    self.addEventListener('message', evt => {
+    this.onmessage((evt, respondWith) => {
       const {
         data,
         source,
-        ports,
       } = evt;
 
-      console.log(evt);
+      console.log(evt, data);
 
       if (!data) {
         return;
@@ -159,14 +179,14 @@ export class Server {
         case ACTION.PING:
           this._addClient(source.id);
 
-          return ports[0].postMessage({
+          return respondWith({
             action: ACTION.PONG,
           });
 
         case ACTION.REQUEST_CLAIM:
           return self.clients.claim()
             .then(() => {
-              ports[0].postMessage({
+              respondWith({
                 action: ACTION.ESTABLISHED,
               });
             });
