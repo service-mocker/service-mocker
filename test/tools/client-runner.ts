@@ -64,6 +64,11 @@ function addCase(test: TestCase) {
     });
   });
 
+  const runner = () => promise;
+
+  // re-map source code
+  runner.toString = () => test.code;
+
   // register to mocha
-  it(test.expect, () => promise);
+  it(test.expect, runner);
 }

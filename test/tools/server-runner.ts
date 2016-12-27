@@ -79,7 +79,10 @@ function describe(title: string, runner: () => void) {
 }
 
 function it(expect: string, runner: (done: MochaDone) => any) {
-  currentSuite.addTest({ expect });
+  currentSuite.addTest({
+    expect,
+    code: runner.toString(),
+  });
 
   let isFinished = false;
 
