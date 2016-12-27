@@ -1,0 +1,126 @@
+import { expect } from 'chai';
+
+const EVENTS_LIST = [
+  'readystatechange',
+  'loadstart',
+  'progress',
+  'load',
+  'loadend',
+];
+
+export function xhrRunner() {
+  const mode = (XMLHttpRequest as any).mockerPatched ? 'Patched' : 'Native';
+
+  describe(`[${mode}] XHR interception`, () => {
+    it('request to "/api" should be intercepted', async () => {
+      const xhr = await XHRtoPromise('/api');
+
+      expect(xhr.responseText).to.be.equal('Hello new world!');
+    });
+  });
+
+  describe(`[${mode}] XHR patch with REAL requests`, async () => {
+    it('on-event should be fired', async () => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'index.html', true);
+
+      const promises = Promise.all(
+        EVENTS_LIST.map(type => XHREventToPromise(xhr, type)),
+      );
+
+      xhr.send();
+
+      return promises;
+    });
+
+    it('addEventListener() should be fired', async () => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'index.html', true);
+
+      const promises = Promise.all(
+        EVENTS_LIST.map(type => XHRListenerToPromise(xhr, type)),
+      );
+
+      xhr.send();
+
+      return promises;
+    });
+  });
+
+  describe(`[${mode}] XHR patch with MOCK requests`, async () => {
+    it('on-event should be fired', async () => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api', true);
+
+      const promises = Promise.all(
+        EVENTS_LIST.map(type => XHREventToPromise(xhr, type)),
+      );
+
+      xhr.send();
+
+      return promises;
+    });
+
+    it('addEventListener() should be fired', async () => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api', true);
+
+      const promises = Promise.all(
+        EVENTS_LIST.map(type => XHRListenerToPromise(xhr, type)),
+      );
+
+      xhr.send();
+
+      return promises;
+    });
+  });
+
+  describe(`[${mode}] XHR responseType`, () => {
+    it('XHR get "index.html" should return Document', async () => {
+      const xhr = await XHRtoPromise('index.html', {
+        responseType: 'document',
+      });
+
+      expect(xhr.response).to.be.instanceof(Document);
+    });
+  });
+}
+
+function eventTimeout(type: string, reject: (reason?: any) => void) {
+  setTimeout(() => {
+    reject(new Error(`event ${type} did't be called in 1000ms`));
+  }, 1e3);
+}
+
+function XHRtoPromise(path: string, options?: any): Promise<XMLHttpRequest> {
+  const xhr = new XMLHttpRequest();
+
+  if (options) {
+    Object.keys(options).forEach(prop => {
+      xhr[prop] = options[prop];
+    });
+  }
+
+  xhr.open('GET', path, true);
+  xhr.send();
+
+  return new Promise((resolve) => {
+    xhr.onload = () => {
+      resolve(xhr);
+    };
+  });
+}
+
+function XHREventToPromise(xhr: XMLHttpRequest, type: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    xhr[`on${type}`] = resolve;
+    eventTimeout(type, reject);
+  });
+}
+
+function XHRListenerToPromise(xhr: XMLHttpRequest, type: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    xhr.addEventListener(type, resolve);
+    eventTimeout(type, reject);
+  });
+}

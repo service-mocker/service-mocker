@@ -1,7 +1,9 @@
 import { expect } from 'chai';
 
 export function fetchRunner() {
-  describe('fetch interception', () => {
+  const mode = (fetch as any).mockerPatched ? 'Patched' : 'Native';
+
+  describe(`[${mode}] fetch interception`, () => {
     it('request to "/api" should be intercepted', async () => {
       const res = await fetch('/api');
 

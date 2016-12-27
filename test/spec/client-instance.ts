@@ -1,5 +1,7 @@
 import { createClient, IMockerClient } from '../../src/client/';
 
-export const client: IMockerClient = createClient('server.js');
+const forceLegacy = /legacy/.test(location.hash);
+
+export const client: IMockerClient = createClient('server.js', forceLegacy);
 
 (self as any).client = client;
