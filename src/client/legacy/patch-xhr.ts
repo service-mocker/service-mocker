@@ -126,7 +126,8 @@ class MockerXHR extends ExtandableXHR {
 
   private _mockFetch(data?: any): Promise<Response> {
     // GET|HEAD requests cannot include body
-    const body = (this._method === 'GET' || this._method === 'HEAD') ? null : data;
+    // set body to `null` will raise a TypeMismatchError in IE Edge
+    const body = (this._method === 'GET' || this._method === 'HEAD') ? undefined : data;
 
     // we are not able to handling cookies
     // const credentials = this.withCredentials ? 'include' : 'omit';
