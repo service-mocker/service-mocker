@@ -88,7 +88,7 @@ export function xhrRunner() {
 
 function eventTimeout(type: string, reject: (reason?: any) => void) {
   setTimeout(() => {
-    reject(new Error(`event ${type} did't be called in 1000ms`));
+    reject(new Error(`event "${type}" did't be called within 1000ms`));
   }, 1e3);
 }
 
