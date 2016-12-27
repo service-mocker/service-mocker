@@ -95,13 +95,14 @@ function eventTimeout(type: string, reject: (reason?: any) => void) {
 function XHRtoPromise(path: string, options?: any): Promise<XMLHttpRequest> {
   const xhr = new XMLHttpRequest();
 
+  xhr.open('GET', path, true);
+
   if (options) {
     Object.keys(options).forEach(prop => {
       xhr[prop] = options[prop];
     });
   }
 
-  xhr.open('GET', path, true);
   xhr.send();
 
   return new Promise((resolve) => {
