@@ -2,12 +2,13 @@ import {
   IMockerClient,
 } from '../client';
 
+import { sendMessageRequest } from '../../utils/';
 import { ClientStorageService } from '../storage';
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
 
 export class LegacyClient implements IMockerClient {
-  readonly legacy = true;
+  readonly isLegacy = true;
   readonly ready: Promise<null>;
   readonly storage = new ClientStorageService(true);
 
@@ -44,5 +45,11 @@ export class LegacyClient implements IMockerClient {
 
   async unregister(): Promise<never> {
     throw new Error('mocker in legacy mode can\'t be unregistered');
+  }
+
+  async sendMessage(message: any): Promise<any> {
+    await this.ready;
+
+    return sendMessageRequest(window, message, 0);
   }
 }

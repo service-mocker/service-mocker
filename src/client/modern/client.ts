@@ -11,17 +11,18 @@ import { connect } from './connect';
 import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
 import { ClientStorageService } from '../storage';
+import { sendMessageRequest } from '../../utils/';
 
 export class ModernClient implements IMockerClient {
-  readonly legacy = false;
+  readonly isLegacy = false;
   readonly storage = new ClientStorageService();
   readonly ready: Promise<ServiceWorkerRegistration>;
 
   controller: ServiceWorker;
 
-  constructor(scriptURL: string, options?: ServiceWorkerRegisterOptions) {
+  constructor(scriptURL: string) {
     this.ready = new Promise(resolve => {
-      this._init(scriptURL, options)
+      this._init(scriptURL)
         .then(registration => {
           this.controller = registration.active;
           resolve(registration);
@@ -53,8 +54,14 @@ export class ModernClient implements IMockerClient {
     return result;
   }
 
-  private async _init(scriptURL: string, options?: ServiceWorkerRegisterOptions): Promise<ServiceWorkerRegistration> {
-    const registration = await register(scriptURL, options);
+  async sendMessage(message: any): Promise<any> {
+    await this.ready;
+
+    return sendMessageRequest(this.controller, message, 0);
+  }
+
+  private async _init(scriptURL: string): Promise<ServiceWorkerRegistration> {
+    const registration = await register(scriptURL);
 
     this._autoSyncClient();
     this._handleUnload();
