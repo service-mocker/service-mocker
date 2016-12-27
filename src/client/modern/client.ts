@@ -48,7 +48,7 @@ export class ModernClient implements IMockerClient {
 
     if (!result) {
       // tslint:disable-next-line max-line-length
-      throw new Error('this service worker has already been unregistered, you may need to close all relative tabs to remove it');
+      debug.warn('this service worker has already been unregistered, you may need to close all relative tabs to remove it');
     }
 
     return result;
