@@ -1,6 +1,5 @@
-/*!
+/**
  * Dispatch a native-like fetch event in GlobalScope.
- * @author Dolphin Wood
  *
  * Notes:
  * - 300ms timeout VS `end()` hook:

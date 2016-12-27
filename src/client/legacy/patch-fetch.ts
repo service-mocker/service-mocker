@@ -1,6 +1,5 @@
-/*!
+/**
  * Patch native `fetch` interface
- * @author Dolphin Wood
  *
  * Notes:
  * - Why we should patch native `fetch`:

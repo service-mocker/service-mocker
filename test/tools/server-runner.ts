@@ -1,6 +1,5 @@
-/*!
+/**
  * Mocha runtime for service worker context
- * @author Dolphin Wood
  *
  * Notes:
  * - How to register test cases:

@@ -1,6 +1,5 @@
-/*!
+/**
  * Make `XMLHttpRequest` extendable
- * @author Dolphin Wood
  *
  * Notes:
  * - Main concepts:
