@@ -19,7 +19,7 @@ export function xhrRunner() {
     });
   });
 
-  describe(`[${mode}] XHR patch with REAL requests`, async () => {
+  describe(`[${mode}] XHR patch with REAL requests`, () => {
     it('on-event should be fired', async () => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', 'index.html', true);
@@ -47,7 +47,7 @@ export function xhrRunner() {
     });
   });
 
-  describe(`[${mode}] XHR patch with MOCK requests`, async () => {
+  describe(`[${mode}] XHR patch with MOCK requests`, () => {
     it('on-event should be fired', async () => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', '/api', true);
