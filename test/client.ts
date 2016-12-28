@@ -9,7 +9,9 @@ const mode = client.isLegacy ? 'Legacy' : 'Modern';
 
 describe(`[${mode}] Client Tests`, () => {
   Object.keys(tests).forEach(name => {
-    tests[name]();
+    if (typeof tests[name] === 'function') {
+      tests[name]();
+    }
   });
 });
 
