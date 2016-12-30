@@ -7,7 +7,7 @@ const joinRoot = path.join.bind(path, __dirname, '..');
 const sources = ['src', 'test'].map(dir => joinRoot(dir));
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   entry: {
     client: [
       joinRoot('test/client.ts'),

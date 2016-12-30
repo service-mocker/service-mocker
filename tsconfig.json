@@ -11,7 +11,7 @@
     "noUnusedLocals": true,
     "importHelpers": true,
     "declaration": true,
-    "sourceMap": true
+    "inlineSourceMap": true
   },
   "exclude": [
     "node_modules",
