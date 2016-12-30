@@ -25,7 +25,9 @@ export async function sendMessageRequest(
     }, timeout);
 
     port1.onmessage = ({ data }) => {
-      clearTimeout(timer);
+      if (timer) {
+        clearTimeout(timer);
+      }
 
       // avoid high transient memory usage, see
       // https://html.spec.whatwg.org/multipage/comms.html#ports-and-garbage-collection
