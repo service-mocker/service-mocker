@@ -1,6 +1,5 @@
 const ip = require('ip');
 const path = require('path');
-const autoprefixer = require('autoprefixer');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const joinRoot = path.join.bind(path, __dirname, '..');
@@ -36,13 +35,6 @@ module.exports = {
       test: /\.ts$/,
       loader: 'ts',
       include: sources,
-    }, {
-      test: /\.css/,
-      loaders: [
-        'style',
-        'css',
-        'postcss',
-      ],
     }],
     noParse: [
       // remove "Critical dependency" warning
@@ -50,7 +42,6 @@ module.exports = {
       require.resolve('source-map-support/browser-source-map-support.js'),
     ],
   },
-  postcss: [autoprefixer],
   tslint: {
     formatter: 'stylish',
   },
