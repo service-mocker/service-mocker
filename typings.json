@@ -4,6 +4,7 @@
     "chai": "registry:dt/chai#3.4.0+20160926213833",
     "localforage": "registry:dt/localforage#0.0.0+20161102134758",
     "mocha": "registry:dt/mocha#2.2.5+20161220115504",
+    "node": "registry:dt/node#6.0.0+20161229171858",
     "service-worker": "file:./src/service-worker.d.ts",
     "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20161004182750",
     "whatwg-streams": "registry:dt/whatwg-streams#0.0.0+20160829180742"

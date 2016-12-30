@@ -1,55 +1,43 @@
 // TODO: generate coverage from service worker context
 
-const path = require('path');
 const webpackConfig = require('./webpack.config.base');
 
-delete webpackConfig.entry;
-delete webpackConfig.output;
-delete webpackConfig.module.preLoaders;
+module.exports = {
+  frameworks: ['mocha'],
+  reporters: ['mocha'],
 
-module.exports = function(config) {
-  config.set({
-    basePath: '..',
-    frameworks: ['mocha'],
-    files: [
-      'test/client.ts',
-      {
-        pattern: 'test/server.ts',
-        included: false,
-      },
-    ],
-    exclude: [],
-    preprocessors: {
-      'test/{client,server}.ts': ['webpack', 'sourcemap'],
+  basePath: '..',
+  files: [
+    'test/client.ts',
+    {
+      pattern: 'test/server.ts',
+      included: false,
     },
-    webpack: webpackConfig,
-    webpackMiddleware: {
-      // make Webpack bundle generation quiet
-      noInfo: true,
-      stats: 'errors-only',
-    },
-    reporters: ['mocha'],
+  ],
 
-    // override MIME for ts
-    mime: {
-      'application/javascript': ['ts','tsx'],
-    },
+  preprocessors: {
+    'test/{client,server}.ts': ['webpack', 'sourcemap'],
+  },
 
-    // proxy server script to root path
-    proxies: {
-      '/server.js': '/base/test/server.ts',
-    },
+  webpack: webpackConfig,
+  webpackMiddleware: {
+    // make Webpack bundle generation quiet
+    noInfo: true,
+    stats: 'errors-only',
+  },
 
-    client: {
-      captureConsole: false
-    },
+  // override MIME for ts
+  mime: {
+    'application/javascript': ['ts','tsx'],
+  },
 
-    port: 9876,
-    colors: true,
-    logLevel: config.LOG_ERROR,
-    autoWatch: false,
-    browsers: ['Chrome'],
-    singleRun: true,
-    concurrency: Infinity,
-  });
+  // proxy server script to root path
+  proxies: {
+    '/server.js': '/base/test/server.ts',
+  },
+
+  // disable logs
+  client: {
+    captureConsole: false
+  },
 }
