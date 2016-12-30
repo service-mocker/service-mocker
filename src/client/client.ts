@@ -14,5 +14,4 @@ export interface IMockerClient {
   update(): Promise<MockerRegistration>;
   getRegistration(): Promise<MockerRegistration>;
   unregister(): Promise<any>;
-  sendMessage(message: any): Promise<any>;
 }

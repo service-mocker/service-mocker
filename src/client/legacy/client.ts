@@ -3,7 +3,6 @@ import {
 } from '../client';
 
 import {
-  sendMessageRequest,
   debug,
 } from '../../utils/';
 
@@ -51,11 +50,5 @@ export class LegacyClient implements IMockerClient {
     debug.scope('legacy').warn('mocker in legacy mode can\'t be unregistered');
 
     return false;
-  }
-
-  async sendMessage(message: any): Promise<any> {
-    await this.ready;
-
-    return sendMessageRequest(window, message, 0);
   }
 }

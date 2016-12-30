@@ -66,22 +66,6 @@ export class Server {
     return fetch(input, init);
   }
 
-  onmessage(handler: (evt: ExtendableMessageEvent, respondWith: (message: any) => void) => void) {
-    self.addEventListener('message', (evt) => {
-      handler(evt, respondWith);
-
-      function respondWith(message: any) {
-        const port = evt.ports[0] || evt.source;
-
-        if (!port) {
-          throw new ReferenceError('no port is found');
-        }
-
-        port.postMessage(message);
-      }
-    });
-  }
-
   private _isLegacyMode() {
     return self === self.window;
   }
@@ -163,10 +147,11 @@ export class Server {
   }
 
   private _handleMessage() {
-    this.onmessage((evt, respondWith) => {
+    self.addEventListener('message', evt => {
       const {
         data,
         source,
+        ports,
       } = evt;
 
       console.log(evt, data);
@@ -179,14 +164,14 @@ export class Server {
         case ACTION.PING:
           this._addClient(source.id);
 
-          return respondWith({
+          return ports[0].postMessage({
             action: ACTION.PONG,
           });
 
         case ACTION.REQUEST_CLAIM:
           return self.clients.claim()
             .then(() => {
-              respondWith({
+              ports[0].postMessage({
                 action: ACTION.ESTABLISHED,
               });
             });

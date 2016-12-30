@@ -38,10 +38,11 @@ if (IS_SW) {
 }
 
 export function serverRunner(server) {
-  server.onmessage((evt, respondWith) => {
+  self.addEventListener('message', (evt) => {
     const {
       data,
       source,
+      ports,
     } = evt;
 
     if (!data || !data.request) {
@@ -50,7 +51,7 @@ export function serverRunner(server) {
 
     switch (data.request) {
       case 'MOCHA_TASKS':
-        return respondWith({
+        return ports[0].postMessage({
           // only send suites in modern mode
           suites: IS_SW && rootSuite.getAll(),
         });

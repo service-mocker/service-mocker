@@ -1,5 +1,6 @@
 import { AssertionError } from 'chai';
 import { TestCase, Suite } from './mocha-suite';
+import { sendMessageRequest } from '../../src/utils/';
 
 const start = mocha.run.bind(mocha);
 (mocha as any).run = () => null;
@@ -13,18 +14,22 @@ const start = mocha.run.bind(mocha);
  * 4. Reflect results to mocha
  */
 export async function clientRunner(client) {
-  const res = await client.sendMessage({
+  await client.ready;
+
+  const target = client.controller || window;
+
+  const res = await sendMessageRequest(target, {
     request: 'MOCHA_TASKS',
-  });
+  }, 0);
 
   (mocha as any).run = start;
 
   registerTest(res.suites);
   start();
 
-  return client.sendMessage({
+  return sendMessageRequest(target, {
     request: 'MOCHA_RESULTS',
-  });
+  }, 0);
 }
 
 function registerTest(suites?: Array<Suite>) {

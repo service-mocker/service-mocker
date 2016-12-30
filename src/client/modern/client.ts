@@ -11,7 +11,6 @@ import { connect } from './connect';
 import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
 import { ClientStorageService } from '../storage';
-import { sendMessageRequest } from '../../utils/';
 
 export class ModernClient implements IMockerClient {
   readonly isLegacy = false;
@@ -52,12 +51,6 @@ export class ModernClient implements IMockerClient {
     }
 
     return result;
-  }
-
-  async sendMessage(message: any): Promise<any> {
-    await this.ready;
-
-    return sendMessageRequest(this.controller, message, 0);
   }
 
   private async _init(scriptURL: string): Promise<ServiceWorkerRegistration> {
