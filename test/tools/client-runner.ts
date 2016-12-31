@@ -1,6 +1,9 @@
 import { AssertionError } from 'chai';
 import { TestCase, Suite } from './mocha-suite';
 import { sendMessageRequest } from '../../src/utils/';
+import 'source-map-support/browser-source-map-support';
+
+(self as any).sourceMapSupport.install();
 
 const start = mocha.run.bind(mocha);
 (mocha as any).run = () => null;

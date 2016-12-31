@@ -14,7 +14,6 @@ module.exports = Object.assign(baseConfig, {
   entry: {
     client: [
       `webpack-dev-server/client?http://${ip.address()}:3000`,
-      require.resolve('./sourcemap'),
       joinRoot('test/client.ts'),
     ],
     server: [
