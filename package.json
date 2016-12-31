@@ -5,6 +5,7 @@
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
+    "postinstall": "typings install",
     "lint": "tslint -t stylish -e '**/*.d.ts' '{src, demo}/**/*.ts'",
     "clean:build": "rimraf ./build",
     "clean:compile": "rimraf ./lib",
@@ -66,6 +67,7 @@
     "tslint-config-standard": "^2.0.0",
     "tslint-loader": "^3.3.0",
     "typescript": "^2.1.4",
+    "typings": "^2.1.0",
     "webpack": "^1.13.3",
     "webpack-dashboard": "^0.2.0",
     "webpack-dev-server": "^1.16.2",
