@@ -6,7 +6,7 @@
   "typings": "index.d.ts",
   "scripts": {
     "postinstall": "typings install",
-    "lint": "tslint -t stylish -e '**/*.d.ts' '{src, demo}/**/*.ts'",
+    "lint": "tslint -t stylish -e '**/*.d.ts' '{src,test}/**/*.ts'",
     "clean:build": "rimraf ./build",
     "clean:compile": "rimraf ./lib",
     "clean:release": "rimraf ./dist",
