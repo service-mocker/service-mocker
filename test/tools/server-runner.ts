@@ -17,6 +17,7 @@
  */
 
 import { Suite } from './mocha-suite';
+import * as swSourceMap from 'source-map-support/sw-source-map-support';
 
 type Result = {
   error?: Error;
@@ -33,6 +34,7 @@ let currentSuite = rootSuite;
 
 // patch mocha env to service worker context
 if (IS_SW) {
+  swSourceMap.install();
   (self as any).describe = describe;
   (self as any).it = it;
 }
@@ -62,6 +64,8 @@ export function serverRunner() {
   });
 }
 
+////// THE FOLLOWING WILL ONLY RUN IN SERVICE WORKER CONTEXT //////
+
 function describe(title: string, runner: () => void) {
   const upperSuite = currentSuite;
 
@@ -86,7 +90,7 @@ function it(expect: string, runner: (done: MochaDone) => any) {
 
   let isFinished = false;
 
-  function done(error?: any) {
+  async function done(error?: any) {
     if (isFinished) {
       return;
     }
@@ -96,13 +100,17 @@ function it(expect: string, runner: (done: MochaDone) => any) {
     let fault: any;
 
     if (error) {
+      // async error remap
+      const stack = await error.stack;
+
       if (typeof error.toJSON === 'function') {
         // `AssertionError`
         fault = error.toJSON();
+        fault.stack = stack;
       } else if (error instanceof Error) {
         fault = {
+          stack,
           message: error.message,
-          stack: error.stack,
         };
       }
     }
