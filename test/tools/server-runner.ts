@@ -37,7 +37,7 @@ if (IS_SW) {
   (self as any).it = it;
 }
 
-export function serverRunner(server) {
+export function serverRunner() {
   self.addEventListener('message', (evt) => {
     const {
       data,
