@@ -42,7 +42,7 @@ module.exports = function(config) {
   config.set(Object.assign(baseConfig, {
     browsers: Object.keys(customLaunchers),
     customLaunchers: customLaunchers,
-    reporters: ['progress', 'saucelabs'],
+    reporters: ['dots', 'saucelabs'],
     sauceLabs: {
       testName: 'Service Mocker tests',
       recordScreenshots: false,

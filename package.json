@@ -18,7 +18,8 @@
     "test:modern": "cross-env karma --port 9876 start ./scripts/karma.config.dev.js",
     "test:legacy": "cross-env FORCE_LEGACY=true karma --port 9877 start ./scripts/karma.config.dev.js",
     "test:full": "karma start ./scripts/karma.config.full.js",
-    "test:cover": "cross-env FORCE_LEGACY=true karma start ./scripts/karma.config.cover.js"
+    "test:cover": "cross-env FORCE_LEGACY=true karma start ./scripts/karma.config.cover.js",
+    "test:sauce": "karma start ./scripts/karma.config.sauce.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "circular-dependency-plugin": "^2.0.0",
+    "codecov": "^1.0.1",
     "cross-env": "^3.1.3",
     "es6-promise": "^4.0.5",
     "html-webpack-plugin": "^2.24.1",

@@ -22,6 +22,7 @@ module.exports = function(config) {
       reports: {
         'text-summary': null,
         html: './coverage/html',
+        lcovonly: './coverage/lcov.info',
       },
     },
   }));
