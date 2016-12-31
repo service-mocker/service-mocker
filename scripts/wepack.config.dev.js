@@ -10,31 +10,6 @@ const baseConfig = require('./webpack.config.base');
 const dashboard = new Dashboard();
 const joinRoot = path.join.bind(path, __dirname, '..');
 
-Object.assign(baseConfig.module, {
-  preLoaders: [{
-    test: /\.ts$/,
-    loader: 'tslint',
-    include: [
-      joinRoot('src'),
-      joinRoot('test'),
-    ],
-  }],
-  postLoaders: [{
-    test: /\.ts$/,
-    loader: 'mocha',
-    include: joinRoot('test/client.ts'),
-  }],
-});
-
-// html plugin & webpack dashboard
-baseConfig.plugins.push(
-  new HtmlWebpackPlugin({
-    title: 'Service Mocker',
-    chunks: ['client'],
-  }),
-  new DashboardPlugin(dashboard.setData)
-);
-
 module.exports = Object.assign(baseConfig, {
   entry: {
     client: [
@@ -50,6 +25,23 @@ module.exports = Object.assign(baseConfig, {
     path: joinRoot('build/'),
     filename: '[name].js',
   },
+
+  module: Object.assign(baseConfig.module, {
+    preLoaders: [{
+      test: /\.ts$/,
+      loader: 'tslint',
+      include: [
+        joinRoot('src'),
+        joinRoot('test'),
+      ],
+    }],
+    postLoaders: [{
+      test: /\.ts$/,
+      loader: 'mocha',
+      include: joinRoot('test/client.ts'),
+    }],
+  }),
+
   tslint: {
     formatter: 'stylish',
   },
@@ -62,4 +54,12 @@ module.exports = Object.assign(baseConfig, {
       declaration: false,
     },
   },
+
+  plugins: baseConfig.plugins.concat([
+    new HtmlWebpackPlugin({
+      title: 'Service Mocker',
+      chunks: ['client'],
+    }),
+    new DashboardPlugin(dashboard.setData),
+  ]),
 });
