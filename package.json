@@ -16,10 +16,10 @@
     "preghpages": "npm run clean:build",
     "ghpages": "webpack --config ./webpack/ghpages.js --display-error-details --color",
     "start": "node ./scripts/serve.js",
-    "pretest:dev": "npm run lint",
-    "test:dev": "npm-run-all test:modern test:legacy",
-    "test:modern": "cross-env karma start ./scripts/karma.config.dev.js",
-    "test:legacy": "cross-env FORCE_LEGACY=true karma start ./scripts/karma.config.dev.js"
+    "pretest": "npm run lint",
+    "test": "npm-run-all --parallel test:modern test:legacy",
+    "test:modern": "cross-env karma --port 9876 start ./scripts/karma.config.dev.js",
+    "test:legacy": "cross-env FORCE_LEGACY=true karma --port 9877 start ./scripts/karma.config.dev.js"
   },
   "repository": {
     "type": "git",
