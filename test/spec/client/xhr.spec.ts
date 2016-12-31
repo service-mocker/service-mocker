@@ -22,7 +22,7 @@ export function xhrRunner() {
   describe(`[${mode}] XHR patch with REAL requests`, () => {
     it('on-event should be fired', async () => {
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', '', true);
+      xhr.open('GET', '/', true);
 
       const promises = Promise.all(
         EVENTS_LIST.map(type => XHREventToPromise(xhr, type)),
@@ -35,7 +35,7 @@ export function xhrRunner() {
 
     it('addEventListener() should be fired', async () => {
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', '', true);
+      xhr.open('GET', '/', true);
 
       const promises = Promise.all(
         EVENTS_LIST.map(type => XHRListenerToPromise(xhr, type)),
@@ -77,7 +77,7 @@ export function xhrRunner() {
 
   describe(`[${mode}] XHR responseType`, () => {
     it('should return type Document', async () => {
-      const xhr = await XHRtoPromise('', {
+      const xhr = await XHRtoPromise('/', {
         responseType: 'document',
       });
 
