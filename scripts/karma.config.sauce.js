@@ -1,0 +1,52 @@
+const baseConfig = require('./karma.config.base');
+
+const customLaunchers = {
+  sl_chrome: {
+    base: 'SauceLabs',
+    browserName: 'chrome',
+    platform: 'Windows 7',
+    version: 'latest',
+  },
+  sl_firefox: {
+    base: 'SauceLabs',
+    browserName: 'firefox',
+    version: 'latest',
+  },
+  sl_mac_safari: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    platform: 'OS X 10.12',
+  },
+
+  // IE family
+  sl_ie_10: {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    platform: 'Windows 7',
+    version: '10',
+  },
+  sl_ie_11: {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    platform: 'Windows 8.1',
+    version: '11',
+  },
+  sl_edge: {
+    base: 'SauceLabs',
+    browserName: 'MicrosoftEdge',
+    platform: 'Windows 10',
+  },
+};
+
+module.exports = function(config) {
+  config.set(Object.assign(baseConfig, {
+    browsers: Object.keys(customLaunchers),
+    customLaunchers: customLaunchers,
+    reporters: ['progress', 'saucelabs'],
+    sauceLabs: {
+      testName: 'Service Mocker tests',
+      recordScreenshots: false,
+      build: process.env.CIRCLE_BUILD_NUM || Date.now(),
+    },
+  }));
+}

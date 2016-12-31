@@ -48,6 +48,7 @@
     "karma-mocha-reporter": "^2.2.1",
     "karma-remap-coverage": "^0.1.4",
     "karma-safari-launcher": "^1.0.0",
+    "karma-sauce-launcher": "^1.1.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^1.8.1",
     "mocha": "^3.2.0",

@@ -1,8 +1,19 @@
 // TODO: generate coverage from service worker context
 
+const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.base');
 
+webpackConfig.plugins.push(
+  // fix source map, see
+  // https://github.com/webpack/webpack.js.org/issues/151
+  new webpack.SourceMapDevToolPlugin({
+    test: /\.(js|css|jsx|ts|tsx)($|\?)/i,
+  })
+);
+
 module.exports = {
+  singleRun: true,
+
   frameworks: ['mocha'],
   reporters: ['mocha'],
 
@@ -13,6 +24,10 @@ module.exports = {
       pattern: 'test/server.ts',
       included: false,
     },
+    {
+      pattern: '**/*.map',
+      included: false
+    }
   ],
 
   preprocessors: {
@@ -38,6 +53,6 @@ module.exports = {
 
   // disable logs
   client: {
-    captureConsole: false
+    captureConsole: false,
   },
 }

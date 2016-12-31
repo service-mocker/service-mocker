@@ -88,8 +88,8 @@ export function xhrRunner() {
 
 function eventTimeout(type: string, reject: (reason?: any) => void) {
   setTimeout(() => {
-    reject(new Error(`event "${type}" did't be called within 1000ms`));
-  }, 1e3);
+    reject(new Error(`event "${type}" did't be called within 10s`));
+  }, 10 * 1e3);
 }
 
 function XHRtoPromise(path: string, options?: any): Promise<XMLHttpRequest> {
