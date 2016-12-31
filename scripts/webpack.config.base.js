@@ -5,7 +5,7 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 const joinRoot = path.join.bind(path, __dirname, '..');
 
 module.exports = {
-  devtool: 'inline-source-map',
+  devtool: 'cheap-module-source-map',
   resolve: {
     extensions: ['', '.js', '.ts', '.css'],
   },
