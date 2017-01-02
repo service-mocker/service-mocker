@@ -1,9 +1,10 @@
 #!/bin/sh
 set -e
 
+# no need for `npm run test`
+# all tests are executed in cover task
 npm run lint
-npm run test:modern
-npm run test:cover # legacy mode
+npm run cover
 
 # report coverage except PRs
 if [[ -z $CI_PULL_REQUEST ]]; then

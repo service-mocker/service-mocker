@@ -1,6 +1,5 @@
 /*!
  * Patch native `XMLHttpRequest`
- * @author Dolphin Wood
  *
  * Notes:
  * - When and how to dispatch fetch event:
