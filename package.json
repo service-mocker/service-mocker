@@ -42,6 +42,10 @@
   },
   "homepage": "https://github.com/idiotWu/service-mocker#readme",
   "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/localforage": "0.0.33",
+    "@types/mocha": "^2.2.35",
+    "@types/node": "^6.0.55",
     "chai": "^3.5.0",
     "circular-dependency-plugin": "^2.0.0",
     "codecov": "^1.0.1",
@@ -79,6 +83,9 @@
     "whatwg-fetch": "^2.0.1"
   },
   "dependencies": {
+    "@types/service_worker_api": "0.0.0-next.0",
+    "@types/whatwg-fetch": "0.0.33",
+    "@types/whatwg-streams": "0.0.2",
     "localforage": "^1.4.3",
     "tslib": "^1.2.0",
     "url": "^0.11.0"
