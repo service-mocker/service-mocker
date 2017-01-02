@@ -40,7 +40,7 @@ if (IS_SW) {
 }
 
 export function serverRunner() {
-  self.addEventListener('message', (evt) => {
+  self.addEventListener('message', (evt: ExtendableMessageEvent) => {
     const {
       data,
       source,

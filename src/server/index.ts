@@ -133,13 +133,13 @@ export class Server {
       return;
     }
 
-    self.addEventListener('install', evt => {
+    self.addEventListener('install', (evt: InstallEvent) => {
       console.info('installed');
 
       evt.waitUntil(self.skipWaiting());
     });
 
-    self.addEventListener('activate', evt => {
+    self.addEventListener('activate', (evt: ExtendableEvent) => {
       console.info('activated');
 
       evt.waitUntil(self.clients.claim());
@@ -147,7 +147,7 @@ export class Server {
   }
 
   private _handleMessage() {
-    self.addEventListener('message', evt => {
+    self.addEventListener('message', (evt: ExtendableMessageEvent) => {
       const {
         data,
         source,
