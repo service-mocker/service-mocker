@@ -93,41 +93,20 @@ try {
   mapPrototypeMethods(Object.getPrototypeOf(source), target);
 })();
 
-// safari 9- don't have these properties on `XMLHttpRequest.prototype`
-[
-  'onabort',
-  'onerror',
-  'onload',
-  'onloadend',
-  'onloadstart',
-  'onprogress',
-  'onreadystatechange',
-  'ontimeout',
-  'readyState',
-  'response',
-  'responseText',
-  'responseType',
-  'responseURL',
-  'responseXML',
-  'status',
-  'statusText',
-  'timeout',
-  'upload',
-  'withCredentials',
-].forEach((prop) => {
-  if (ExtandableXHR.prototype.hasOwnProperty(prop)) {
-    return;
+// safari 9- only have methods on `XMLHttpRequest.prototype`
+const xhr = new NativeXHR();
+for (let prop in xhr) {
+  if (!ExtandableXHR.prototype.hasOwnProperty(prop)) {
+    Object.defineProperty(ExtandableXHR.prototype, prop, {
+      get() {
+        return this._nativeXHR[prop];
+      },
+      set(value: any) {
+        this._nativeXHR[prop] = value;
+        return value;
+      },
+      enumerable: true,
+      configurable: true,
+    });
   }
-
-  Object.defineProperty(ExtandableXHR.prototype, prop, {
-    get() {
-      return this._nativeXHR[prop];
-    },
-    set(value: any) {
-      this._nativeXHR[prop] = value;
-      return value;
-    },
-    enumerable: true,
-    configurable: true,
-  });
-});
+}
