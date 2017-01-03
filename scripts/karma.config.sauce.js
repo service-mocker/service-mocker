@@ -14,7 +14,7 @@ const customLaunchers = {
   },
 
   // yet another IE family
-  sl_mac_safari_9: {
+  sl_mac_safari_8: {
     base: 'SauceLabs',
     browserName: 'safari',
     platform: 'OS X 10.10',
