@@ -21,10 +21,9 @@
     "test:full": "karma start ./scripts/karma.config.full.js",
     "test:sauce": "karma start ./scripts/karma.config.sauce.js",
     "precover": "npm run clean:cover",
-    "cover": "npm-run-all cover:modern cover:legacy cover:combine",
-    "cover:combine": "node ./scripts/combine-coverage.js",
-    "cover:modern": "karma start ./scripts/karma.config.cover.js",
-    "cover:legacy": "cross-env FORCE_LEGACY=true karma start ./scripts/karma.config.cover.js"
+    "cover": "npm-run-all --parallel cover:modern cover:legacy && node ./scripts/combine-coverage.js",
+    "cover:modern": "karma --port 9876 start ./scripts/karma.config.cover.js",
+    "cover:legacy": "cross-env FORCE_LEGACY=true karma --port 9877 start ./scripts/karma.config.cover.js"
   },
   "repository": {
     "type": "git",
