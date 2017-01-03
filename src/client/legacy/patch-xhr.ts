@@ -191,7 +191,7 @@ class MockerXHR extends ExtandableXHR {
       }
 
       // Caveat: `this` & `event.target` are still the native one
-      super.dispatchEvent(event);
+      this.dispatchEvent(event);
     });
   }
 }
