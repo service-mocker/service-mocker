@@ -12,10 +12,17 @@ const customLaunchers = {
     browserName: 'firefox',
     version: 'latest',
   },
-  sl_mac_safari: {
+
+  // another IE family
+  sl_mac_safari_9: {
     base: 'SauceLabs',
     browserName: 'safari',
-    platform: 'OS X 10.12',
+    platform: 'OS X 10.10',
+  },
+  sl_mac_safari_10: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    platform: 'macOS 10.12',
   },
 
   // IE family
