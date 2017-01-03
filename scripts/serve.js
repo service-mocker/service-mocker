@@ -1,4 +1,3 @@
-const ip = require('ip');
 const path = require('path');
 const webpack = require('webpack');
 const Server = require('webpack-dev-server');

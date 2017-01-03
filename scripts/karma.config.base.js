@@ -36,8 +36,8 @@ module.exports = {
     },
     {
       pattern: '**/*.map',
-      included: false
-    }
+      included: false,
+    },
   ],
 
   preprocessors: {
@@ -53,7 +53,7 @@ module.exports = {
 
   // override MIME for ts
   mime: {
-    'application/javascript': ['ts','tsx'],
+    'application/javascript': ['ts', 'tsx'],
   },
 
   // proxy server script to root path
@@ -65,4 +65,4 @@ module.exports = {
   client: {
     captureConsole: false,
   },
-}
+};

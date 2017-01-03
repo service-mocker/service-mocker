@@ -8,13 +8,13 @@ var opts = {
 if (process.env.CI) {
   opts.reporters = {
     lcovonly: {
-      dir: './coverage'
+      dir: './coverage',
     },
   };
 } else {
   opts.reporters = {
     html: {
-      dir: './coverage/html'
+      dir: './coverage/html',
     },
   };
 }

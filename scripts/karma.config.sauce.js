@@ -76,7 +76,7 @@ const customLaunchers = {
 
 const buildNum = process.env.CIRCLE_BUILD_NUM ? `#${process.env.CIRCLE_BUILD_NUM}` : `@${Date.now()}`;
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set(Object.assign(baseConfig, {
     browsers: Object.keys(customLaunchers),
     customLaunchers: customLaunchers,
@@ -87,4 +87,4 @@ module.exports = function(config) {
       build: `service-worker ${buildNum}`,
     },
   }));
-}
+};
