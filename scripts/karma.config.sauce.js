@@ -50,6 +50,28 @@ const customLaunchers = {
     browserName: 'MicrosoftEdge',
     platform: 'Windows 10',
   },
+
+  // mobile
+  sl_ios_9: {
+    base: 'SauceLabs',
+    browserName: 'iphone',
+    version: '9.3',
+  },
+  sl_ios_10: {
+    base: 'SauceLabs',
+    browserName: 'iphone',
+    version: '10.0',
+  },
+  sl_android_4: {
+    base: 'SauceLabs',
+    browserName: 'android',
+    version: '4.4',
+  },
+  sl_android_5: {
+    base: 'SauceLabs',
+    browserName: 'android',
+    version: '5.1',
+  },
 };
 
 const buildNum = process.env.CIRCLE_BUILD_NUM ? `#${process.env.CIRCLE_BUILD_NUM}` : `@${Date.now()}`;
