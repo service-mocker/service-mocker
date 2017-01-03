@@ -6,6 +6,7 @@
         "es2017"
     ],
     "moduleResolution": "node",
+    "experimentalDecorators": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "strictNullChecks": true,

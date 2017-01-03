@@ -170,6 +170,8 @@ class MockerXHR extends ExtandableXHR {
   }
 
   private _setProperty(name: string, value?: any): void {
+    // in IE & Safari, those property are unconfigurable
+    // assign to patched XHR, as a trade-off
     Object.defineProperty(this, name, {
       value,
       writable: false,
@@ -188,13 +190,8 @@ class MockerXHR extends ExtandableXHR {
         event.total = event.loaded = 1;
       }
 
-      this.dispatchEvent(event);
-
-      // no need to invoke listeners manually
-      // const handler = this[`on${type}`];
-      // if (handler) {
-      //   handler.call(this.nativeXHR, event);
-      // }
+      // Caveat: `this` & `event.target` are still the native one
+      super.dispatchEvent(event);
     });
   }
 }
