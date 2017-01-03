@@ -45,6 +45,8 @@ const customLaunchers = {
   },
 };
 
+const buildNum = process.env.CIRCLE_BUILD_NUM ? `#${process.env.CIRCLE_BUILD_NUM}` : `@${Date.now()}`;
+
 module.exports = function(config) {
   config.set(Object.assign(baseConfig, {
     browsers: Object.keys(customLaunchers),
@@ -53,7 +55,7 @@ module.exports = function(config) {
     sauceLabs: {
       testName: 'Service Mocker tests',
       recordScreenshots: false,
-      build: process.env.CIRCLE_BUILD_NUM || Date.now(),
+      build: `service-worker ${buildNum}`,
     },
   }));
 }
