@@ -17,7 +17,7 @@ const customLaunchers = {
   sl_mac_safari_9: {
     base: 'SauceLabs',
     browserName: 'safari',
-    platform: 'OS X 10.10',
+    platform: 'OS X 10.11',
   },
   sl_mac_safari_10: {
     base: 'SauceLabs',
