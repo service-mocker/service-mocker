@@ -1,5 +1,4 @@
-import 'es6-promise/auto';
-import 'whatwg-fetch';
+import 'service-mocker-polyfills';
 
 import * as tests from './spec/client/';
 import { client } from './spec/client-instance';
