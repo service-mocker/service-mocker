@@ -1,12 +1,17 @@
+// mocha is already loaded by webpack/karma
 import { AssertionError } from 'chai';
-import { TestCase, Suite } from './mocha-suite';
 import { sendMessageRequest } from '../../src/utils/';
 import 'source-map-support/browser-source-map-support';
 
 (self as any).sourceMapSupport.install();
 
-const start = mocha.run.bind(mocha);
-(mocha as any).run = () => null;
+(mocha as any).delay();
+
+mocha.setup({
+  ui: 'bdd',
+  slow: 200,
+  timeout: 10 * 1e3,
+});
 
 /**
  * Client tests runner:
@@ -23,25 +28,24 @@ export async function clientRunner(client) {
 
   const res = await sendMessageRequest(target, {
     request: 'MOCHA_TASKS',
-  }, 0);
-
-  (mocha as any).run = start;
+  }, 10 * 1e3);
 
   registerTest(res.suites);
-  start();
+
+  run();
 
   return sendMessageRequest(target, {
     request: 'MOCHA_RESULTS',
   }, 0);
 }
 
-function registerTest(suites?: Array<Suite>) {
+function registerTest(suites?) {
   // suites should be empty when running in legacy mode
   if (!suites || !suites.length) {
     return;
   }
 
-  suites.forEach(({ title, tests, nestSuites }) => {
+  suites.forEach(({ title, tests, suites: nestSuites }) => {
     describe(title, () => {
       tests.forEach(addCase);
 
@@ -50,12 +54,14 @@ function registerTest(suites?: Array<Suite>) {
   });
 }
 
-function addCase(test: TestCase) {
+function addCase(test) {
   const promise = new Promise((resolve, reject) => {
     navigator.serviceWorker.addEventListener('message', function handler({ data }) {
-      if (!data || data.testTitle !== test.expect) {
+      if (!data || data.title !== test.title) {
         return;
       }
+
+      console.log(data);
 
       // one-off listener
       navigator.serviceWorker.removeEventListener('message', handler);
@@ -75,8 +81,21 @@ function addCase(test: TestCase) {
   const runner = () => promise;
 
   // re-map source code
-  runner.toString = () => test.code;
+  runner.toString = () => test.body;
 
   // register to mocha
-  it(test.expect, runner);
+  it(test.title, runner);
+}
+
+// synchronous XHR for source-map-support
+if ((XMLHttpRequest as any).mockerPatched) {
+  const originalSend = XMLHttpRequest.prototype.send;
+
+  XMLHttpRequest.prototype.send = function send(data) {
+    if (this._url.match(/(client|server)\.js/)) {
+      return this._nativeXHR.send(data);
+    }
+
+    originalSend.call(this, data);
+  };
 }

@@ -16,30 +16,36 @@
  * the next connection of client.
  */
 
-import { Suite } from './mocha-suite';
+// manually import 'mocha' for karma
+import 'mocha/mocha';
 import * as swSourceMap from 'source-map-support/sw-source-map-support';
 
 type Result = {
   error?: Error;
-  testTitle: string;
+  title: string;
 };
 
 const IS_SW = self !== self.window;
 
-const rootSuite = new Suite('Root Group');
 const resultCache: Array<Result> = [];
-
-// mark current depth
-let currentSuite = rootSuite;
 
 // patch mocha env to service worker context
 if (IS_SW) {
   swSourceMap.install();
-  (self as any).describe = describe;
-  (self as any).it = it;
+
+  mocha.setup({
+    ui: 'bdd',
+    slow: 200,
+    timeout: 10 * 1e3,
+    reporter: swReporter,
+  });
 }
 
 export function serverRunner() {
+  if (IS_SW) {
+    mocha.run();
+  }
+
   self.addEventListener('message', (evt: ExtendableMessageEvent) => {
     const {
       data,
@@ -55,7 +61,7 @@ export function serverRunner() {
       case 'MOCHA_TASKS':
         return ports[0].postMessage({
           // only send suites in modern mode
-          suites: IS_SW && rootSuite.getAll(),
+          suites: IS_SW && getAllSuites(),
         });
 
       case 'MOCHA_RESULTS':
@@ -64,79 +70,66 @@ export function serverRunner() {
   });
 }
 
-////// THE FOLLOWING WILL ONLY RUN IN SERVICE WORKER CONTEXT //////
+function swReporter(runner) {
+  runner
+    .on('pass', (test) => {
+      console.info(test);
+      const result = {
+        title: test.title,
+      };
 
-function describe(title: string, runner: () => void) {
-  const upperSuite = currentSuite;
+      // as long as service worker will not be reloaded when refreshing page
+      // we need save results for further uses
+      resultCache.push(result);
 
-  // change current to new suite
-  currentSuite = new Suite(title);
+      // broadcast result to connected clients
+      broadcast(result);
+    })
+    .on('fail', async (test, error) => {
+      let fault: any;
 
-  // attach child node
-  upperSuite.addSuite(currentSuite);
+      if (error) {
+        // async error remap
+        const stack = await error.stack;
 
-  // all the `describe` calls with `runner` will be attached to this suite
-  runner();
-
-  // restore previous depth
-  currentSuite = upperSuite;
-}
-
-function it(expect: string, runner: (done: MochaDone) => any) {
-  currentSuite.addTest({
-    expect,
-    code: runner.toString(),
-  });
-
-  let isFinished = false;
-
-  async function done(error?: any) {
-    if (isFinished) {
-      return;
-    }
-
-    isFinished = true;
-
-    let fault: any;
-
-    if (error) {
-      // async error remap
-      const stack = await error.stack;
-
-      if (typeof error.toJSON === 'function') {
-        // `AssertionError`
-        fault = error.toJSON();
-        fault.stack = stack;
-      } else if (error instanceof Error) {
-        fault = {
-          stack,
-          message: error.message,
-        };
+        if (typeof error.toJSON === 'function') {
+          // `AssertionError`
+          fault = error.toJSON();
+          fault.stack = stack;
+        } else if (error instanceof Error) {
+          fault = {
+            stack,
+            message: error.message,
+          };
+        }
       }
-    }
 
-    const res: Result = {
-      error: fault,
-      testTitle: expect,
-    };
+      const result = {
+        error: fault,
+        title: test.title,
+      };
 
-    // as long as service worker will not be reloaded when refreshing page
-    // we need save results for further uses
-    resultCache.push(res);
-
-    // broadcast result to connected clients
-    broadcast(res);
-  }
-
-  try {
-    Promise.resolve(runner(done)).then(done, done);
-  } catch (e) {
-    done(e);
-  }
+      resultCache.push(result);
+      broadcast(result);
+    });
 }
 
-// send results of tests that are already executed to current connected-in client
-// the unexecuted tests will be reported via `broadcast`
+// get minimal suites
+function getAllSuites(parent = (mocha as any).suite.suites) {
+  return parent.map(({ suites, tests, title }) => {
+    const allSuites = getAllSuites(suites);
+    const allTests = tests.map(({ body, title }) => {
+      return { body, title };
+    });
+
+    return {
+      title,
+      suites: allSuites,
+      tests: allTests,
+    };
+  });
+}
+
 async function reportResults(currentClientId: string) {
   if (!resultCache.length) {
     return;
