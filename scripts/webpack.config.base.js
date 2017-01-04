@@ -20,6 +20,7 @@ module.exports = {
     }],
     noParse: [
       // remove "Critical dependency" warning
+      require.resolve('mocha/mocha'),
       path.dirname(require.resolve('localforage')),
       path.dirname(require.resolve('source-map-support')),
     ],
