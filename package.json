@@ -12,7 +12,7 @@
     "clean:cover": "rimraf ./coverage",
     "clean": "npm-run-all clean:build clean:compile clean:release clean:cover",
     "compile": "tsc -p tsconfig.prod.json",
-    "release": "./scripts/release.sh",
+    "release": "FORCE_MOBILE_TEST=true ./scripts/release.sh",
     "start": "node ./scripts/serve.js",
     "pretest": "npm run lint",
     "test": "npm-run-all --parallel test:modern test:legacy",

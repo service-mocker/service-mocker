@@ -3,6 +3,7 @@ const baseConfig = require('./karma.config.base');
 const {
   CIRCLE_BRANCH,
   CIRCLE_BUILD_NUM,
+  FORCE_MOBILE_TEST,
 } = process.env;
 
 const customLaunchers = {
