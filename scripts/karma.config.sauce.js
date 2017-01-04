@@ -1,5 +1,10 @@
 const baseConfig = require('./karma.config.base');
 
+const {
+  CIRCLE_BRANCH,
+  CIRCLE_BUILD_NUM,
+} = process.env;
+
 const customLaunchers = {
   sl_chrome: {
     base: 'SauceLabs',
@@ -50,37 +55,45 @@ const customLaunchers = {
     browserName: 'MicrosoftEdge',
     platform: 'Windows 10',
   },
-
-  // mobile
-  sl_ios_9: {
-    base: 'SauceLabs',
-    browserName: 'iphone',
-    version: '9.3',
-  },
-  sl_ios_10: {
-    base: 'SauceLabs',
-    browserName: 'iphone',
-    version: '10.0',
-  },
-  sl_android_4: {
-    base: 'SauceLabs',
-    browserName: 'android',
-    version: '4.4',
-  },
-  sl_android_5: {
-    base: 'SauceLabs',
-    browserName: 'android',
-    version: '5.1',
-  },
 };
 
-const buildNum = process.env.CIRCLE_BUILD_NUM ? `#${process.env.CIRCLE_BUILD_NUM}` : `@${Date.now()}`;
+// mobile emulators are really really slow
+// only run them on develop/master branch
+if (CIRCLE_BRANCH === 'develop' || CIRCLE_BRANCH === 'master' || FORCE_MOBILE_TEST) {
+  Object.assign(customLaunchers, {
+    sl_ios_9: {
+      base: 'SauceLabs',
+      browserName: 'iphone',
+      version: '9.3',
+    },
+    sl_ios_10: {
+      base: 'SauceLabs',
+      browserName: 'iphone',
+      version: '10.0',
+    },
+    sl_android_4: {
+      base: 'SauceLabs',
+      browserName: 'android',
+      version: '4.4',
+    },
+    sl_android_5: {
+      base: 'SauceLabs',
+      browserName: 'android',
+      version: '5.1',
+    },
+  });
+}
+
+const buildNum = CIRCLE_BUILD_NUM ? `#${CIRCLE_BUILD_NUM}` : `@${Date.now()}`;
 
 module.exports = function (config) {
   config.set(Object.assign(baseConfig, {
     browsers: Object.keys(customLaunchers),
     customLaunchers: customLaunchers,
     reporters: ['dots', 'saucelabs'],
+    // wait for mobile emulators
+    captureTimeout: 300000,
+    browserNoActivityTimeout: 300000,
     sauceLabs: {
       testName: 'Service Mocker tests',
       recordScreenshots: false,
