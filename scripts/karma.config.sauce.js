@@ -89,11 +89,23 @@ if (CIRCLE_BRANCH === 'develop' || CIRCLE_BRANCH === 'master' || FORCE_MOBILE_TE
 const buildNum = CIRCLE_BUILD_NUM ? `#${CIRCLE_BUILD_NUM}` : `@${Date.now()}`;
 
 module.exports = function (config) {
+  if (!CI) {
+    Object.assign(baseConfig, {
+      logLevel: config.LOG_WARN,
+      reporters: ['nyan', 'saucelabs'],
+      nyanReporter: {
+        suppressErrorHighlighting: true,
+      },
+    });
+  } else {
+    Object.assign(baseConfig, {
+      reporters: ['mocha', 'saucelabs'],
+    });
+  }
+
   config.set(Object.assign(baseConfig, {
-    logLevel: config.LOG_WARN,
     browsers: Object.keys(customLaunchers),
     customLaunchers: customLaunchers,
-    reporters: ['nyan', 'saucelabs'],
     // wait for mobile emulators
     captureTimeout: 300000,
     browserNoActivityTimeout: 300000,
@@ -101,10 +113,6 @@ module.exports = function (config) {
       testName: 'Service Mocker tests',
       recordScreenshots: false,
       build: `service-worker ${buildNum}`,
-    },
-    nyanReporter: {
-      suppressErrorHighlighting: true,
-      renderOnRunCompleteOnly: !!CI,
     },
   }));
 };
