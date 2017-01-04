@@ -14,8 +14,9 @@ module.exports = function (config) {
   }];
 
   config.set(Object.assign(baseConfig, {
+    logLevel: config.LOG_WARN,
     browsers: ['Chrome'],
-    reporters: ['mocha', 'karma-remap-istanbul'],
+    reporters: ['karma-remap-istanbul'],
     preprocessors: {
       '**/*.ts': ['webpack', 'sourcemap'],
     },
