@@ -4,4 +4,6 @@ machine:
 
 test:
   override:
-    - bash scripts/ci.sh
+    - npm run lint
+    - npm run test:sauce
+    - npm run cover && ./node_modules/.bin/codecov
