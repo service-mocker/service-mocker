@@ -8,10 +8,17 @@ const EVENTS_LIST = [
   'loadend',
 ];
 
-export function xhrRunner() {
+export function xhrRunner () {
   const mode = (XMLHttpRequest as any).mockerPatched ? 'Patched' : 'Native';
 
-  describe(`[${mode}] XHR interception`, () => {
+  function desc(title: string, cb: () => void) {
+    describe(`[${mode}] ${title}`, function () {
+      this.timeout(10 * 1e3);
+      cb.call(this);
+    });
+  }
+
+  desc(`XHR interception`, () => {
     it('request to "/api" should be intercepted', async () => {
       const xhr = await XHRtoPromise('/api');
 
@@ -19,7 +26,7 @@ export function xhrRunner() {
     });
   });
 
-  describe(`[${mode}] XHR patch with REAL requests`, () => {
+  desc(`XHR patch with REAL requests`, () => {
     it('on-event should be fired', async () => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', '/', true);
@@ -47,7 +54,7 @@ export function xhrRunner() {
     });
   });
 
-  describe(`[${mode}] XHR patch with MOCK requests`, () => {
+  desc(`XHR patch with MOCK requests`, () => {
     it('on-event should be fired', async () => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', '/api', true);
@@ -75,7 +82,7 @@ export function xhrRunner() {
     });
   });
 
-  describe(`[${mode}] XHR responseType`, () => {
+  desc(`XHR responseType`, () => {
     it('should return type Document', async () => {
       const xhr = await XHRtoPromise('/', {
         responseType: 'document',
