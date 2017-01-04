@@ -73,7 +73,6 @@ export function serverRunner() {
 function swReporter(runner) {
   runner
     .on('pass', (test) => {
-      console.info(test);
       const result = {
         title: test.title,
       };

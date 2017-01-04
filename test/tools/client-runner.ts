@@ -1,7 +1,9 @@
 // mocha is already loaded by webpack/karma
 import { AssertionError } from 'chai';
-import { sendMessageRequest } from '../../src/utils/';
 import 'source-map-support/browser-source-map-support';
+
+import { sendMessageRequest } from '../../src/utils/';
+import { createClient } from 'service-mocker/client';
 
 (self as any).sourceMapSupport.install();
 
@@ -21,7 +23,9 @@ mocha.setup({
  * 3. Fetch results from server
  * 4. Reflect results to mocha
  */
-export async function clientRunner(client) {
+export async function clientRunner() {
+  const client = createClient('server.js');
+
   await client.ready;
 
   const target = client.controller || window;
@@ -60,8 +64,6 @@ function addCase(test) {
       if (!data || data.title !== test.title) {
         return;
       }
-
-      console.log(data);
 
       // one-off listener
       navigator.serviceWorker.removeEventListener('message', handler);

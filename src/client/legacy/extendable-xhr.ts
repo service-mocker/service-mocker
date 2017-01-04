@@ -48,9 +48,7 @@ try {
       Object.getOwnPropertyDescriptor(NativeXHR, prop),
     );
   });
-} catch (e) {
-  // do nothing
-}
+} catch (e) {}
 
 // delegate all unset properties to `nativeXHR`
 (function mapPrototypeMethods(

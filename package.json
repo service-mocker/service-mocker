@@ -15,15 +15,11 @@
     "release": "FORCE_MOBILE_TEST=true ./scripts/release.sh",
     "start": "node ./scripts/serve.js",
     "pretest": "npm run lint",
-    "test": "npm-run-all test:modern test:legacy",
-    "test:modern": "cross-env karma start ./scripts/karma.config.unit.js",
-    "test:legacy": "cross-env FORCE_LEGACY=true karma start ./scripts/karma.config.unit.js",
+    "test": "karma start ./scripts/karma.config.unit.js",
     "test:full": "karma start ./scripts/karma.config.full.js",
     "test:sauce": "karma start ./scripts/karma.config.sauce.js",
     "precover": "npm run clean:cover",
-    "cover": "npm-run-all --parallel cover:modern cover:legacy && node ./scripts/combine-coverage.js",
-    "cover:modern": "karma --port 9876 start ./scripts/karma.config.cover.js",
-    "cover:legacy": "cross-env FORCE_LEGACY=true karma --port 9877 start ./scripts/karma.config.cover.js"
+    "cover": "karma start ./scripts/karma.config.cover.js"
   },
   "repository": {
     "type": "git",
@@ -55,7 +51,6 @@
     "eslint-plugin-standard": "^2.0.1",
     "html-webpack-plugin": "^2.24.1",
     "ip": "^1.1.4",
-    "istanbul-combine": "git+https://github.com/service-mocker/istanbul-combine.git",
     "karma": "^1.3.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-coverage": "^1.1.1",
@@ -63,7 +58,6 @@
     "karma-mocha": "^1.3.0",
     "karma-mocha-reporter": "^2.2.1",
     "karma-nyan-reporter": "^0.2.4",
-    "karma-remap-coverage": "^0.1.4",
     "karma-remap-istanbul": "^0.4.0",
     "karma-safari-launcher": "^1.0.0",
     "karma-sauce-launcher": "^1.1.0",

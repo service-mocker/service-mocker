@@ -1,6 +1,5 @@
 const path = require('path');
 const baseConfig = require('./karma.config.base');
-const isLegacy = !!process.env.FORCE_LEGACY;
 
 module.exports = function (config) {
   // instrument only testing sources with Istanbul
@@ -13,18 +12,28 @@ module.exports = function (config) {
     },
   }];
 
+  const istanbulOptions = {};
+
+  if (process.env.CI) {
+    baseConfig.reporters = ['mocha', 'karma-remap-istanbul'];
+    istanbulOptions.reports = {
+      lcovonly: 'coverage/lcov.info',
+    };
+  } else {
+    baseConfig.reporters = ['nyan', 'karma-remap-istanbul'];
+    istanbulOptions.reports = {
+      'text-summary': null,
+      html: 'coverage/html',
+    };
+  }
+
   config.set(Object.assign(baseConfig, {
     logLevel: config.LOG_WARN,
     browsers: ['Chrome'],
-    reporters: ['karma-remap-istanbul'],
     preprocessors: {
       '**/*.ts': ['webpack', 'sourcemap'],
     },
 
-    remapIstanbulReporter: {
-      reports: {
-        json: `./coverage/coverage-${isLegacy ? 'legacy' : 'modern'}.json`,
-      },
-    },
+    remapIstanbulReporter: istanbulOptions,
   }));
 };

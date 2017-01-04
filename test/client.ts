@@ -1,17 +1,36 @@
 import 'service-mocker-polyfills';
 
-import * as tests from './spec/client/';
-import { client } from './spec/client-instance';
 import { clientRunner } from './tools/client-runner';
+import { createClient } from 'service-mocker/client';
 
-const mode = client.isLegacy ? 'Legacy' : 'Modern';
+import * as modernTests from './spec/client/modern/';
+import * as legacyTests from './spec/client/legacy/';
 
-describe(`[${mode}] Client Tests`, () => {
-  Object.keys(tests).forEach(name => {
-    if (typeof tests[name] === 'function') {
-      tests[name]();
-    }
+describe('Modern Client Tests', function() {
+  before(() => {
+    const client = createClient('server.js');
+    return client.ready;
+  });
+
+  Object.keys(modernTests).forEach((name) => {
+    modernTests[name].call(this);
   });
 });
 
-clientRunner(client);
+describe('Legacy Client Tests', function() {
+  before(async () => {
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      await reg.unregister();
+    } catch (e) {}
+
+    const client = createClient('server.js', true);
+    return client.ready;
+  });
+
+  Object.keys(legacyTests).forEach((name) => {
+    legacyTests[name].call(this);
+  });
+});
+
+clientRunner();

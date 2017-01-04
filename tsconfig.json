@@ -13,7 +13,11 @@
     "noUnusedLocals": true,
     "importHelpers": true,
     "declaration": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+        "service-mocker/*": [ "src/*" ]
+    }
   },
   "exclude": [
     "node_modules",

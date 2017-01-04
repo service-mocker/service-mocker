@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const joinRoot = path.join.bind(path, __dirname, '..');
@@ -8,6 +7,9 @@ module.exports = {
   devtool: 'cheap-module-source-map',
   resolve: {
     extensions: ['', '.js', '.ts', '.css'],
+    alias: {
+      'service-mocker': joinRoot('src'),
+    },
   },
   module: {
     loaders: [{
@@ -30,11 +32,6 @@ module.exports = {
       // exclude detection of files based on a RegExp
       exclude: /node_modules/,
       failOnError: true,
-    }),
-    new webpack.DefinePlugin({
-      'process.env': {
-        FORCE_LEGACY: !!process.env.FORCE_LEGACY,
-      },
     }),
   ],
 };

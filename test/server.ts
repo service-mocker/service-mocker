@@ -1,12 +1,14 @@
-import './spec/server-instance';
 import * as tests from './spec/server/';
+import { createServer } from 'service-mocker/server';
 import { serverRunner } from './tools/server-runner';
 
-const mode = self === self.window ? 'Legacy' : 'Modern';
+const server = createServer();
 
-describe(`[${mode}] Server Tests`, () => {
+const mode = server.isLegacy ? 'Legacy' : 'Modern';
+
+describe(`${mode} Server Tests`, () => {
   Object.keys(tests).forEach(name => {
-    tests[name]();
+    tests[name](server);
   });
 });
 

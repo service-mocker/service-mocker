@@ -15,12 +15,24 @@ export function createServer(): Server {
 }
 
 export class Server {
+  readonly isLegacy = self === self.window;
+
   private _running = false;
   private _clients: any = {
     [LEGACY_CLIENT_ID]: true,
   };
 
   constructor() {
+    const global: any = self;
+
+    // Server should always be SINGLETON!!!
+    // Or chrome will crash
+    if (global._mockerServer) {
+      return global._mockerServer;
+    }
+
+    global._mockerServer = this;
+
     this._start();
   }
 
@@ -66,10 +78,6 @@ export class Server {
     return fetch(input, init);
   }
 
-  private _isLegacyMode() {
-    return self === self.window;
-  }
-
   private _fetchWithWarning(input: RequestInfo, init?: RequestInit): Promise<Response> {
     serverLog.warn('invoking `fetch` directly is considered potentially dangerous, please use `server#fetch` instead');
 
@@ -77,7 +85,7 @@ export class Server {
   }
 
   private _attachFetchWarning() {
-    if (!this._isLegacyMode()) {
+    if (!this.isLegacy) {
       return;
     }
 
@@ -91,7 +99,7 @@ export class Server {
   }
 
   private _detachFetchWarning() {
-    if (!this._isLegacyMode()) {
+    if (!this.isLegacy) {
       return;
     }
 

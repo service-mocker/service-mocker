@@ -1,1 +1,1 @@
-export * from './noop.spec';
+export * from './base.spec';
