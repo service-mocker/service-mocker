@@ -24,7 +24,7 @@ mocha.setup({
  * 4. Reflect results to mocha
  */
 export async function clientRunner() {
-  const client = createClient('server.js', /legacy/i.test(location.search));
+  const client = createClient('server.js', /legacy server/i.test(decodeURIComponent(location.search)));
 
   await client.ready;
 

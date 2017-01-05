@@ -16,9 +16,8 @@
  * the next connection of client.
  */
 
-// manually import 'mocha' for karma
 // import 'mocha/mocha';
-import * as swSourceMap from 'source-map-support/sw-source-map-support';
+// import * as swSourceMap from 'source-map-support/sw-source-map-support';
 
 type Result = {
   error?: Error;
@@ -31,10 +30,9 @@ const resultCache: Array<Result> = [];
 
 // patch mocha env to service worker context
 if (IS_SW) {
-  // avoid pollute client env
+  // avoid polluting client env
   require('mocha/mocha');
-
-  swSourceMap.install();
+  require('source-map-support/sw-source-map-support').install();
 
   mocha.setup({
     ui: 'bdd',
@@ -64,11 +62,11 @@ export function serverRunner() {
       case 'MOCHA_TASKS':
         return ports[0].postMessage({
           // only send suites in modern mode
-          suites: IS_SW && getAllSuites(),
+          suites: IS_SW ? getAllSuites() : null,
         });
 
       case 'MOCHA_RESULTS':
-        return IS_SW && reportResults(source.id);
+        return reportResults(source.id);
     }
   });
 }
