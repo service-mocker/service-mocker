@@ -6,16 +6,20 @@ import { createClient } from 'service-mocker/client';
 import * as modernTests from './spec/client/modern/';
 import * as legacyTests from './spec/client/legacy/';
 
-describe('Modern Client Tests', function() {
-  before(() => {
-    const client = createClient('server.js');
-    return client.ready;
-  });
+if (supportSW()) {
+  console.warn('modern client tests are ignored because of the browser compatibility');
 
-  Object.keys(modernTests).forEach((name) => {
-    modernTests[name].call(this);
+  describe('Modern Client Tests', function() {
+    before(() => {
+      const client = createClient('server.js');
+      return client.ready;
+    });
+
+    Object.keys(modernTests).forEach((name) => {
+      modernTests[name].call(this);
+    });
   });
-});
+}
 
 describe('Legacy Client Tests', function() {
   before(async () => {
@@ -34,3 +38,8 @@ describe('Legacy Client Tests', function() {
 });
 
 clientRunner();
+
+function supportSW() {
+  return navigator.serviceWorker &&
+    (location.protocol === 'https' || location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+}
