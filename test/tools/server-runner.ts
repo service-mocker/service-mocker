@@ -17,7 +17,7 @@
  */
 
 // manually import 'mocha' for karma
-import 'mocha/mocha';
+// import 'mocha/mocha';
 import * as swSourceMap from 'source-map-support/sw-source-map-support';
 
 type Result = {
@@ -31,6 +31,9 @@ const resultCache: Array<Result> = [];
 
 // patch mocha env to service worker context
 if (IS_SW) {
+  // avoid pollute client env
+  require('mocha/mocha');
+
   swSourceMap.install();
 
   mocha.setup({
