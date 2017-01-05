@@ -7,8 +7,6 @@ import * as modernTests from './spec/client/modern/';
 import * as legacyTests from './spec/client/legacy/';
 
 if (supportSW()) {
-  console.warn('modern client tests are ignored because of the browser compatibility');
-
   describe('Modern Client Tests', function() {
     before(() => {
       const client = createClient('server.js');
@@ -19,6 +17,8 @@ if (supportSW()) {
       modernTests[name].call(this);
     });
   });
+} else {
+  console.warn('modern client tests are ignored because of the browser compatibility');
 }
 
 describe('Legacy Client Tests', function() {

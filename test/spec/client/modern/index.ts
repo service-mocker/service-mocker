@@ -1,1 +1,1 @@
-export * from './fetch.spec';
+export * from '../common/';
