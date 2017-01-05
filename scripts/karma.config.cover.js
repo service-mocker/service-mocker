@@ -12,28 +12,24 @@ module.exports = function (config) {
     },
   }];
 
-  const istanbulOptions = {};
+  const istanbulReports = {
+    'text-summary': null,
+  };
 
   if (process.env.CI) {
-    baseConfig.reporters = ['mocha', 'karma-remap-istanbul'];
-    istanbulOptions.reports = {
-      lcovonly: 'coverage/lcov.info',
-    };
+    istanbulReports.lcovonly = 'coverage/lcov.info';
   } else {
-    baseConfig.reporters = ['nyan', 'karma-remap-istanbul'];
-    istanbulOptions.reports = {
-      'text-summary': null,
-      html: 'coverage/html',
-    };
+    istanbulReports.html = 'coverage/html';
   }
 
   config.set(Object.assign(baseConfig, {
-    logLevel: config.LOG_WARN,
     browsers: ['Chrome'],
+    reporters: ['mocha', 'karma-remap-istanbul'],
     preprocessors: {
       '**/*.ts': ['webpack', 'sourcemap'],
     },
-
-    remapIstanbulReporter: istanbulOptions,
+    remapIstanbulReporter: {
+      reports: istanbulReports,
+    },
   }));
 };

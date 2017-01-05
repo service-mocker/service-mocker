@@ -1,7 +1,6 @@
 const baseConfig = require('./karma.config.base');
 
 const {
-  CI,
   CIRCLE_BRANCH,
   CIRCLE_BUILD_NUM,
   FORCE_MOBILE_TEST,
@@ -89,21 +88,8 @@ if (CIRCLE_BRANCH === 'develop' || CIRCLE_BRANCH === 'master' || FORCE_MOBILE_TE
 const buildNum = CIRCLE_BUILD_NUM ? `#${CIRCLE_BUILD_NUM}` : `@${Date.now()}`;
 
 module.exports = function (config) {
-  if (!CI) {
-    Object.assign(baseConfig, {
-      logLevel: config.LOG_WARN,
-      reporters: ['nyan', 'saucelabs'],
-      nyanReporter: {
-        suppressErrorHighlighting: true,
-      },
-    });
-  } else {
-    Object.assign(baseConfig, {
-      reporters: ['mocha', 'saucelabs'],
-    });
-  }
-
   config.set(Object.assign(baseConfig, {
+    reporters: ['mocha', 'saucelabs'],
     browsers: Object.keys(customLaunchers),
     customLaunchers: customLaunchers,
     // wait for mobile emulators
@@ -113,6 +99,10 @@ module.exports = function (config) {
       testName: 'Service Mocker tests',
       recordScreenshots: false,
       build: `service-worker ${buildNum}`,
+    },
+    mochaReporter: {
+      // modern tests won't be reported on 'full' mode
+      output: 'minimal',
     },
   }));
 };
