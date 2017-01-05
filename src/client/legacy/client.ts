@@ -10,6 +10,8 @@ import { ClientStorageService } from '../storage';
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
 
+const registrations = {};
+
 export class LegacyClient implements IMockerClient {
   readonly isLegacy = true;
   readonly ready: Promise<null>;
@@ -21,6 +23,13 @@ export class LegacyClient implements IMockerClient {
   constructor(scriptURL: string) {
     patchXHR();
     patchFetch();
+
+    // avoid duplications
+    if (registrations.hasOwnProperty(scriptURL)) {
+      return registrations[scriptURL];
+    }
+
+    registrations[scriptURL] = this;
 
     const script = document.createElement('script');
     script.src = scriptURL;
