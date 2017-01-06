@@ -34,10 +34,6 @@ module.exports = {
       pattern: 'test/server.ts',
       included: false,
     },
-    {
-      pattern: '**/*.map',
-      included: false,
-    },
   ],
 
   preprocessors: {
