@@ -1,12 +1,16 @@
 import { expect } from 'chai';
 import { createServer } from 'service-mocker/server';
 
-export function baseRunner(server) {
-  describe('base infrastructure', () => {
-    it('should be singleton', () => {
-      const newServer = createServer();
+const api = require('../api.json');
 
-      expect(newServer).to.equal(server);
+export function baseRunner() {
+  const server = createServer();
+
+  server.router.get('/api', api['/api']);
+
+  describe('noop', () => {
+    it('1+1=2', () => {
+      expect(1 + 1).to.equal(2);
     });
   });
 }

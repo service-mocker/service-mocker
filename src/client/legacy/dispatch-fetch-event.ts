@@ -23,10 +23,19 @@ import {
 
 import { createEvent } from './create-event';
 
-interface CustomFetchEvent extends Event {
-  // symbol for legacy mode
-  isLegacy: boolean;
+const fetchEvents: any = [];
+const addEventListener = self.addEventListener.bind(self);
 
+// handle fetch events ourselves
+self.addEventListener = function(type: string, listener: (event: any) => void, useCapture?: boolean) {
+  if (type === 'fetch') {
+    fetchEvents.push(listener);
+  } else {
+    addEventListener(type, listener, useCapture);
+  }
+};
+
+interface CustomFetchEvent extends Event {
   // legacy client ID
   clientId: string;
 
@@ -58,7 +67,6 @@ export async function dispatchFetchEvent(request: Request): Promise<Response | n
 
   let finished = false;
 
-  fetchEvt.isLegacy = true;
   fetchEvt.request = request;
   fetchEvt.clientId = LEGACY_CLIENT_ID;
 
@@ -86,11 +94,14 @@ export async function dispatchFetchEvent(request: Request): Promise<Response | n
     });
   };
 
-  fetchEvt.end = () => {
-    done(null);
-  };
+  fetchEvents.forEach((listener) => {
+    listener(fetchEvt);
+  });
 
-  self.dispatchEvent(fetchEvt);
+  // `event.respondWith` haven't been called
+  if (!finished) {
+    done(null);
+  }
 
   return deferred.promise;
 }
