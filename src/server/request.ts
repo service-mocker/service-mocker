@@ -40,5 +40,19 @@ export class MockerRequest extends ExtandableRequest implements IMockerRequest {
     this.params = params;
     this.path = url.pathname;
     this.query = qs.parse(url.search.slice(1)); // remove leading '?'
+
+    // overwrite relative URL from fetch polyfill
+    if (this.url !== url.href) {
+      Object.defineProperty(this, 'url', {
+        value: url.href,
+        writable: false,
+        enumerable: true,
+        configurable: true,
+      });
+    }
+  }
+
+  clone() {
+    return new MockerRequest(this._event, this.params);
   }
 }
