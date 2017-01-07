@@ -37,7 +37,7 @@ export class LegacyClient implements IMockerClient {
     const script = document.createElement('script');
     script.src = scriptURL;
 
-    this.ready = new Promise<null>((resolve, reject) => {
+    this.ready = new Promise<null>((resolve) => {
       script.onload = async () => {
         await sendMessageRequest(window, {
           action: ACTION.PING,
@@ -47,11 +47,11 @@ export class LegacyClient implements IMockerClient {
 
         resolve(null);
       };
-
-      script.onerror = () => {
-        reject(new Error('legacy mode bootstrap failed'));
-      };
     });
+
+    script.onerror = () => {
+      throw new Error('legacy mode bootstrap failed');
+    };
 
     document.body.appendChild(script);
   }
