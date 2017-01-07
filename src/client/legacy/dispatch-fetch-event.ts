@@ -23,19 +23,7 @@ import {
 
 import { createEvent } from './create-event';
 
-const fetchEvents: any = [];
-const addEventListener = self.addEventListener.bind(self);
-
-// handle fetch events ourselves
-self.addEventListener = function(type: string, listener: (event: any) => void, useCapture?: boolean) {
-  if (type === 'fetch') {
-    fetchEvents.push(listener);
-  } else {
-    addEventListener(type, listener, useCapture);
-  }
-};
-
-interface CustomFetchEvent extends Event {
+interface MockFetchEvent extends Event {
   // legacy client ID
   clientId: string;
 
@@ -49,20 +37,26 @@ interface CustomFetchEvent extends Event {
   // simulate native `waitUntil` interface
   // extend fetch event's lifetime until promise resolved
   waitUntil(promise: any): void;
-
-  // hook method for terminating fetch event.
-  // since we are not able to know whether a fetch event is handled,
-  // we need provide a method to terminate it from outside.
-  // a `end()` call will resolve the event with `null`
-  end(): void;
 }
+
+const fetchEvents: any = [];
+const addEventListener = self.addEventListener.bind(self);
+
+// handle fetch events ourselves
+self.addEventListener = function(type: string, listener: (event: any) => void, useCapture?: boolean) {
+  if (type === 'fetch') {
+    fetchEvents.push(listener);
+  } else {
+    addEventListener(type, listener, useCapture);
+  }
+};
 
 /**
  * Dispatch fetch event on GlobalScope in legacy mode.
  * Resolved with `null` if `event.respondWith` isn't called.
  */
 export async function dispatchFetchEvent(request: Request): Promise<Response | null> {
-  const fetchEvt: CustomFetchEvent = createEvent('fetch');
+  const fetchEvt: MockFetchEvent = createEvent('fetch');
   const deferred = new Defer();
 
   let finished = false;
