@@ -4,7 +4,12 @@ import {
 
 import {
   debug,
+  sendMessageRequest,
 } from '../../utils/';
+
+import {
+  ACTION,
+} from '../../constants/';
 
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
@@ -33,7 +38,13 @@ export class LegacyClient implements IMockerClient {
     script.src = scriptURL;
 
     this.ready = new Promise<null>((resolve, reject) => {
-      script.onload = () => {
+      script.onload = async () => {
+        await sendMessageRequest(window, {
+          action: ACTION.PING,
+        });
+
+        debug.scope('legacy').info('connection established');
+
         resolve(null);
       };
 

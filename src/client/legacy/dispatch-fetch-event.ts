@@ -92,7 +92,7 @@ export async function dispatchFetchEvent(request: Request): Promise<Response | n
     listener(fetchEvt);
   });
 
-  // `event.respondWith` haven't been called
+  // `event.respondWith` wasn't called
   if (!finished) {
     done(null);
   }

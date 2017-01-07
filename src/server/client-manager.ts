@@ -3,12 +3,6 @@ import {
   LEGACY_CLIENT_ID,
 } from '../constants/';
 
-import {
-  debug,
-} from '../utils/';
-
-const cmLog = debug.scope('cm');
-
 const clients: any = {
   [LEGACY_CLIENT_ID]: true,
 };
@@ -43,7 +37,6 @@ export const clientManager = {
 
       switch (data.action) {
         case ACTION.PING:
-          cmLog.info(`client connected in: ${clientId}`);
           this.add(clientId);
           return port.postMessage({
             action: ACTION.PONG,
@@ -56,7 +49,6 @@ export const clientManager = {
           });
 
         case ACTION.DISCONNECT:
-          cmLog.info(`client disconnected: ${clientId}`);
           return this.delete(clientId);
       }
     });
