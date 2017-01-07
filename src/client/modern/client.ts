@@ -10,11 +10,9 @@ import { register } from './register';
 import { connect } from './connect';
 import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
-import { ClientStorageService } from '../storage';
 
 export class ModernClient implements IMockerClient {
   readonly isLegacy = false;
-  readonly storage = new ClientStorageService();
   readonly ready: Promise<ServiceWorkerRegistration>;
 
   controller: ServiceWorker;

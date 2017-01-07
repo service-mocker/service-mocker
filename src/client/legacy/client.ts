@@ -6,7 +6,6 @@ import {
   debug,
 } from '../../utils/';
 
-import { ClientStorageService } from '../storage';
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
 
@@ -15,7 +14,6 @@ const registrations = {};
 export class LegacyClient implements IMockerClient {
   readonly isLegacy = true;
   readonly ready: Promise<null>;
-  readonly storage = new ClientStorageService(true);
 
   controller = null;
   private _registration = null;

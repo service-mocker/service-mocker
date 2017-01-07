@@ -1,3 +1,5 @@
+import './storage';
+
 import {
   IMockerClient,
 } from './client';
