@@ -35,12 +35,20 @@
  */
 export function extensify<T>(Native: T, ...inits): T;
 export function extensify(Native, ...inits) {
+  function initNative(...args) {
+    if (typeof Native === 'function') {
+      return new Native(...args);
+    }
+
+    // avoid `XMLHttpRequest.bind` is undefined in safari 9-
+    return new Native();
+  }
 
   class Extandable {
     protected _native;
 
     constructor(...args) {
-      this._native = new Native(...args);
+      this._native = initNative(...args);
     }
   }
 
@@ -97,7 +105,7 @@ export function extensify(Native, ...inits) {
   })();
 
   // safari 9- only have methods on `XMLHttpRequest.prototype`
-  const native = new Native(...inits);
+  const native = initNative(...inits);
   for (let prop in native) {
     if (!Extandable.prototype.hasOwnProperty(prop)) {
       Object.defineProperty(Extandable.prototype, prop, {
