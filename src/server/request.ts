@@ -12,8 +12,9 @@ export type Query = {
   [key: string]: any,
 };
 
+// convert native `Request` to extendable
 // export or you'll get an error of 'using private'
-export const ExtandableRequest = extensify(Request, '');
+export const ExtandableRequest = (fetch as any).polyfill ? Request : extensify(Request, '');
 
 export interface IMockerRequest extends Request {
   readonly path: string;
