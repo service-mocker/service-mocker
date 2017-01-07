@@ -78,15 +78,9 @@ export class ClientStorageService {
           return;
       }
 
-      ports[0].postMessage({
-        result,
-        action: ACTION.SUCCESS,
-      });
+      ports[0].postMessage({ result });
     } catch (e) {
-      ports[0].postMessage({
-        error: e,
-        action: ACTION.FAILED,
-      });
+      ports[0].postMessage({ error: e });
     }
   }
 };
