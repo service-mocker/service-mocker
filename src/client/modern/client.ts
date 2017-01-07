@@ -67,13 +67,13 @@ export class ModernClient implements IMockerClient {
 
     serviceWorker.addEventListener('controllerchange', async () => {
       try {
-        const registration = await connect(true);
+        const registration = await connect();
         this.controller = registration.active;
 
         updateLog.color('crimson')
           .warn('mocker updated, reload your requests to take effect');
       } catch (error) {
-        updateLog.error('connecting to new mocker failed', error);
+        updateLog.error('connecting to new service worker failed', error);
       }
     });
   }

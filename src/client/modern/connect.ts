@@ -9,13 +9,13 @@ import {
 
 import { getNewestReg } from './get-newest-reg';
 
-export async function connect(skipUpdateCheck = false): Promise<ServiceWorkerRegistration> {
+export async function connect(): Promise<ServiceWorkerRegistration> {
   const {
     serviceWorker,
   } = navigator;
 
   // check update
-  if (!skipUpdateCheck && serviceWorker.controller) {
+  if (serviceWorker.controller) {
     return getNewestReg().then(handshake);
   }
 
