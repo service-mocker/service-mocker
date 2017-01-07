@@ -1,4 +1,4 @@
-/*!
+/**
  * Patch native `XMLHttpRequest`
  *
  * Notes:
@@ -26,8 +26,11 @@
  */
 
 import { createEvent } from './create-event';
-import { ExtandableXHR } from './extendable-xhr';
 import { dispatchFetchEvent } from './dispatch-fetch-event';
+
+import {
+  extensify,
+} from '../../utils/';
 
 export function patchXHR() {
   if ((XMLHttpRequest as any).mockerPatched) {
@@ -45,6 +48,8 @@ const EVENTS_LIST = [
   'load',
   'loadend',
 ];
+
+const ExtandableXHR = extensify(XMLHttpRequest);
 
 class MockerXHR extends ExtandableXHR {
   // marked with `mockerPatched` symbol
