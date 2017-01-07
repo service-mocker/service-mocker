@@ -18,16 +18,14 @@ export class ModernClient implements IMockerClient {
   controller: ServiceWorker;
 
   constructor(scriptURL: string) {
-    this.ready = new Promise(resolve => {
-      this._init(scriptURL)
-        .then(registration => {
-          this.controller = registration.active;
-          resolve(registration);
-        })
-        .catch(error => {
-          debug.error('mocker initialization failed: ', error);
-        });
-    });
+    this.ready = this._init(scriptURL)
+      .then(registration => {
+        this.controller = registration.active;
+        return registration;
+      })
+      .catch(error => {
+        debug.error('mocker initialization failed: ', error);
+      });
   }
 
   async update(): Promise<ServiceWorkerRegistration> {

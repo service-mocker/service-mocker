@@ -4,6 +4,7 @@ import {
 
 import {
   debug,
+  Defer,
   sendMessageRequest,
 } from '../../utils/';
 
@@ -14,7 +15,8 @@ import {
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
 
-const registrations = {};
+const clientLog = debug.scope('legacy');
+const registrations: any = {};
 
 export class LegacyClient implements IMockerClient {
   readonly isLegacy = true;
@@ -27,33 +29,39 @@ export class LegacyClient implements IMockerClient {
     patchXHR();
     patchFetch();
 
+    const deferred = new Defer();
+
     // avoid duplications
     if (registrations.hasOwnProperty(scriptURL)) {
-      return registrations[scriptURL];
+      deferred.resolve();
+    } else {
+      const script = document.createElement('script');
+      script.src = scriptURL;
+      script.onload = () => {
+        deferred.resolve();
+      };
+      script.onerror = (error) => {
+        deferred.reject(error);
+      };
+
+      document.body.appendChild(script);
     }
 
-    registrations[scriptURL] = this;
-
-    const script = document.createElement('script');
-    script.src = scriptURL;
-
-    this.ready = new Promise<null>((resolve) => {
-      script.onload = async () => {
-        await sendMessageRequest(window, {
+    this.ready = deferred.promise
+      .then(() => {
+        return sendMessageRequest(window, {
           action: ACTION.PING,
         });
-
-        debug.scope('legacy').info('connection established');
-
-        resolve(null);
-      };
-    });
-
-    script.onerror = () => {
-      throw new Error('legacy mode bootstrap failed');
-    };
-
-    document.body.appendChild(script);
+      })
+      .then(() => {
+        clientLog.info('connection established');
+        registrations[scriptURL] = true;
+        return this._registration;
+      })
+      .catch(error => {
+        // `ready` should never be rejected
+        clientLog.error('bootstrap failed', error);
+      });
   }
 
   async update(): Promise<null> {
