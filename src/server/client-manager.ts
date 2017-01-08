@@ -8,6 +8,8 @@ const clients: any = {
 };
 
 export const clientManager = {
+  _initialized: false,
+
   has(id: string): boolean {
     return !!clients[id];
   },
@@ -20,7 +22,13 @@ export const clientManager = {
     delete clients[id];
   },
 
-  listen(): void {
+  listenOnce(): void {
+    if (this._initialized) {
+      return;
+    }
+
+    this._initialized = true;
+
     self.addEventListener('message', async (evt: ExtendableMessageEvent) => {
       const {
         data,

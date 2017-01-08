@@ -15,7 +15,7 @@ export class MockerServer implements IMockerServer {
   readonly storage = new MockerStorage();
 
   constructor() {
-    clientManager.listen();
+    clientManager.listenOnce();
 
     if (!this.isLegacy) {
       self.addEventListener('install', (event: InstallEvent) => {
