@@ -107,7 +107,7 @@ export class MockerResponse implements IMockerResponse {
   }
 
   proxy(input: RequestInfo, init: RequestInit = {}): void {
-    this._event.respondWith(async () => {
+    const transmit = async () => {
       const { request } = this._event;
 
       let defaultBody: any;
@@ -137,7 +137,9 @@ export class MockerResponse implements IMockerResponse {
       };
 
       return nativeFetch(input, options);
-    });
+    };
+
+    this._event.respondWith(transmit());
   }
 
   private _getStatusText() {
