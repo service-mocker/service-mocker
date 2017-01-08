@@ -15,6 +15,10 @@ mocha.setup({
   timeout: 10 * 1e3,
 });
 
+const client = createClient('server.js', {
+  forceLegacy: /legacy/i.test(decodeURIComponent(location.search)),
+});
+
 /**
  * Client tests runner:
  *
@@ -24,8 +28,6 @@ mocha.setup({
  * 4. Reflect results to mocha
  */
 export async function clientRunner() {
-  const client = createClient('server.js', /legacy/i.test(decodeURIComponent(location.search)));
-
   await client.ready;
 
   const target = client.controller || window;
@@ -40,7 +42,7 @@ export async function clientRunner() {
 
   return sendMessageRequest(target, {
     request: 'MOCHA_RESULTS',
-  }, Infinity);
+  });
 }
 
 function registerTest(suites?) {
@@ -88,6 +90,28 @@ function addCase(test) {
   // register to mocha
   it(test.title, runner);
 }
+
+async function sendRequest(event: MessageEvent) {
+  const {
+    data,
+    ports,
+  } = event;
+
+  if (data && data.request === 'FETCH') {
+    await client.ready;
+    const res = await fetch(data.url, data.init);
+
+    ports[0].postMessage({
+      result: await res.text(),
+    });
+  }
+}
+
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.addEventListener('message', sendRequest);
+}
+
+window.addEventListener('message', sendRequest);
 
 // synchronous XHR for source-map-support
 if ((XMLHttpRequest as any).mockerPatched) {

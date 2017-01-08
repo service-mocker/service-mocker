@@ -66,6 +66,7 @@ export function serverRunner() {
         });
 
       case 'MOCHA_RESULTS':
+        ports[0].postMessage('DONE');
         return reportResults(source.id);
     }
   });
