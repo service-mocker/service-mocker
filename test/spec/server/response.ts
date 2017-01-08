@@ -71,6 +71,19 @@ export function responseRunner() {
 
         expect(headers.get('content-type')).to.equal(mime.lookup('json'));
       });
+
+      it(`should send a response with contentType "text/plain"`, async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.type('text/plain').send('ServiceMocker');
+        });
+
+        const { headers } = await sendRequest(path);
+
+        expect(headers.get('content-type')).to.equal('text/plain');
+      });
+
     });
 
     describe('.json()', () => {
