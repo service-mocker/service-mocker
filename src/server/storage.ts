@@ -6,6 +6,8 @@ import {
   ACTION,
 } from '../constants/';
 
+import { clientManager } from './client-manager';
+
 export interface IMockerStorage {
   get(key: string): Promise<any>;
   set<T>(key: string, value: T): Promise<T>;
@@ -42,13 +44,9 @@ export class MockerStorage implements IMockerStorage {
   }
 
   private async _askClient(message: any) {
-    const clients = await self.clients.matchAll();
+    const client = await clientManager.getAvailable();
 
-    if (clients.length === 0) {
-      throw new Error('storage service requires active clients');
-    }
-
-    const data = await sendMessageRequest(clients[0], message);
+    const data = await sendMessageRequest(client, message);
 
     return data.result;
   }

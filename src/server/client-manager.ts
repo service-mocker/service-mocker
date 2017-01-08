@@ -24,6 +24,23 @@ export const clientManager = {
     delete clients[id];
   },
 
+  async getAvailable(): Promise<ServiceWorkerClient | Window> {
+    if (self === self.window) {
+      // legacy
+      return window;
+    }
+
+    const clients = await self.clients.matchAll();
+
+    for (let client of clients) {
+      if (this.has(client.id)) {
+        return client;
+      }
+    }
+
+    throw new Error('no active client is found');
+  },
+
   listenOnce(): void {
     if (this._initialized) {
       return;
