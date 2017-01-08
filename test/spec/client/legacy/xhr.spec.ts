@@ -27,7 +27,7 @@ export function XHRRunner () {
   });
 
   describe('XHR patch with REAL requests', () => {
-    it('on-event should be fired', async () => {
+    it('on-event should be fired', () => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', '/', true);
 
@@ -40,7 +40,7 @@ export function XHRRunner () {
       return promises;
     });
 
-    it('addEventListener() should be fired', async () => {
+    it('addEventListener() should be fired', () => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', '/', true);
 
@@ -55,7 +55,7 @@ export function XHRRunner () {
   });
 
   describe('XHR patch with MOCK requests', () => {
-    it('on-event should be fired', async () => {
+    it('on-event should be fired', () => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', '/api', true);
 
@@ -68,7 +68,7 @@ export function XHRRunner () {
       return promises;
     });
 
-    it('addEventListener() should be fired', async () => {
+    it('addEventListener() should be fired', () => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', '/api', true);
 
