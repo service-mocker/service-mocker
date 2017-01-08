@@ -179,7 +179,12 @@ export function XHRRunner () {
     });
 
     describe('.overrideMimeType()', () => {
-      it('should get contentType "text/plain"', async () => {
+      it('should get contentType "text/plain"', async function() {
+        // overrideMimeType is only supported on IE11+
+        if (!(XMLHttpRequest as any).native.prototype.overrideMimeType) {
+          this.skip();
+        }
+
         const xhr = await XHRtoPromise('/json', (xhr) => {
           xhr.overrideMimeType('text/plain');
         });

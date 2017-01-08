@@ -103,6 +103,10 @@ class MockerXHR extends ExtandableXHR {
   }
 
   overrideMimeType(mime: string): void {
+    if (!super.overrideMimeType) {
+      return;
+    }
+
     super.overrideMimeType(mime);
     this._responseMIME = mime;
   }
