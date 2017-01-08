@@ -1,6 +1,19 @@
 import * as mime from 'mime-component';
 import * as HttpStatus from 'http-status-codes';
 
+import { debug } from '../utils/';
+
+// null body statuses, see
+// https://fetch.spec.whatwg.org/#statuses
+const NULL_BODY_STATUS = [
+  101,
+  204,
+  205,
+  304,
+];
+
+const IS_IE_EDGE = /Edge/.test(navigator.userAgent);
+
 export interface IMockerResponse {
   readonly headers: Headers;
 
@@ -89,9 +102,12 @@ export class MockerResponse implements IMockerResponse {
 
     let responseBody = this._body;
 
-    // leave body empty for 204 requests, see:
-    // https://bugs.chromium.org/p/chromium/issues/detail?id=524500
-    if (this._statusCode === 204) {
+    // leave body empty for null body status
+    if (NULL_BODY_STATUS.indexOf(this._statusCode) > -1) {
+      if (IS_IE_EDGE) {
+        debug.scope('response').warn('using null body status in IE Edge may raise a `TypeMismatchError` Error');
+      }
+
       responseBody = undefined;
     }
 
