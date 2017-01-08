@@ -17,14 +17,14 @@ if (supportSW()) {
       modernTests[name].call(this);
     });
 
-    // to many registrations may case chrome crash
-    // after(async () => {
-    //   try {
-    //     const reg = await navigator.serviceWorker.getRegistration();
+    // NOTICE: to many registrations may case chrome crash
+    after(async () => {
+      try {
+        const reg = await navigator.serviceWorker.getRegistration();
 
-    //     await reg.unregister();
-    //   } catch (e) {}
-    // });
+        await reg.unregister();
+      } catch (e) {}
+    });
   });
 } else {
   console.warn('modern client tests are ignored because of the browser compatibility');
