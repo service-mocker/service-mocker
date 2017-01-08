@@ -1,9 +1,0 @@
-{
-  "homepage": "https://github.com/idiotWu/service-mocker",
-  "globalDependencies": {
-    "localforage": "registry:dt/localforage#0.0.0+20161102134758",
-    "service-worker": "file:./src/service-worker.d.ts",
-    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20161004182750",
-    "whatwg-streams": "registry:dt/whatwg-streams#0.0.0+20160829180742"
-  }
-}

@@ -1,6 +1,5 @@
 /*!
  * Patch native `XMLHttpRequest`
- * @author Dolphin Wood
  *
  * Notes:
  * - When and how to dispatch fetch event:
@@ -126,7 +125,8 @@ class MockerXHR extends ExtandableXHR {
 
   private _mockFetch(data?: any): Promise<Response> {
     // GET|HEAD requests cannot include body
-    const body = (this._method === 'GET' || this._method === 'HEAD') ? null : data;
+    // set body to `null` will raise a TypeMismatchError in IE Edge
+    const body = (this._method === 'GET' || this._method === 'HEAD') ? undefined : data;
 
     // we are not able to handling cookies
     // const credentials = this.withCredentials ? 'include' : 'omit';
@@ -170,6 +170,8 @@ class MockerXHR extends ExtandableXHR {
   }
 
   private _setProperty(name: string, value?: any): void {
+    // in IE & Safari, those property are unconfigurable
+    // assign to patched XHR, as a trade-off
     Object.defineProperty(this, name, {
       value,
       writable: false,
@@ -188,13 +190,8 @@ class MockerXHR extends ExtandableXHR {
         event.total = event.loaded = 1;
       }
 
+      // Caveat: `this` & `event.target` are still the native one
       this.dispatchEvent(event);
-
-      // no need to invoke listeners manually
-      // const handler = this[`on${type}`];
-      // if (handler) {
-      //   handler.call(this.nativeXHR, event);
-      // }
     });
   }
 }

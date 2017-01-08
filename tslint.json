@@ -4,6 +4,7 @@
     "ter-indent": [true, 2, { "SwitchCase": 1 }],
     "semicolon": [true, "always"],
     "align": [true, "parameters", "statements"],
-    "trailing-comma": [true, {"multiline": "always", "singleline": "never"}]
+    "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
+    "no-empty": false
   }
 }

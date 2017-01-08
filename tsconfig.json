@@ -6,19 +6,22 @@
         "es2017"
     ],
     "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "noUnusedParameters": true,
     "noImplicitReturns": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "importHelpers": true,
     "declaration": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+        "service-mocker/*": [ "src/*" ]
+    }
   },
   "exclude": [
     "node_modules",
     "lib",
     "dist"
-  ],
-  "typeRoots": [
-    "./typings"
   ]
 }

@@ -1,19 +1,14 @@
-export type Message = {
-  action: string,
-  [key: string]: any,
-};
-
 // Client => Server
 export async function sendMessageRequest(
   target: ServiceWorker | Window /* legacy mode */,
-  message: Message,
+  message: any,
   timeout?: number,
 ): Promise<any>;
 
 // Server => Client
 export async function sendMessageRequest(
   target: ServiceWorkerClient | Window /* legacy mode */,
-  message: Message,
+  message: any,
   timeout?: number,
 ): Promise<any>;
 
@@ -30,7 +25,9 @@ export async function sendMessageRequest(
     }, timeout);
 
     port1.onmessage = ({ data }) => {
-      clearTimeout(timer);
+      if (timer) {
+        clearTimeout(timer);
+      }
 
       // avoid high transient memory usage, see
       // https://html.spec.whatwg.org/multipage/comms.html#ports-and-garbage-collection
@@ -38,7 +35,7 @@ export async function sendMessageRequest(
       port2.close();
 
       if (typeof data === 'object') {
-        data.request = message.action;
+        data.request = message;
       }
 
       if (data && data.error) {

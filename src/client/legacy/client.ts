@@ -1,13 +1,19 @@
 import {
-  MockerClient,
+  IMockerClient,
 } from '../client';
+
+import {
+  debug,
+} from '../../utils/';
 
 import { ClientStorageService } from '../storage';
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
 
-export class LegacyClient implements MockerClient {
-  readonly legacy = true;
+const registrations = {};
+
+export class LegacyClient implements IMockerClient {
+  readonly isLegacy = true;
   readonly ready: Promise<null>;
   readonly storage = new ClientStorageService(true);
 
@@ -17,6 +23,13 @@ export class LegacyClient implements MockerClient {
   constructor(scriptURL: string) {
     patchXHR();
     patchFetch();
+
+    // avoid duplications
+    if (registrations.hasOwnProperty(scriptURL)) {
+      return registrations[scriptURL];
+    }
+
+    registrations[scriptURL] = this;
 
     const script = document.createElement('script');
     script.src = scriptURL;
@@ -42,7 +55,9 @@ export class LegacyClient implements MockerClient {
     return Promise.resolve(this._registration);
   }
 
-  async unregister(): Promise<never> {
-    throw new Error('mocker in legacy mode can\'t be unregistered');
+  async unregister(): Promise<boolean> {
+    debug.scope('legacy').warn('mocker in legacy mode can\'t be unregistered');
+
+    return false;
   }
 }

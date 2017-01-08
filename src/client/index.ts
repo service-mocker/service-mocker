@@ -1,14 +1,20 @@
 import {
-  MockerClient,
+  IMockerClient,
 } from './client';
 
 import { ModernClient } from './modern/client';
 import { LegacyClient } from './legacy/client';
 
+export { IMockerClient };
+
 export function createClient(
   scriptURL: string,
-  options?: ServiceWorkerRegisterOptions,
-): MockerClient {
+  forceLegacy?: boolean,
+): IMockerClient {
+  if (forceLegacy) {
+    return new LegacyClient(scriptURL);
+  }
+
   const useLegacy = isLegacyMode();
 
   if (useLegacy) {
@@ -16,7 +22,7 @@ export function createClient(
     return new LegacyClient(scriptURL);
   }
 
-  return new ModernClient(scriptURL, options);
+  return new ModernClient(scriptURL);
 }
 
 function isLegacyMode(): boolean {

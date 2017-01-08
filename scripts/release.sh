@@ -6,19 +6,25 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+# dist directory
+DIST_DIR="dist"
+
+if [[ `git rev-parse --abbrev-ref HEAD` != "master" ]]; then
+  echo "${RED}Please run release script in master branch.${NC}"
+  exit 1
+fi
+
 if [[ -n `git status -s` ]]; then
   echo "${RED}Please commit local changes before releasing.${NC}"
   exit 1
 fi
 
-DIST_DIR="dist"
-
 echo "${GREEN}Which type of release is this?${NC}"
 echo
 TYPES=(
-  "patch - bug fixes and other minor changes"
-  "minor - new features which don't break existing features"
-  "major - changes which break backwards compatibility"
+  "patch - bug fixes and other minor changes (a.b.0 -> a.b.1)"
+  "minor - new features which don't break existing features (a.0.c -> a.1.0)"
+  "major - changes which break backwards compatibility (0.b.c -> 1.0.0)"
   "others"
 )
 
@@ -47,23 +53,22 @@ if [[ -z $VERSION ]]; then
   VERSION=$REPLY
 fi
 
-read -r -p "Releaing version:$VERSION - are you sure? (y/N) "
+read -r -p "Releasing version:$VERSION - are you sure? (y/N) "
 
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo "Releasing version $VERSION"
   npm run lint
-  npm run test
+  npm run test:sauce
   npm run clean
   npm run compile
 
-  NPM_VERSION=`npm version $VERSION --message "Release $VERSION"`
+  NPM_VERSION=`npm version $VERSION`
 
   echo "Copying files to $DIST_DIR"
   mkdir -p $DIST_DIR
   cp -r src $DIST_DIR
   cp -r lib $DIST_DIR
   cp package.json $DIST_DIR
-  cp typings.json $DIST_DIR
   cp LICENSE $DIST_DIR
 
   echo "Creating entry points"
@@ -71,17 +76,17 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   # Alignment!
   echo 'exports.createClient = require("./client").createClient;'      >  index.js
   echo 'exports.createServer = require("./server").createServer;'      >> index.js
-  echo 'export { createClient } from "./client";'                      >  index.d.ts
+  echo 'export { createClient, IMockerClient } from "./client";'       >  index.d.ts
   echo 'export { createServer } from "./server";'                      >> index.d.ts
 
   echo 'exports.createClient = require("./lib/client/").createClient;' > client.js
-  echo 'export { createClient } from "./lib/client/";'                 > client.d.ts
+  echo 'export { createClient, IMockerClient } from "./lib/client/";'  > client.d.ts
 
   echo 'exports.createServer = require("./lib/server/").createServer;' > server.js
   echo 'export { createServer } from "./lib/server/";'                 > server.d.ts
 
   echo "Publishing $NPM_VERSION"
+  git push
+  git push --tags
   npm publish
-  cd ..
-  git push origin refs/tags/v$VERSION
 fi

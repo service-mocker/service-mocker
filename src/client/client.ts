@@ -4,10 +4,10 @@ export type MockerController = ServiceWorker | null /* legacy mode */;
 
 export type MockerRegistration = ServiceWorkerRegistration | null;
 
-export interface MockerClient {
+export interface IMockerClient {
   controller: MockerController;
 
-  readonly legacy: boolean;
+  readonly isLegacy: boolean;
   readonly storage: ClientStorageService;
   readonly ready: Promise<MockerRegistration>;
 

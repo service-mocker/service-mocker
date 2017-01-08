@@ -3,7 +3,7 @@ import {
 } from '../../utils/';
 
 import {
-  MockerClient,
+  IMockerClient,
 } from '../client';
 
 import { register } from './register';
@@ -12,22 +12,21 @@ import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
 import { ClientStorageService } from '../storage';
 
-export class ModernClient implements MockerClient {
-  readonly legacy = false;
+export class ModernClient implements IMockerClient {
+  readonly isLegacy = false;
   readonly storage = new ClientStorageService();
   readonly ready: Promise<ServiceWorkerRegistration>;
 
-  controller: ServiceWorker | null;
+  controller: ServiceWorker;
 
-  constructor(scriptURL: string, options?: ServiceWorkerRegisterOptions) {
+  constructor(scriptURL: string) {
     this.ready = new Promise(resolve => {
-      this._init(scriptURL, options)
+      this._init(scriptURL)
         .then(registration => {
           this.controller = registration.active;
           resolve(registration);
         })
         .catch(error => {
-          this.controller = null;
           debug.error('mocker initialization failed: ', error);
         });
     });
@@ -48,14 +47,14 @@ export class ModernClient implements MockerClient {
 
     if (!result) {
       // tslint:disable-next-line max-line-length
-      throw new Error('this service worker has already been unregistered, you may need to close all relative tabs to remove it');
+      debug.warn('this service worker has already been unregistered, you may need to close all relative tabs to remove it');
     }
 
     return result;
   }
 
-  private async _init(scriptURL: string, options?: ServiceWorkerRegisterOptions): Promise<ServiceWorkerRegistration> {
-    const registration = await register(scriptURL, options);
+  private async _init(scriptURL: string): Promise<ServiceWorkerRegistration> {
+    const registration = await register(scriptURL);
 
     this._autoSyncClient();
     this._handleUnload();

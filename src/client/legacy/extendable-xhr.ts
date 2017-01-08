@@ -1,6 +1,5 @@
-/*!
+/**
  * Make `XMLHttpRequest` extendable
- * @author Dolphin Wood
  *
  * Notes:
  * - Main concepts:
@@ -41,12 +40,15 @@ export class ExtandableXHR {
 }
 
 // copy all static properties
-Object.keys(NativeXHR).forEach(prop => {
-  Object.defineProperty(
-    ExtandableXHR, prop,
-    Object.getOwnPropertyDescriptor(NativeXHR, prop),
-  );
-});
+// safari 9- will include a "prototype" property
+try {
+  Object.keys(NativeXHR).forEach(prop => {
+    Object.defineProperty(
+      ExtandableXHR, prop,
+      Object.getOwnPropertyDescriptor(NativeXHR, prop),
+    );
+  });
+} catch (e) {}
 
 // delegate all unset properties to `nativeXHR`
 (function mapPrototypeMethods(
@@ -58,26 +60,21 @@ Object.keys(NativeXHR).forEach(prop => {
     return;
   }
 
-  Object.keys(source).forEach(name => {
-    if (target.hasOwnProperty(name)) {
+  Object.keys(source).forEach(prop => {
+    if (target.hasOwnProperty(prop)) {
       return;
     }
 
-    const descriptor = Object.getOwnPropertyDescriptor(source, name);
+    const descriptor = Object.getOwnPropertyDescriptor(source, prop);
 
-    if (descriptor.set || descriptor.get) {
-      // getter
-      const {
-        get: nativeGet,
-        set: nativeSet,
-      } = descriptor;
-
-      descriptor.get = nativeGet && function get() {
-        return nativeGet.call(this._nativeXHR);
+    if (descriptor.get || descriptor.set) {
+      descriptor.get = function getNative() {
+        return this._nativeXHR[prop];
       };
 
-      descriptor.set = nativeSet && function set(value) {
-        return nativeSet.call(this._nativeXHR, value);
+      descriptor.set = function setNative(value) {
+        this._nativeXHR[prop] = value;
+        return value;
       };
     } else if (typeof descriptor.value === 'function') {
       // method
@@ -87,9 +84,27 @@ Object.keys(NativeXHR).forEach(prop => {
       };
     }
 
-    Object.defineProperty(target, name, descriptor);
+    Object.defineProperty(target, prop, descriptor);
   });
 
   // recursively look-up
   mapPrototypeMethods(Object.getPrototypeOf(source), target);
 })();
+
+// safari 9- only have methods on `XMLHttpRequest.prototype`
+const xhr = new NativeXHR();
+for (let prop in xhr) {
+  if (!ExtandableXHR.prototype.hasOwnProperty(prop)) {
+    Object.defineProperty(ExtandableXHR.prototype, prop, {
+      get() {
+        return this._nativeXHR[prop];
+      },
+      set(value: any) {
+        this._nativeXHR[prop] = value;
+        return value;
+      },
+      enumerable: true,
+      configurable: true,
+    });
+  }
+}

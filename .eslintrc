@@ -1,0 +1,13 @@
+{
+  "extends": "standard",
+  "env": {
+    "node": true,
+    "browser": true
+  },
+  "rules": {
+    "indent": [2, 2],
+    "semi": [2, "always"],
+    "comma-dangle": [2, "always-multiline"],
+    "space-before-function-paren": [2, { "anonymous": "always", "named": "never" }]
+  }
+}

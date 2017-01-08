@@ -9,13 +9,30 @@ import {
 
 const serverLog = debug.scope('server');
 
+// todo: createServer & IMockerServer
+export function createServer(): Server {
+  return new Server();
+}
+
 export class Server {
+  readonly isLegacy = self === self.window;
+
   private _running = false;
   private _clients: any = {
     [LEGACY_CLIENT_ID]: true,
   };
 
   constructor() {
+    const global: any = self;
+
+    // Server should always be SINGLETON!!!
+    // Or chrome will crash
+    if (global._mockerServer) {
+      return global._mockerServer;
+    }
+
+    global._mockerServer = this;
+
     this._start();
   }
 
@@ -61,10 +78,6 @@ export class Server {
     return fetch(input, init);
   }
 
-  private _isLegacyMode() {
-    return self === self.window;
-  }
-
   private _fetchWithWarning(input: RequestInfo, init?: RequestInit): Promise<Response> {
     serverLog.warn('invoking `fetch` directly is considered potentially dangerous, please use `server#fetch` instead');
 
@@ -72,7 +85,7 @@ export class Server {
   }
 
   private _attachFetchWarning() {
-    if (!this._isLegacyMode()) {
+    if (!this.isLegacy) {
       return;
     }
 
@@ -86,7 +99,7 @@ export class Server {
   }
 
   private _detachFetchWarning() {
-    if (!this._isLegacyMode()) {
+    if (!this.isLegacy) {
       return;
     }
 
@@ -128,13 +141,13 @@ export class Server {
       return;
     }
 
-    self.addEventListener('install', evt => {
+    self.addEventListener('install', (evt: InstallEvent) => {
       console.info('installed');
 
       evt.waitUntil(self.skipWaiting());
     });
 
-    self.addEventListener('activate', evt => {
+    self.addEventListener('activate', (evt: ExtendableEvent) => {
       console.info('activated');
 
       evt.waitUntil(self.clients.claim());
@@ -142,14 +155,14 @@ export class Server {
   }
 
   private _handleMessage() {
-    self.addEventListener('message', evt => {
+    self.addEventListener('message', (evt: ExtendableMessageEvent) => {
       const {
         data,
         source,
         ports,
       } = evt;
 
-      console.log(evt);
+      console.log(evt, data);
 
       if (!data) {
         return;
