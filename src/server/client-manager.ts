@@ -15,7 +15,9 @@ export const clientManager = {
   },
 
   add(id: string): void {
-    clients[id] = true;
+    if (id) {
+      clients[id] = true;
+    }
   },
 
   delete(id: string): void {
@@ -41,11 +43,14 @@ export const clientManager = {
       }
 
       const port = ports[0];
-      const clientId = source.id;
+
+      // `evt.source` is null in old webkit, see:
+      // https://bugs.chromium.org/p/chromium/issues/detail?id=403693
+      const clientID = source ? source.id : await this._inferClientID();
 
       switch (data.action) {
         case ACTION.PING:
-          this.add(clientId);
+          this.add(clientID);
           return port.postMessage({
             action: ACTION.PONG,
           });
@@ -57,8 +62,26 @@ export const clientManager = {
           });
 
         case ACTION.DISCONNECT:
-          return this.delete(clientId);
+          return this.delete(clientID);
       }
     });
+  },
+
+  // infer the possible client ID
+  async _inferClientID(): Promise<any> {
+    // legacy mode
+    if (!self.clients) {
+      return;
+    }
+
+    const clients = await self.clients.matchAll({
+      includeUncontrolled: true,
+    });
+
+    for (let { id } of clients) {
+      if (!this.has(id)) {
+        return id;
+      }
+    }
   },
 };
