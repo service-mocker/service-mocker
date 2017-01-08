@@ -11,8 +11,8 @@ import {
 
 import { clientManager } from './client-manager';
 
-// RFC2616 HTTP request methods, see
-// https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
+// bacic HTTP request methods in fetch standard, see
+// https://fetch.spec.whatwg.org/#concept-method
 const methods = [
   'get',
   'post',
@@ -20,8 +20,6 @@ const methods = [
   'head',
   'delete',
   'options',
-  'trace',
-  'connect',
 ];
 
 export type RoutePath = string | RegExp;
@@ -40,8 +38,6 @@ export interface IMockerRouter {
   head: IRouterMatcher<this>;
   delete: IRouterMatcher<this>;
   options: IRouterMatcher<this>;
-  trace: IRouterMatcher<this>;
-  connect: IRouterMatcher<this>;
 }
 
 type RouteRule = {
