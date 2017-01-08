@@ -60,11 +60,14 @@ export class MockerResponse implements IMockerResponse {
     this.end();
   }
 
+
   send(body?: any): void {
+    const contentType = this.headers.get('contentType');
+
     switch (typeof body) {
       case 'string':
         this._body = body;
-        if (!this.headers.get('content-type')) {
+        if (!contentType) {
           this.type('html');
         }
         return this.end();
@@ -77,14 +80,19 @@ export class MockerResponse implements IMockerResponse {
           this._body = body;
           return this.end();
         } else if (body instanceof ArrayBuffer) {
+          if (!contentType) {
+            this.type('bin');
+          }
           this._body = body;
-          this.type('bin');
           return this.end();
         }
 
         return this.json(body);
 
       default:
+        if (!contentType) {
+          this.type('text');
+        }
         return this.end();
     }
   }
