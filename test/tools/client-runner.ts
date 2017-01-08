@@ -88,7 +88,11 @@ function addCase(test) {
   runner.toString = () => test.body;
 
   // register to mocha
-  it(test.title, runner);
+  if (test.pending) {
+    it.skip(test.title, runner);
+  } else {
+    it(test.title, runner);
+  }
 }
 
 async function sendRequest(event: MessageEvent) {
