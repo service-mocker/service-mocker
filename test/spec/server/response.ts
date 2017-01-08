@@ -103,6 +103,19 @@ export function responseRunner() {
     });
 
     describe('.send()', () => {
+      it('should end up empty response', async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.send();
+        });
+
+        const { headers, text } = await sendRequest(path);
+
+        expect(headers.get('content-type')).to.equal(mime.lookup('text'));
+        expect(text).to.be.empty;
+      });
+
       it(`should send a response with contentType "${mime.lookup('html')}"`, async () => {
         const path = uniquePath();
 
