@@ -11,7 +11,7 @@ import {
 
 import { clientManager } from './client-manager';
 
-export type RoutePath = string;
+export type RoutePath = string | RegExp;
 export type RouteCallback = (request: MockerRequest, response: MockerResponse) => void;
 
 export interface IMockerRouter {
