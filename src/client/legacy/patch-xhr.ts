@@ -91,11 +91,15 @@ class MockerXHR extends ExtandableXHR {
 
     const results: Array<string> = [];
 
-    this._requestHeaders.forEach((value, name) => {
-      results.push(`${name}: ${value}`);
+    // https://xhr.spec.whatwg.org/#dom-xmlhttprequest-getallresponseheaders
+    const seperator = String.fromCharCode(0x3A) + String.fromCharCode(0x20);
+    const linebreaker = String.fromCharCode(0x0D) + String.fromCharCode(0x0A);
+
+    this._responseHeaders.forEach((value, name) => {
+      results.push([name, value].join(seperator));
     });
 
-    return results.join('\n');
+    return results.join(linebreaker);
   }
 
   overrideMimeType(mime: string): void {
