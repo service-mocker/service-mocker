@@ -60,9 +60,8 @@ export class MockerResponse implements IMockerResponse {
     this.end();
   }
 
-
   send(body?: any): void {
-    const contentType = this.headers.get('contentType');
+    const contentType = this.headers.get('content-type');
 
     switch (typeof body) {
       case 'string':
