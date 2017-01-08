@@ -32,13 +32,13 @@ async function listen(evt: MessageEvent): Promise<void> {
 
     switch (data.action) {
       case ACTION.GET_STORAGE:
-        result = await store.get(data.key);
+        result = await store.getItem(data.key);
         break;
       case ACTION.SET_STORAGE:
-        result = await store.set(data.key, data.value);
+        result = await store.setItem(data.key, data.value);
         break;
       case ACTION.REMOVE_STORAGE:
-        result = await store.remove(data.key);
+        result = await store.removeItem(data.key);
         break;
       case ACTION.CLEAR_STORAGE:
         result = await store.clear();
@@ -49,6 +49,11 @@ async function listen(evt: MessageEvent): Promise<void> {
 
     ports[0].postMessage({ result });
   } catch (e) {
-    ports[0].postMessage({ error: e });
+    ports[0].postMessage({
+      error: {
+        message: e.message,
+        stack: e.stack,
+      },
+    });
   }
 }
