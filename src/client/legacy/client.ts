@@ -4,7 +4,6 @@ import {
 
 import {
   debug,
-  Defer,
   sendMessageRequest,
 } from '../../utils/';
 
@@ -29,33 +28,30 @@ export class LegacyClient implements IMockerClient {
     patchXHR();
     patchFetch();
 
-    const deferred = new Defer();
+    let promise: Promise<any>;
 
     // avoid duplications
-    if (registrations.hasOwnProperty(scriptURL)) {
-      deferred.resolve();
+    if (registrations[scriptURL]) {
+      promise = registrations[scriptURL];
     } else {
-      const script = document.createElement('script');
-      script.src = scriptURL;
-      script.onload = () => {
-        deferred.resolve();
-      };
-      script.onerror = (error) => {
-        deferred.reject(error);
-      };
+      registrations[scriptURL] =
+      promise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = scriptURL;
+        script.onload = resolve;
+        script.onerror = reject;
 
-      document.body.appendChild(script);
+        document.body.appendChild(script);
+      });
     }
 
-    this.ready = deferred.promise
-      .then(() => {
+    this.ready = promise.then(() => {
         return sendMessageRequest(window, {
           action: ACTION.PING,
         });
       })
       .then(() => {
         clientLog.info('connection established');
-        registrations[scriptURL] = true;
         return this._registration;
       })
       .catch(error => {
