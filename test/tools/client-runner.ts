@@ -63,7 +63,7 @@ function registerTest(suites?) {
 function addCase(test) {
   const promise = new Promise((resolve, reject) => {
     navigator.serviceWorker.addEventListener('message', function handler({ data }) {
-      if (!data || data.title !== test.title) {
+      if (!data || data.composedTitle !== test.composedTitle) {
         return;
       }
 
@@ -104,9 +104,21 @@ async function sendRequest(event: MessageEvent) {
   if (data && data.request === 'FETCH') {
     await client.ready;
     const res = await fetch(data.url, data.init);
+    const headers: any = {};
+
+    res.headers.forEach((value, name) => {
+      if (headers[name]) {
+        headers[name] += `, ${value}`;
+      } else {
+        headers[name] = value;
+      }
+    });
 
     ports[0].postMessage({
-      result: await res.text(),
+      headers,
+      text: await res.text(),
+      status: res.status,
+      statusText: res.statusText,
     });
   }
 }

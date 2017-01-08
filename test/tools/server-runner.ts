@@ -21,7 +21,7 @@
 
 type Result = {
   error?: Error;
-  title: string;
+  composedTitle: string;
 };
 
 const IS_SW = self !== self.window;
@@ -76,7 +76,7 @@ function swReporter(runner) {
   runner
     .on('pass', (test) => {
       const result = {
-        title: test.title,
+        composedTitle: `${test.parent.title}-${test.title}`,
       };
 
       // as long as service worker will not be reloaded when refreshing page
@@ -107,7 +107,7 @@ function swReporter(runner) {
 
       const result = {
         error: fault,
-        title: test.title,
+        composedTitle: `${test.parent.title}-${test.title}`,
       };
 
       resultCache.push(result);
@@ -119,8 +119,11 @@ function swReporter(runner) {
 function getAllSuites(parent = (mocha as any).suite.suites) {
   return parent.map(({ suites, tests, title }) => {
     const allSuites = getAllSuites(suites);
-    const allTests = tests.map(({ body, title, pending }) => {
-      return { body, title, pending };
+    const allTests = tests.map(({ body, title, pending, parent }) => {
+      return {
+        body, title, pending,
+        composedTitle: `${parent.title}-${title}`,
+      };
     });
 
     return {
