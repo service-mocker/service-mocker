@@ -82,8 +82,18 @@ export class MockerResponse implements IMockerResponse {
   end(): void {
     const { request } = this._event;
 
+    let responseBody = this._body;
+
+    // leave body empty for 204 requests, see:
+    // https://bugs.chromium.org/p/chromium/issues/detail?id=524500
+    if (this._statusCode === 204) {
+      responseBody = undefined;
+    }
+
     // skip body for HEAD requests
-    const responseBody = request.method === 'HEAD' ? undefined : this._body;
+    if (request.method === 'HEAD') {
+      responseBody = undefined;
+    }
 
     const responseInit: ResponseInit = {
       headers: this.headers,
