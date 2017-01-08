@@ -65,15 +65,18 @@ export class MockerResponse implements IMockerResponse {
           return this.end();
         }
         return this.json(body);
+
+      default:
+        return this.end();
     }
   }
 
   sendStatus(code: number): void {
     this.type('text');
     this._statusCode = code;
-    this._body = HttpStatus[code] || JSON.stringify(code);
+    const body = this._getStatusText();
 
-    this.end();
+    this.send(body);
   }
 
   end(): void {
@@ -82,18 +85,10 @@ export class MockerResponse implements IMockerResponse {
     // skip body for HEAD requests
     const responseBody = request.method === 'HEAD' ? undefined : this._body;
 
-    let statusText: string;
-
-    try {
-      statusText = HttpStatus.getStatusText(this._statusCode);
-    } catch (e) {
-      statusText = 'OK';
-    }
-
     const responseInit: ResponseInit = {
-      statusText,
       headers: this.headers,
       status: this._statusCode,
+      statusText: this._getStatusText(),
     };
 
     const response = new Response(responseBody, responseInit);
@@ -133,6 +128,18 @@ export class MockerResponse implements IMockerResponse {
 
       return nativeFetch(input, options);
     });
+  }
+
+  private _getStatusText() {
+    let statusText: string;
+
+    try {
+      statusText = HttpStatus.getStatusText(this._statusCode);
+    } catch (e) {
+      statusText = JSON.stringify(this._statusCode);
+    }
+
+    return statusText;
   }
 }
 
