@@ -31,10 +31,19 @@
 /**
  * Make un-extendable native classes extendable
  * @param Native Native class
- * @param ...inits Parameters used for creating a temporary instance
  */
-export function extensify<T>(Native: T, ...inits): T;
-export function extensify(Native, ...inits) {
+export function extensify<T>(Native: T): T;
+export function extensify(Native) {
+  class Extandable {
+    protected _native;
+
+    constructor(...args) {
+      this._native = initNative(...args);
+
+      checkLack(this._native);
+    }
+  }
+
   function initNative(...args) {
     if (typeof Native === 'function') {
       return new Native(...args);
@@ -44,11 +53,28 @@ export function extensify(Native, ...inits) {
     return new Native();
   }
 
-  class Extandable {
-    protected _native;
+  let checked = false;
+  function checkLack(instance) {
+    if (checked) {
+      return;
+    }
 
-    constructor(...args) {
-      this._native = initNative(...args);
+    // safari 9- only have methods on `XMLHttpRequest.prototype`
+    // so we need copy properties from an instance
+    for (let prop in instance) {
+      if (!Extandable.prototype.hasOwnProperty(prop)) {
+        Object.defineProperty(Extandable.prototype, prop, {
+          get() {
+            return this._native[prop];
+          },
+          set(value: any) {
+            this._native[prop] = value;
+            return value;
+          },
+          enumerable: true,
+          configurable: true,
+        });
+      }
     }
   }
 
@@ -103,24 +129,6 @@ export function extensify(Native, ...inits) {
     // recursively look-up
     mapPrototypeMethods(Object.getPrototypeOf(source), target);
   })();
-
-  // safari 9- only have methods on `XMLHttpRequest.prototype`
-  const native = initNative(...inits);
-  for (let prop in native) {
-    if (!Extandable.prototype.hasOwnProperty(prop)) {
-      Object.defineProperty(Extandable.prototype, prop, {
-        get() {
-          return this._native[prop];
-        },
-        set(value: any) {
-          this._native[prop] = value;
-          return value;
-        },
-        enumerable: true,
-        configurable: true,
-      });
-    }
-  }
 
   return Extandable;
 }
