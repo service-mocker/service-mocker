@@ -103,52 +103,34 @@ export class MockerRouter implements IMockerRouter {
       request,
     } = event;
 
-    const url = new URL(request.url, location.href);
+    const { pathname } = new URL(request.url, location.href);
 
     for (let rule of this._rules) {
       const {
         method,
         regex,
+        keys,
+        callback,
       } = rule;
 
-      const matched = regex.test(url.pathname);
+      const matches = regex.exec(pathname);
 
-      if (matched && (request.method === method || rule.isAll)) {
-        return this._dispatch(event, rule);
+      if (matches && (request.method === method || rule.isAll)) {
+        const params: RequestParameter = {};
+
+        // skip full string at [0]
+        const max = matches.length;
+        for (let i = 1; i < max; i++) {
+          const { name } = keys[i - 1];
+          params[name] = matches[i];
+        }
+
+        const request = new MockerRequest(event, params);
+        const response = new MockerResponse(event);
+
+        return callback.call(event, request, response);
       }
     }
-  }
-
-  private _dispatch(event: FetchEvent, rule: RouteRule): void {
-    const { callback } = rule;
-
-    const params = this._parseParams(event.request.url, rule);
-
-    const request = new MockerRequest(event, params);
-    const response = new MockerResponse(event);
-
-    callback.call(event, request, response);
-  }
-
-  private _parseParams(requestURL: string, rule: RouteRule): RequestParameter {
-    const {
-      regex,
-      keys,
-    } = rule;
-
-    const params: RequestParameter = {};
-    const matches = regex.exec(requestURL);
-
-    if (matches) {
-      // skip full string at [0]
-      const max = matches.length;
-      for (let i = 1; i < max; i++) {
-        const { name } = keys[i];
-        params[name] = matches[i];
-      }
-    }
-
-    return params;
   }
 }
 
