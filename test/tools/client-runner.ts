@@ -2,7 +2,7 @@
 import { AssertionError } from 'chai';
 import 'source-map-support/browser-source-map-support';
 
-import { sendMessageRequest } from '../../src/utils/';
+import { sendMessageRequest } from 'service-mocker/utils/';
 import { createClient } from 'service-mocker/client';
 
 (self as any).sourceMapSupport.install();
@@ -40,7 +40,7 @@ export async function clientRunner() {
 
   return sendMessageRequest(target, {
     request: 'MOCHA_RESULTS',
-  }, 0);
+  }, Infinity);
 }
 
 function registerTest(suites?) {
