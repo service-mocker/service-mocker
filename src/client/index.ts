@@ -9,11 +9,15 @@ import { LegacyClient } from './legacy/client';
 
 export { IMockerClient };
 
+export type MockerClientOptions = {
+  forceLegacy?: boolean,
+};
+
 export function createClient(
   scriptURL: string,
-  forceLegacy?: boolean,
+  options: MockerClientOptions = {},
 ): IMockerClient {
-  if (forceLegacy) {
+  if (options.forceLegacy) {
     return new LegacyClient(scriptURL);
   }
 
