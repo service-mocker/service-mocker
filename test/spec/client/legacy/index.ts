@@ -1,4 +1,4 @@
 // export shared tests
 export * from '../common/';
 
-export * from './xhr.spec';
+export * from './xhr';

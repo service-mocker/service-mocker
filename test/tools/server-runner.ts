@@ -28,6 +28,8 @@ const IS_SW = self !== self.window;
 
 const resultCache: Array<Result> = [];
 
+const connectedClients: any = {};
+
 // patch mocha env to service worker context
 if (IS_SW) {
   // avoid polluting client env
@@ -43,10 +45,6 @@ if (IS_SW) {
 }
 
 export function serverRunner() {
-  if (IS_SW) {
-    mocha.run();
-  }
-
   self.addEventListener('message', (evt: ExtendableMessageEvent) => {
     const {
       data,
@@ -58,8 +56,17 @@ export function serverRunner() {
       return;
     }
 
+    const clientID = source.id;
+
     switch (data.request) {
       case 'MOCHA_TASKS':
+        if (IS_SW && !connectedClients.hasOwnProperty(clientID)) {
+          // clear cache & re-run on every first connection
+          connectedClients[clientID] = true;
+          resultCache.length = 0;
+          mocha.run();
+        }
+
         return ports[0].postMessage({
           // only send suites in modern mode
           suites: IS_SW ? getAllSuites() : null,
@@ -67,7 +74,7 @@ export function serverRunner() {
 
       case 'MOCHA_RESULTS':
         ports[0].postMessage('DONE');
-        return reportResults(source.id);
+        return reportResults(clientID);
     }
   });
 }
@@ -132,7 +139,7 @@ function getAllSuites(parent = (mocha as any).suite.suites) {
 }
 
 async function reportResults(currentClientId: string) {
-  if (!resultCache.length) {
+  if (!resultCache.length || !currentClientId) {
     return;
   }
 
