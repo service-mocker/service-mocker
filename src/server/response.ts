@@ -82,10 +82,18 @@ export class MockerResponse implements IMockerResponse {
     // skip body for HEAD requests
     const responseBody = request.method === 'HEAD' ? undefined : this._body;
 
+    let statusText: string;
+
+    try {
+      statusText = HttpStatus.getStatusText(this._statusCode);
+    } catch (e) {
+      statusText = 'OK';
+    }
+
     const responseInit: ResponseInit = {
+      statusText,
       headers: this.headers,
       status: this._statusCode,
-      statusText: HttpStatus[this._statusCode] || 'OK',
     };
 
     const response = new Response(responseBody, responseInit);
