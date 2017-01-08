@@ -16,19 +16,26 @@ if (supportSW()) {
     Object.keys(modernTests).forEach((name) => {
       modernTests[name].call(this);
     });
+
+    // to many registrations may case chrome crash
+    // after(async () => {
+    //   try {
+    //     const reg = await navigator.serviceWorker.getRegistration();
+
+    //     await reg.unregister();
+    //   } catch (e) {}
+    // });
   });
 } else {
   console.warn('modern client tests are ignored because of the browser compatibility');
 }
 
 describe('Legacy Client Tests', function() {
-  before(async () => {
-    try {
-      const reg = await navigator.serviceWorker.getRegistration();
-      await reg.unregister();
-    } catch (e) {}
+  before(() => {
+    const client = createClient('server.js', {
+      forceLegacy: true,
+    });
 
-    const client = createClient('server.js', true);
     return client.ready;
   });
 

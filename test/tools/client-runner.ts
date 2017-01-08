@@ -102,24 +102,28 @@ async function sendRequest(event: MessageEvent) {
   } = event;
 
   if (data && data.request === 'FETCH') {
-    await client.ready;
-    const res = await fetch(data.url, data.init);
-    const headers: any = {};
+    try {
+      await client.ready;
+      const res = await fetch(data.url, data.init);
+      const headers: any = {};
 
-    res.headers.forEach((value, name) => {
-      if (headers[name]) {
-        headers[name] += `, ${value}`;
-      } else {
-        headers[name] = value;
-      }
-    });
+      res.headers.forEach((value, name) => {
+        if (headers[name]) {
+          headers[name] += `, ${value}`;
+        } else {
+          headers[name] = value;
+        }
+      });
 
-    ports[0].postMessage({
-      headers,
-      text: await res.text(),
-      status: res.status,
-      statusText: res.statusText,
-    });
+      ports[0].postMessage({
+        headers,
+        text: await res.text(),
+        status: res.status,
+        statusText: res.statusText,
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 

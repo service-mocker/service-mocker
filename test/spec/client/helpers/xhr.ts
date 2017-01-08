@@ -1,12 +1,10 @@
-export function XHRtoPromise(path: string, options?: any): Promise<XMLHttpRequest> {
+export function XHRtoPromise(path: string, preprocessor?: (xhr: XMLHttpRequest) => void): Promise<XMLHttpRequest> {
   const xhr = new XMLHttpRequest();
 
   xhr.open('GET', path, true);
 
-  if (options) {
-    Object.keys(options).forEach(prop => {
-      xhr[prop] = options[prop];
-    });
+  if (preprocessor) {
+    preprocessor(xhr);
   }
 
   xhr.send();
