@@ -4,7 +4,7 @@ import {
   extensify,
 } from '../utils/';
 
-export type Parameters = {
+export type RequestParameter = {
   [key: string]: any,
 };
 
@@ -19,17 +19,17 @@ export const ExtandableRequest = (fetch as any).polyfill ? Request : extensify(R
 export interface IMockerRequest extends Request {
   readonly path: string;
   readonly query: Query;
-  readonly params: Parameters;
+  readonly params: RequestParameter;
 }
 
 export class MockerRequest extends ExtandableRequest implements IMockerRequest {
   readonly path: string;
   readonly query: Query;
-  readonly params: Parameters;
+  readonly params: RequestParameter;
 
   private _event: FetchEvent;
 
-  constructor(event: FetchEvent, params: Parameters) {
+  constructor(event: FetchEvent, params: RequestParameter) {
     const { request } = event;
 
     super(request);

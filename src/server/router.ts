@@ -1,7 +1,7 @@
 import * as pathToRegExp from 'path-to-regexp';
 
 import {
-  Parameters,
+  RequestParameter,
   MockerRequest,
 } from './request';
 
@@ -130,13 +130,13 @@ export class MockerRouter implements IMockerRouter {
     callback.call(event, request, response);
   }
 
-  private _parseParams(requestURL: string, rule: RouteRule): Parameters {
+  private _parseParams(requestURL: string, rule: RouteRule): RequestParameter {
     const {
       regex,
       keys,
     } = rule;
 
-    const params: Parameters = {};
+    const params: RequestParameter = {};
     const matches = regex.exec(requestURL);
 
     if (matches) {
