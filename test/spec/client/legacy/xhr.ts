@@ -128,6 +128,15 @@ export function XHRRunner () {
 
         expect(xhr.response).to.be.an('object');
       });
+
+      it('should return type text', async function() {
+        const xhr = await XHRtoPromise('/api', (xhr) => {
+          xhr.responseType = 'text';
+        });
+
+        expect(xhr.response).to.be.a('string');
+      });
+
     });
 
     describe('.setRequestHeader()', () => {
