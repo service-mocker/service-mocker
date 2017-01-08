@@ -63,7 +63,12 @@ export class MockerResponse implements IMockerResponse {
           // blob's content type will be set by `Response`
           this._body = body;
           return this.end();
+        } else if (body instanceof ArrayBuffer) {
+          this._body = body;
+          this.type('bin');
+          return this.end();
         }
+
         return this.json(body);
 
       default:
