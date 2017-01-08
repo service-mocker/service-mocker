@@ -11,30 +11,50 @@ import {
 
 import { clientManager } from './client-manager';
 
+// RFC2616 HTTP request methods, see
+// https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
+const methods = [
+  'get',
+  'post',
+  'put',
+  'head',
+  'delete',
+  'options',
+  'trace',
+  'connect',
+];
+
 export type RoutePath = string | RegExp;
 export type RouteCallback = (request: MockerRequest, response: MockerResponse) => void;
 
-export interface IMockerRouter {
-  all(path: RoutePath, callback: RouteCallback): this;
-  all(path: RoutePath, callback: any): this;
-
-  get(path: RoutePath, callback: RouteCallback): this;
-  get(path: RoutePath, callback: any): this;
-
-  post(path: RoutePath, callback: RouteCallback): this;
-  post(path: RoutePath, callback: any): this;
+export interface IRouterMatcher<T> {
+  (path: RoutePath, callback: RouteCallback): T;
+  (path: RoutePath, callback: any): T;
 }
 
-type RouteMethod = 'GET' | 'POST' | 'ALL';
+export interface IMockerRouter {
+  all: IRouterMatcher<this>;
+  get: IRouterMatcher<this>;
+  post: IRouterMatcher<this>;
+  put: IRouterMatcher<this>;
+  head: IRouterMatcher<this>;
+  delete: IRouterMatcher<this>;
+  options: IRouterMatcher<this>;
+  trace: IRouterMatcher<this>;
+  connect: IRouterMatcher<this>;
+}
 
 type RouteRule = {
-  method: RouteMethod,
+  method: string,
+  isAll: boolean,
   path: RoutePath,
   callback: RouteCallback,
   regex: pathToRegExp.PathRegExp,
   keys: pathToRegExp.Key[],
-  isAll: boolean,
 };
+
+// merge interface to pass type checks
+export interface MockerRouter extends IMockerRouter {}
 
 export class MockerRouter implements IMockerRouter {
   private _rules: Array<RouteRule> = [];
@@ -54,25 +74,7 @@ export class MockerRouter implements IMockerRouter {
     });
   }
 
-  all(path: RoutePath, callback: RouteCallback): this;
-  all(path: RoutePath, callback: any): this;
-  all(path, callback) {
-    return this._add('ALL', path, callback);
-  }
-
-  get(path: RoutePath, callback: RouteCallback): this;
-  get(path: RoutePath, callback: any): this;
-  get(path, callback) {
-    return this._add('GET', path, callback);
-  }
-
-  post(path: RoutePath, callback: RouteCallback): this;
-  post(path: RoutePath, callback: any): this;
-  post(path, callback) {
-    return this._add('POST', path, callback);
-  }
-
-  private _add(method: RouteMethod, path: RoutePath, callback: any): this {
+  protected _add(method: string, path: RoutePath, callback: any): this {
     const regex = pathToRegExp(path);
 
     let cb: RouteCallback;
@@ -80,6 +82,7 @@ export class MockerRouter implements IMockerRouter {
     if (typeof callback === 'function') {
       cb = callback;
     } else {
+      // shorthand method
       cb = (_request, response) => {
         response.send(callback);
       };
@@ -148,3 +151,13 @@ export class MockerRouter implements IMockerRouter {
     return params;
   }
 }
+
+// assign all methods
+[
+  'all',
+  ...methods,
+].forEach(type => {
+  MockerRouter.prototype[type] = function (path, callback) {
+    return this._add(type.toUpperCase(), path, callback);
+  };
+});

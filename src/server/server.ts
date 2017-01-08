@@ -8,7 +8,7 @@ export interface IMockerServer {
   readonly storage: MockerStorage;
 }
 
-export class MockerServer {
+export class MockerServer implements IMockerServer {
   readonly isLegacy = self === self.window;
 
   readonly router = new MockerRouter();
