@@ -16,28 +16,28 @@ export interface IMockerStorage {
 }
 
 export class MockerStorage implements IMockerStorage {
-  async get(key: string): Promise<any> {
+  get(key: string): Promise<any> {
     return this._askClient({
       key,
       action: ACTION.GET_STORAGE,
     });
   }
 
-  async set<T>(key: string, value: T): Promise<T> {
+  set<T>(key: string, value: T): Promise<T> {
     return this._askClient({
       key, value,
       action: ACTION.SET_STORAGE,
     });
   }
 
-  async remove(key: string): Promise<void> {
+  remove(key: string): Promise<void> {
     return this._askClient({
       key,
       action: ACTION.REMOVE_STORAGE,
     });
   }
 
-  async clear(): Promise<void> {
+  clear(): Promise<void> {
     return this._askClient({
       action: ACTION.CLEAR_STORAGE,
     });
