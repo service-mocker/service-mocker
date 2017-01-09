@@ -12,18 +12,10 @@ export function responseRunner() {
 
   describe('Response', () => {
     describe('.timeout', () => {
-      it('should have a default timeout at 10s', async () => {
-        const response = await responseToPromise();
-
-        expect(response).to.have.property('timeout')
-          .and.that.equals(10 * 1e3);
-      });
-
       it('should forward timeout request', async () => {
         const rr = router.timeout(100);
         const logError = console.error.bind(console);
 
-        let timeout: any;
         let errorMsg: any;
 
         console.error = (...args) => {
@@ -32,8 +24,6 @@ export function responseRunner() {
         };
 
         rr.get('/', (_req, res) => {
-          timeout = res.timeout;
-
           setTimeout(() => {
             res.send('failed');
           }, 1000);
@@ -43,7 +33,6 @@ export function responseRunner() {
 
         (rr as any)._rules.length = 0;
 
-        expect(timeout).to.equal(100);
         expect(text).not.to.equal('failed');
         expect(errorMsg).not.to.be.empty;
       });

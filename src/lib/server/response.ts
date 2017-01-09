@@ -22,7 +22,6 @@ const responseLog = debug.scope('response');
 const IS_IE_EDGE = /Edge/.test(navigator.userAgent);
 
 export interface IMockerResponse {
-  readonly timeout: number;
   readonly headers: Headers;
 
   status(code: number): this;
@@ -43,7 +42,7 @@ export class MockerResponse implements IMockerResponse {
   private _statusCode = 200;
   private _deferred = new Defer();
 
-  constructor(private _event: FetchEvent, readonly timeout: number) {
+  constructor(private _event: FetchEvent, timeout: number) {
     const {
       _deferred,
     } = this;
