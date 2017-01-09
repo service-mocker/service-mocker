@@ -207,7 +207,6 @@ export class MockerResponse implements IMockerResponse {
    * @param input Destination URL or a Request object or MockerRequest
    * @param init Fetch request init
    */
-  /* istanbul ignore next: unable to test */
   async forward(input: RequestInfo, init?: RequestInit): Promise<void>;
   async forward(input: MockerRequest, init?: RequestInit): Promise<void>;
   async forward(input: any, init: RequestInit = {}) {
@@ -231,22 +230,19 @@ export class MockerResponse implements IMockerResponse {
       credentials: 'include',
     };
 
-    if (!init.body && request.method !== 'GET' && request.method !== 'HEAD') {
+    if (!init.body && !request.bodyUsed && request.method !== 'GET' && request.method !== 'HEAD') {
       const req = request.clone();
       const contentType = req.headers.get('content-type');
 
-      // request.body maybe consumed
-      try {
-        if (contentType) {
-          if (/form-data/.test(contentType)) {
-            defaultOptions.body = await req.formData();
-          } else {
-            defaultOptions.body = await req.blob();
-          }
+      if (contentType) {
+        if (/form-data/.test(contentType)) {
+          defaultOptions.body = await req.formData();
         } else {
-          defaultOptions.body = await req.text();
+          defaultOptions.body = await req.blob();
         }
-      } catch (e) {}
+      } else {
+        defaultOptions.body = await req.text();
+      }
     }
 
     this._deferred.resolve(nativeFetch(input, Object.assign(defaultOptions, init)));

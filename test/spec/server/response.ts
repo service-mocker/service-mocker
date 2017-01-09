@@ -343,7 +343,7 @@ export function responseRunner() {
         });
 
         const { text } = await sendRequest(path);
-        const realResponse = await sendRequest(('/'));
+        const realResponse = await sendRequest('/');
 
         expect(text).to.equal(realResponse.text);
       });
@@ -356,7 +356,7 @@ export function responseRunner() {
         });
 
         const { text } = await sendRequest(path);
-        const realResponse = await sendRequest(('/'));
+        const realResponse = await sendRequest('/');
 
         expect(text).to.equal(realResponse.text);
       });
@@ -372,7 +372,24 @@ export function responseRunner() {
 
         (rr as any)._rules.length = 0;
 
-        const realResponse = await sendRequest(('/'));
+        const realResponse = await sendRequest('/');
+
+        expect(text).to.equal(realResponse.text);
+      });
+
+      it('should forward a request with body', async () => {
+        const path = uniquePath();
+        const init = {
+          method: 'OPTIONS',
+          body: new Blob(),
+        };
+
+        router.options(path, (_req, res) => {
+          res.forward('/');
+        });
+
+        const { text } = await sendRequest(path, init);
+        const realResponse = await sendRequest('/', init);
 
         expect(text).to.equal(realResponse.text);
       });
