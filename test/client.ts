@@ -5,6 +5,7 @@ import { createClient } from 'service-mocker/client';
 
 import * as modernTests from './spec/client/modern/';
 import * as legacyTests from './spec/client/legacy/';
+import * as miscTests from './spec/misc/';
 
 if (supportSW()) {
   describe('Modern Client Tests', function() {
@@ -32,6 +33,12 @@ describe('Legacy Client Tests', function() {
 
   Object.keys(legacyTests).forEach((name) => {
     legacyTests[name].call(this);
+  });
+});
+
+describe('Utils & Misc', function() {
+  Object.keys(miscTests).forEach((name) => {
+    miscTests[name].call(this);
   });
 });
 
