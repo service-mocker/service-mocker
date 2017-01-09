@@ -440,23 +440,6 @@ export function responseRunner() {
         expect(text).to.equal(realResponse.text);
       });
 
-      it('should forward a request with arraybuffer body', async () => {
-        const path = uniquePath();
-        const init = {
-          method: 'OPTIONS',
-          body: new ArrayBuffer(8),
-        };
-
-        router.options(path, (_req, res) => {
-          res.forward('/');
-        });
-
-        const { text } = await sendRequest(path, init);
-        const realResponse = await sendRequest('/', init);
-
-        expect(text).to.equal(realResponse.text);
-      });
-
       it('should forward a request with text body', async () => {
         const path = uniquePath();
         const init = {
