@@ -81,6 +81,9 @@ function swReporter(runner) {
           // `AssertionError`
           fault = error.toJSON();
           fault.stack = stack;
+
+          // err.actual is a function
+          delete fault.actual;
         } else if (error instanceof Error) {
           fault = {
             stack,
