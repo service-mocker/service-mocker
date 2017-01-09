@@ -74,7 +74,13 @@ function addCase(test) {
 
   const deferred = serverTests[test.composedTitle];
 
-  const runner = () => deferred.promise;
+  const runner = async function() {
+    const skip = await deferred.promise;
+
+    if (skip) {
+      this.skip();
+    }
+  };
 
   // re-map source code
   runner.toString = () => test.body;
@@ -100,6 +106,7 @@ function listenResult() {
     const {
       composedTitle,
       error,
+      skip,
     } = data;
 
     if (!serverTests[composedTitle]) {
@@ -114,7 +121,7 @@ function listenResult() {
 
       deferred.reject(err);
     } else {
-      deferred.resolve();
+      deferred.resolve(skip);
     }
   });
 }
@@ -129,6 +136,12 @@ async function sendRequest(event: MessageEvent) {
   if (data && data.request === 'FETCH') {
     try {
       await client.ready;
+
+      // convert formData
+      if (data.init.body === 'FORM_DATA') {
+        data.init.body = new FormData();
+      }
+
       const res = await fetch(data.url, data.init);
       const headers: any = {};
 

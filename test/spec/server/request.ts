@@ -114,8 +114,12 @@ export function requestRunner() {
         expect(await request.blob()).to.be.an.instanceof(Blob);
       });
 
-      // FormData can't be passed through `postMessage`
-      it.skip('should have `.formData()` method', async () => {
+      it('should have `.formData()` method', async function() {
+        // no `res.formData()` method in chrome
+        if (!('formData' in new Response())) {
+          this.skip();
+        }
+
         const request = await postToPromise({
           method: 'POST',
           body: new FormData(),

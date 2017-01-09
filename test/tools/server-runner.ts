@@ -57,13 +57,18 @@ export function serverRunner(register: () => void) {
 function swReporter(runner) {
   runner
     .on('pass', (test) => {
-      const result = {
+      // broadcast result to connected clients
+      broadcast({
         mochaTest: true,
         composedTitle: composeTestTitle(test),
-      };
-
-      // broadcast result to connected clients
-      broadcast(result);
+      });
+    })
+    .on('pending', (test) => {
+      broadcast({
+        skip: true,
+        mochaTest: true,
+        composedTitle: composeTestTitle(test),
+      });
     })
     .on('fail', async (test, error) => {
       let fault: any;

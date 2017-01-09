@@ -1,6 +1,10 @@
 import { sendMessageRequest } from 'service-mocker/lib/utils/';
 
-export async function sendRequest(url: string, init?: RequestInit) {
+export async function sendRequest(url: string, init: RequestInit = {}) {
+  if (init.body instanceof FormData) {
+    init.body = 'FORM_DATA';
+  }
+
   const message = {
     url, init,
     request: 'FETCH',
