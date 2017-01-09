@@ -114,7 +114,7 @@ export class MockerRouter implements IMockerRouter {
       if (matches && (request.method === method || rule.isAll)) {
         const params: RequestParameter = {};
 
-        // skip full string at [0]
+        // skip full matched string at [0]
         const max = matches.length;
         for (let i = 1; i < max; i++) {
           const { name } = keys[i - 1];

@@ -4,7 +4,7 @@ import {
   XHRtoPromise,
   XHREventToPromise,
   XHRListenerToPromise,
-} from '../helpers/';
+} from '../helpers/xhr';
 
 const EVENTS_LIST = [
   'readystatechange',

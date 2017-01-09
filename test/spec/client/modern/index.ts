@@ -1,3 +1,3 @@
-export * from '../common/';
-
 export * from './base';
+// shared tests
+export * from '../common/';

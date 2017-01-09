@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import {
   XHRtoPromise,
-} from '../helpers/';
+} from '../helpers/xhr';
 
 import { RESPONSE } from '../../mock-response';
 

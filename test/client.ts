@@ -17,6 +17,7 @@ if (supportSW()) {
       modernTests[name].call(this);
     });
 
+    // cleanning stuff
     // NOTICE: to many registrations may case chrome crash
     after(async () => {
       try {
