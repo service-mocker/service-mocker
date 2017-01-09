@@ -46,10 +46,6 @@ export async function dispatchFetchEvent(request: Request): Promise<Response | n
   fetchEvt.clientId = LEGACY_CLIENT_ID;
 
   function done(result: any) {
-    if (finished) {
-      return;
-    }
-
     finished = true;
     deferred.resolve(result);
   }
