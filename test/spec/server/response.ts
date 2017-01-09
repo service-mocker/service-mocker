@@ -116,6 +116,22 @@ export function responseRunner() {
         expect(text).to.be.empty;
       });
 
+      it('should be able to do some asynchronous stuffs' , async () => {
+        const path = uniquePath();
+
+        router.post(path, async (req, res) => {
+          const body = await req.text();
+          res.send(body);
+        });
+
+        const { text } = await sendRequest(path, {
+          method: 'POST',
+          body: 'whatever',
+        });
+
+        expect(text).to.equal('whatever');
+      });
+
       it(`should send a response with contentType "${mime.lookup('html')}"`, async () => {
         const path = uniquePath();
 

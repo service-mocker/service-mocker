@@ -1,7 +1,10 @@
 import * as mime from 'mime-component';
 import * as HttpStatus from 'http-status-codes';
 
-import { debug } from '../utils/';
+import {
+  debug,
+  Defer,
+} from '../utils/';
 
 // null body statuses, see
 // https://fetch.spec.whatwg.org/#statuses
@@ -12,6 +15,7 @@ const NULL_BODY_STATUS = [
   304,
 ];
 
+const responseLog = debug.scope('response');
 const IS_IE_EDGE = /Edge/.test(navigator.userAgent);
 
 export interface IMockerResponse {
@@ -33,8 +37,30 @@ export class MockerResponse implements IMockerResponse {
 
   private _body: any;
   private _statusCode = 200;
+  private _deferred = new Defer();
 
-  constructor(private _event: FetchEvent) {}
+  constructor(private _event: FetchEvent) {
+    const {
+      _deferred,
+    } = this;
+
+    // everything within service worker should be asynchronous
+    _event.respondWith(_deferred.promise);
+
+    const timer = setTimeout(() => {
+      if (_deferred.done) {
+        return;
+      }
+      responseLog.error('processing response timeout, forgot to call `res.end()`?');
+      this.forward(_event.request);
+    }, 10 * 1e3);
+
+    function clear() {
+      clearTimeout(timer);
+    }
+
+    _deferred.promise.then(clear, clear);
+  }
 
   /**
    * Sets the HTTP status for the response.
@@ -133,7 +159,9 @@ export class MockerResponse implements IMockerResponse {
   }
 
   /**
-   * Ends the response process and call `fetchEvent.respondWith()`.
+   * End the response processing and pass the response to `fetchEvent.respondWith()`.
+   * Simply call this method will end the response WITHOUT any data,
+   * if you want to respond with data, use `res.send()` and `res.json()`.
    */
   end(): void {
     const { request } = this._event;
@@ -144,7 +172,7 @@ export class MockerResponse implements IMockerResponse {
     if (NULL_BODY_STATUS.indexOf(this._statusCode) > -1) {
       /* istanbul ignore if */
       if (IS_IE_EDGE) {
-        debug.scope('response').warn('using null body status in IE Edge may raise a `TypeMismatchError` Error');
+        responseLog.warn('using null body status in IE Edge may raise a `TypeMismatchError` Error');
       }
 
       responseBody = undefined;
@@ -169,51 +197,51 @@ export class MockerResponse implements IMockerResponse {
 
     const response = new Response(responseBody, responseInit);
 
-    this._event.respondWith(response);
+    this._deferred.resolve(response);
   }
 
   /**
    * Forward the request to other destination.
    * The forwarded request will NOT be captured by service worker.
    *
-   * @param url Destination URL
+   * @param input Destination URL or a Request object
    * @param init Fetch request init
    */
   /* istanbul ignore next: unable to test */
-  forward(url: string, init: RequestInit = {}): void {
-    const transmit = async () => {
-      const { request } = this._event;
+  async forward(input: RequestInfo, init: RequestInit = {}): Promise<void> {
+    const { request } = this._event;
 
-      let defaultBody: any;
+    if (input instanceof Request) {
+      return this._deferred.resolve(nativeFetch(input, init));
+    }
 
-      if (request.method !== 'GET' && request.method !== 'HEAD') {
-        const req = request.clone();
-        const contentType = req.headers.get('content-type');
+    let defaultBody: any;
 
-        if (contentType) {
-          if (/form-data/.test(contentType)) {
-            defaultBody = await req.formData();
-          } else {
-            defaultBody = await req.blob();
-          }
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      const req = request.clone();
+      const contentType = req.headers.get('content-type');
+
+      if (contentType) {
+        if (/form-data/.test(contentType)) {
+          defaultBody = await req.formData();
         } else {
-          defaultBody = await req.text();
+          defaultBody = await req.blob();
         }
+      } else {
+        defaultBody = await req.text();
       }
+    }
 
-      const options: RequestInit = {
-        body: init.body || defaultBody,
-        method: init.method || request.method,
-        headers: init.headers || request.headers,
-        // always using 'cors'
-        mode: 'cors',
-        credentials: 'include',
-      };
-
-      return nativeFetch(url, options);
+    const options: RequestInit = {
+      body: init.body || defaultBody,
+      method: init.method || request.method,
+      headers: init.headers || request.headers,
+      // always using 'cors'
+      mode: 'cors',
+      credentials: 'include',
     };
 
-    this._event.respondWith(transmit());
+    this._deferred.resolve(nativeFetch(input, options));
   }
 
   private _getStatusText() {
