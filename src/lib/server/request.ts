@@ -32,7 +32,8 @@ export class MockerRequest extends ExtandableRequest implements IMockerRequest {
   constructor(event: FetchEvent, params: RequestParameter) {
     const { request } = event;
 
-    super(request);
+    // avoid polluting original request
+    super(request.clone());
 
     const url = new URL(this.url, location.href);
 
