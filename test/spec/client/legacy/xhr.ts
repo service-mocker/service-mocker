@@ -203,5 +203,20 @@ export function XHRRunner () {
         expect(contentType).to.equal('text/plain');
       });
     });
+
+    describe('.send()', () => {
+      it('should throw an error when state is not OPENED', () => {
+        let err: any;
+
+        try {
+          const xhr = new XMLHttpRequest();
+          xhr.send();
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err).not.to.be.null;
+      });
+    });
   });
 }
