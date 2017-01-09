@@ -217,6 +217,47 @@ export function XHRRunner () {
 
         expect(err).not.to.be.null;
       });
+
+      it('should ignore body for GET request', async () => {
+        const promise = fetchRequestToPromise();
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/', true);
+        xhr.send('whatever');
+
+        const request = await promise;
+
+        expect(await request.text()).to.be.empty;
+      });
+
+      it('should ignore body for HEAD request', async () => {
+        const promise = fetchRequestToPromise();
+        const xhr = new XMLHttpRequest();
+        xhr.open('HEAD', '/', true);
+        xhr.send('whatever');
+
+        const request = await promise;
+
+        expect(await request.text()).to.be.empty;
+      });
+
+      it('should NOT ignore body for OPTIONS request', async () => {
+        const promise = fetchRequestToPromise();
+        const xhr = new XMLHttpRequest();
+        xhr.open('OPTIONS', '/', true);
+        xhr.send('whatever');
+
+        const request = await promise;
+
+        expect(await request.text()).to.equal('whatever');
+      });
+    });
+  });
+}
+
+function fetchRequestToPromise(): Promise<Request> {
+  return new Promise((resolve) => {
+    self.addEventListener('fetch', (event: FetchEvent) => {
+      resolve(event.request.clone());
     });
   });
 }
