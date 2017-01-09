@@ -62,6 +62,7 @@ export class MockerRouter implements IMockerRouter {
         clientId,
       } = event;
 
+      /* istanbul ignore next */
       const id = clientId || (client && client.id);
 
       if (clientManager.has(id)) {

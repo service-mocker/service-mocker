@@ -36,6 +36,7 @@ export class ModernClient implements IMockerClient {
     return this.ready;
   }
 
+  /* istanbul ignore next: don't unregister sw in tests */
   async unregister(): Promise<boolean> {
     const registration = await this.getRegistration();
 
@@ -65,6 +66,7 @@ export class ModernClient implements IMockerClient {
 
     const updateLog = debug.scope('update');
 
+    /* istanbul ignore next: won't occur in tests */
     serviceWorker.addEventListener('controllerchange', async () => {
       try {
         const registration = await connect();

@@ -32,6 +32,7 @@ export class PrefixedConsole {
 
 export const debug = new PrefixedConsole();
 
+/* istanbul ignore else */
 // inherit console methods
 if (typeof Object.setPrototypeOf === 'function') {
   Object.setPrototypeOf(PrefixedConsole.prototype, console);
@@ -57,6 +58,7 @@ if (typeof Object.setPrototypeOf === 'function') {
       _color,
     } = this;
 
+    /* istanbul ignore if */
     if (isIE) {
       return console[method](`[${_namespace}]`, ...messages);
     }

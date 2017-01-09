@@ -142,6 +142,7 @@ export class MockerResponse implements IMockerResponse {
 
     // leave body empty for null body status
     if (NULL_BODY_STATUS.indexOf(this._statusCode) > -1) {
+      /* istanbul ignore if */
       if (IS_IE_EDGE) {
         debug.scope('response').warn('using null body status in IE Edge may raise a `TypeMismatchError` Error');
       }
@@ -178,6 +179,7 @@ export class MockerResponse implements IMockerResponse {
    * @param url Destination URL
    * @param init Fetch request init
    */
+  /* istanbul ignore next: unable to test */
   forward(url: string, init: RequestInit = {}): void {
     const transmit = async () => {
       const { request } = this._event;
@@ -221,6 +223,7 @@ export class MockerResponse implements IMockerResponse {
       // `http-status-codes` will raise an error on unknown status codes
       statusText = HttpStatus.getStatusText(this._statusCode);
     } catch (e) {
+      /* istanbul ignore next */
       statusText = JSON.stringify(this._statusCode);
     }
 
@@ -243,6 +246,7 @@ export class MockerResponse implements IMockerResponse {
  *
  * 3. Or, you may be running in service worker context, return `fetch`.
  */
+/* istanbul ignore next */
 function nativeFetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
   const globalContext: any = self;
 

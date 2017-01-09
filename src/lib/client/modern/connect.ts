@@ -22,6 +22,7 @@ export async function connect(): Promise<ServiceWorkerRegistration> {
 async function handshake(registration: ServiceWorkerRegistration): Promise<ServiceWorkerRegistration> {
   const controller = registration.active;
 
+  /* istanbul ignore if */
   if (!controller) {
     throw new Error('no active service worker registration is found');
   }

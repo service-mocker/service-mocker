@@ -17,6 +17,7 @@ export class MockerServer implements IMockerServer {
   constructor() {
     clientManager.listenOnce();
 
+    /* istanbul ignore if: unable to report coverage from sw context */
     if (!this.isLegacy) {
       self.addEventListener('install', (event: InstallEvent) => {
         event.waitUntil(self.skipWaiting());

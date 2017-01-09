@@ -7,6 +7,7 @@ const clients: any = {
   [LEGACY_CLIENT_ID]: true,
 };
 
+/* istanbul ignore next: unable to report coverage from sw context */
 export const clientManager = {
   _initialized: false,
 

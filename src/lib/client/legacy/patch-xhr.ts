@@ -103,6 +103,7 @@ class MockerXHR extends ExtandableXHR {
   }
 
   overrideMimeType(mime: string): void {
+    /* istanbul ignore if */
     if (!super.overrideMimeType) {
       return;
     }

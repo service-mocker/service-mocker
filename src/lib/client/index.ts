@@ -23,6 +23,7 @@ export function createClient(
 
   const useLegacy = isLegacyMode();
 
+  /* istanbul ignore if */
   if (useLegacy) {
     console.warn('Switching to legacy mode...');
     return new LegacyClient(scriptURL);
@@ -31,6 +32,7 @@ export function createClient(
   return new ModernClient(scriptURL);
 }
 
+/* istanbul ignore next */
 function isLegacyMode(): boolean {
   if (!('serviceWorker' in navigator)) {
     // tslint:disable-next-line max-line-length

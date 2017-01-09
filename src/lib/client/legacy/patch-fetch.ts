@@ -23,6 +23,7 @@
 import { dispatchFetchEvent } from './dispatch-fetch-event';
 
 export function patchFetch(): void {
+  /* istanbul ignore if */
   if (!self.fetch) {
     throw new Error('fetch is required for legacy mode');
   }

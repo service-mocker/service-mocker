@@ -54,6 +54,7 @@ export function extensify(Native) {
   }
 
   let checked = false;
+  /* istanbul ignore next */
   function checkLack(instance) {
     if (checked) {
       return;
@@ -100,6 +101,7 @@ export function extensify(Native) {
     }
 
     Object.keys(source).forEach(prop => {
+      /* istanbul ignore if */
       if (target.hasOwnProperty(prop)) {
         return;
       }

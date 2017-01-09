@@ -68,6 +68,7 @@ export class LegacyClient implements IMockerClient {
     return Promise.resolve(this._registration);
   }
 
+  /* istanbul ignore next */
   async unregister(): Promise<boolean> {
     debug.scope('legacy').warn('mocker in legacy mode can\'t be unregistered');
 

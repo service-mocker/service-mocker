@@ -9,6 +9,7 @@ const store = localforage.createInstance({
   description: 'storage space for service mocker',
 });
 
+/* istanbul ignore else */
 if (navigator.serviceWorker) {
   navigator.serviceWorker.addEventListener('message', listen);
 }

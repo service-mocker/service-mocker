@@ -41,6 +41,7 @@ export class MockerRequest extends ExtandableRequest implements IMockerRequest {
     this.path = url.pathname;
     this.query = qs.parse(url.search.slice(1)); // remove leading '?'
 
+    /* istanbul ignore if */
     // overwrite relative URL from fetch polyfill
     if (this.url !== url.href) {
       Object.defineProperty(this, 'url', {

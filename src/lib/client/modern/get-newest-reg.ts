@@ -5,6 +5,7 @@ import {
 
 const updateLog = debug.scope('update');
 
+/* istanbul ignore next: unable to test it on single run */
 export async function getNewestReg(): Promise<ServiceWorkerRegistration> {
   const {
     serviceWorker,
