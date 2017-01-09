@@ -78,6 +78,12 @@ export function routerRunner() {
         expect(rr).to.have.property('_timeout')
           .and.that.equals(1000);
       });
+
+      it('should be to default value when not given', () => {
+        const rr = router.timeout();
+
+        expect((rr as any)._timeout).equal((router as any)._timeout);
+      });
     });
 
     describe('.globalTimeout()', () => {
@@ -90,10 +96,19 @@ export function routerRunner() {
       });
 
       it('should be set to 1000ms timeout', () => {
-        const rr = router.timeout(1000);
+        const old = (router as any)._timeout;
+        router.globalTimeout(1000);
 
-        expect(rr).to.have.property('_timeout')
-          .and.that.equals(1000);
+        expect((router as any)._timeout).to.equals(1000);
+
+        router.timeout(old);
+      });
+
+      it('should be to default value when not given', () => {
+        const old = (router as any)._timeout;
+        router.globalTimeout();
+
+        expect((router as any)._timeout).to.equals(old);
       });
     });
   });

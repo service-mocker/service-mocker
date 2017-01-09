@@ -65,9 +65,10 @@ export class MockerRouter implements IMockerRouter {
         clientId,
       } = event;
 
-      /* istanbul ignore next */
+      /* istanbul ignore next: unable to test old spec */
       const id = clientId || (client && client.id);
 
+      /* istanbul ignore else */
       if (clientManager.has(id)) {
         this._match(event);
       }
@@ -85,7 +86,7 @@ export class MockerRouter implements IMockerRouter {
   /**
    * Return a new router with temporary timeout.
    */
-  timeout(ms: number): MockerRouter {
+  timeout(ms = this._timeout): MockerRouter {
     return new MockerRouter(ms);
   }
 
