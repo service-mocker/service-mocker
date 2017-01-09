@@ -361,6 +361,20 @@ export function responseRunner() {
         expect(text).to.equal(realResponse.text);
       });
 
+      it('should forward the request with given RequestInit', async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.forward('/', {
+            method: 'HEAD',
+          });
+        });
+
+        const { text } = await sendRequest(path);
+
+        expect(text).to.be.empty;
+      });
+
       it('should forward the request with given Request object', async () => {
         const path = uniquePath();
 
@@ -409,11 +423,7 @@ export function responseRunner() {
         expect(text).to.equal(realResponse.text);
       });
 
-      it('should forward a request with formData body', async function() {
-        if (!('formData' in new Response()) || (fetch as any).polyfill) {
-          this.skip();
-        }
-
+      it('should forward a request with formData body', async () => {
         const path = uniquePath();
         const init = {
           method: 'OPTIONS',

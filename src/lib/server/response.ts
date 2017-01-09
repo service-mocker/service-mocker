@@ -43,7 +43,7 @@ export class MockerResponse implements IMockerResponse {
   private _statusCode = 200;
   private _deferred = new Defer();
 
-  constructor(private _event: FetchEvent, readonly timeout = 10 * 1e3) {
+  constructor(private _event: FetchEvent, readonly timeout: number) {
     const {
       _deferred,
     } = this;
@@ -237,7 +237,7 @@ export class MockerResponse implements IMockerResponse {
 
       if (contentType) {
         if (/form-data/.test(contentType)) {
-          defaultOptions.body = await req.formData();
+          defaultOptions.body = await req.text();
         } else {
           defaultOptions.body = await req.blob();
         }
