@@ -45,6 +45,7 @@ export class LegacyClient implements IMockerClient {
       });
     }
 
+    /* istanbul ignore next */
     this.ready = promise.then(() => {
         return sendMessageRequest(window, {
           action: ACTION.PING,

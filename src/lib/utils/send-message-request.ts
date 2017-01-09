@@ -34,6 +34,7 @@ export async function sendMessageRequest(
       port1.close();
       port2.close();
 
+      /* istanbul ignore else */
       if (typeof data === 'object') {
         data.request = message;
       }

@@ -44,6 +44,7 @@ export function extensify(Native) {
     }
   }
 
+  /* istanbul ignore next: safari specfic cases */
   function initNative(...args) {
     if (typeof Native === 'function') {
       return new Native(...args);

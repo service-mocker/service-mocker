@@ -18,6 +18,7 @@ export class ModernClient implements IMockerClient {
   controller: ServiceWorker;
 
   constructor(scriptURL: string) {
+    /* istanbul ignore next */
     this.ready = this._init(scriptURL)
       .then(registration => {
         this.controller = registration.active;

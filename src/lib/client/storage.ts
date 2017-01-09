@@ -50,6 +50,7 @@ async function listen(evt: MessageEvent): Promise<void> {
 
     ports[0].postMessage({ result });
   } catch (e) {
+    /* istanbul ignore next */
     ports[0].postMessage({
       error: {
         message: e.message,

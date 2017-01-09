@@ -14,6 +14,7 @@ export type RequestQuery = {
 
 // convert native `Request` to extendable
 // export or you'll get an error of 'using private'
+/* istanbul ignore next: polyfill is legacy browsers only */
 export const ExtandableRequest = (fetch as any).polyfill ? Request : extensify(Request);
 
 export interface IMockerRequest extends Request {
@@ -42,8 +43,8 @@ export class MockerRequest extends ExtandableRequest implements IMockerRequest {
     this.path = url.pathname;
     this.query = qs.parse(url.search.slice(1)); // remove leading '?'
 
-    /* istanbul ignore if */
     // overwrite relative URL from fetch polyfill
+    /* istanbul ignore if: legacy browsers only */
     if (this.url !== url.href) {
       Object.defineProperty(this, 'url', {
         value: url.href,
