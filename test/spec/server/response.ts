@@ -95,6 +95,19 @@ export function responseRunner() {
 
         expect(statusText).to.equal(HttpStatus.getStatusText(202));
       });
+
+      it(`should be able to set unknown status code`, async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.status(222).end();
+        });
+
+        const { status, statusText } = await sendRequest(path);
+
+        expect(status).to.equals(222);
+        expect(statusText).to.equal('222');
+      });
     });
 
     describe('.type()', () => {

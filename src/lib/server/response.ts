@@ -256,7 +256,6 @@ export class MockerResponse implements IMockerResponse {
       // `http-status-codes` will raise an error on unknown status codes
       statusText = HttpStatus.getStatusText(this._statusCode);
     } catch (e) {
-      /* istanbul ignore next */
       statusText = JSON.stringify(this._statusCode);
     }
 
