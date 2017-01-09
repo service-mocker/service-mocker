@@ -36,12 +36,26 @@ export class MockerResponse implements IMockerResponse {
 
   constructor(private _event: FetchEvent) {}
 
+  /**
+   * Sets the HTTP status for the response.
+   *
+   * @chainable
+   * @param code Status code
+   */
   status(code: number): this {
     this._statusCode = code;
 
     return this;
   }
 
+  /**
+   * Sets the Content-Type HTTP header to the MIME type.
+   * If the given MIME doesn't contain '/' character,
+   * use `mime.lookup(type)` to obtain MIME type.
+   *
+   * @chainable
+   * @param type MIME type
+   */
   type(type: string): this {
     const contentType = type.indexOf('/') === -1 ? mime.lookup(type) : type;
 
@@ -50,6 +64,11 @@ export class MockerResponse implements IMockerResponse {
     return this;
   }
 
+  /**
+   * Send a JSON response.
+   *
+   * @param body Any JSON compatible type, including object, array, string, Boolean, or number.
+   */
   json(body?: any): void {
     this._body = JSON.stringify(body);
 
@@ -60,11 +79,17 @@ export class MockerResponse implements IMockerResponse {
     this.end();
   }
 
+  /**
+   * Sends the HTTP response.
+   *
+   * @param body Response body, one of Blob, ArrayBuffer, Object, or any primitive types
+   */
   send(body?: any): void {
     let contentType = 'text';
 
     switch (typeof body) {
       case 'string':
+        // follow the express style
         this._body = body;
         contentType = 'html';
         break;
@@ -91,6 +116,14 @@ export class MockerResponse implements IMockerResponse {
     this.end();
   }
 
+  /**
+   * Set the response HTTP status code to statusCode and
+   * send its status text representation as the response body.
+   *
+   * Equivalent to `res.status(code).send(statusText)`
+   *
+   * @param code Status code
+   */
   sendStatus(code: number): void {
     this.type('text');
     this._statusCode = code;
@@ -99,6 +132,9 @@ export class MockerResponse implements IMockerResponse {
     this.send(body);
   }
 
+  /**
+   * Ends the response process and call `fetchEvent.respondWith()`.
+   */
   end(): void {
     const { request } = this._event;
 
@@ -135,7 +171,14 @@ export class MockerResponse implements IMockerResponse {
     this._event.respondWith(response);
   }
 
-  proxy(input: RequestInfo, init: RequestInit = {}): void {
+  /**
+   * Forward the request to other destination.
+   * The forwarded request will NOT be captured by service worker.
+   *
+   * @param url Destination URL
+   * @param init Fetch request init
+   */
+  proxy(url: string, init: RequestInit = {}): void {
     const transmit = async () => {
       const { request } = this._event;
 
@@ -165,7 +208,7 @@ export class MockerResponse implements IMockerResponse {
         credentials: 'include',
       };
 
-      return nativeFetch(input, options);
+      return nativeFetch(url, options);
     };
 
     this._event.respondWith(transmit());
@@ -175,6 +218,7 @@ export class MockerResponse implements IMockerResponse {
     let statusText: string;
 
     try {
+      // `http-status-codes` will raise an error on unknown status codes
       statusText = HttpStatus.getStatusText(this._statusCode);
     } catch (e) {
       statusText = JSON.stringify(this._statusCode);

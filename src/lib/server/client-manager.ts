@@ -24,6 +24,11 @@ export const clientManager = {
     delete clients[id];
   },
 
+  /**
+   * Get current available client
+   * - If server is running in legacy mode, return window
+   * - Else pick the connected client
+   */
   async getAvailable(): Promise<ServiceWorkerClient | Window> {
     if (self === self.window) {
       // legacy
@@ -91,6 +96,7 @@ export const clientManager = {
       return;
     }
 
+    // client maybe uncontrolled
     const clients = await self.clients.matchAll({
       includeUncontrolled: true,
     });

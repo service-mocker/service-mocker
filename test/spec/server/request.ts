@@ -115,7 +115,7 @@ export function requestRunner() {
       });
 
       it('should have `.formData()` method', async function() {
-        // no `res.formData()` method in chrome
+        // no `res.formData()` method in some browsers
         // fetch polyfill bug: https://github.com/github/fetch/issues/460
         if (!('formData' in new Response()) || (fetch as any).polyfill) {
           this.skip();

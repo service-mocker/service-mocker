@@ -14,12 +14,9 @@ export async function connect(): Promise<ServiceWorkerRegistration> {
     serviceWorker,
   } = navigator;
 
-  // check update
-  if (serviceWorker.controller) {
-    return getNewestReg().then(handshake);
-  }
+  const reg = serviceWorker.controller ? await getNewestReg() : await serviceWorker.ready;
 
-  return serviceWorker.ready.then(handshake);
+  return handshake(reg);
 }
 
 async function handshake(registration: ServiceWorkerRegistration): Promise<ServiceWorkerRegistration> {

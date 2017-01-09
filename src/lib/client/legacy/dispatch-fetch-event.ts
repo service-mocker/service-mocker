@@ -1,18 +1,3 @@
-/**
- * Dispatch a native-like fetch event in GlobalScope.
- *
- * Notes:
- * - 300ms timeout VS `end()` hook:
- *    Both of them work well, but if every request is delayed for 300ms,
- *    it would be a huge burden for daily development.
- *
- * - Re-fetch unhandled events or not:
- *   No.
- *   When a XHR fails, we invoke `nativeXHR.send()`;
- *   But when a fetch fails, we call `nativeFetch()` again to fetch response.
- *   They are handled respectively, so I think we should not do a re-fetch when `respondWith` is not invoked.
- */
-
 import {
   Defer,
 } from '../../utils/';

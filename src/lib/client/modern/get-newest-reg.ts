@@ -5,10 +5,6 @@ import {
 
 const updateLog = debug.scope('update');
 
-/**
- * Update and get the newest registration.
- * @async
- */
 export async function getNewestReg(): Promise<ServiceWorkerRegistration> {
   const {
     serviceWorker,
