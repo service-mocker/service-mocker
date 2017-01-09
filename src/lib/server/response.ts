@@ -49,9 +49,6 @@ export class MockerResponse implements IMockerResponse {
     _event.respondWith(_deferred.promise);
 
     const timer = setTimeout(() => {
-      if (_deferred.done) {
-        return;
-      }
       responseLog.error('processing response timeout, forgot to call `res.end()`?');
       this.forward(_event.request);
     }, timeout);

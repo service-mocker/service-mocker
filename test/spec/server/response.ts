@@ -11,7 +11,14 @@ export function responseRunner() {
   const { router } = createServer();
 
   describe('Response', () => {
-    describe('timeout', () => {
+    describe('.timeout', () => {
+      it('should have a default timeout at 10s', async () => {
+        const response = await responseToPromise();
+
+        expect(response).to.have.property('timeout')
+          .and.that.equals(10 * 1e3);
+      });
+
       it('should forward timeout request', async () => {
         const rr = router.timeout(100);
         const logError = console.error.bind(console);
