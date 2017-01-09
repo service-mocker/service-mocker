@@ -35,9 +35,6 @@ export function storageRunner() {
 
         await storage.remove('whoami');
 
-        // don't panic
-        await sleep(100);
-
         const res = await storage.get('whoami');
 
         expect(res).to.be.null;
@@ -52,18 +49,10 @@ export function storageRunner() {
 
         await storage.clear();
 
-        await sleep(100);
-
         expect(await storage.get('a')).to.be.null;
         expect(await storage.get('b')).to.be.null;
         expect(await storage.get('c')).to.be.null;
       });
     });
-
-    function sleep(ms: number): Promise<any> {
-      return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-      });
-    }
   });
 }
