@@ -1,4 +1,5 @@
 import * as mime from 'mime-component';
+import * as objectAssign from 'object-assign';
 import * as HttpStatus from 'http-status-codes';
 
 import {
@@ -245,7 +246,7 @@ export class MockerResponse implements IMockerResponse {
       }
     }
 
-    this._deferred.resolve(nativeFetch(input, Object.assign(defaultOptions, init)));
+    this._deferred.resolve(nativeFetch(input, objectAssign(defaultOptions, init)));
   }
 
   private _getStatusText() {
