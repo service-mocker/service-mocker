@@ -339,7 +339,7 @@ export function responseRunner() {
         const path = uniquePath();
 
         router.get(path, (_req, res) => {
-          res.forward(('/'));
+          res.forward('/');
         });
 
         const { text } = await sendRequest(path);

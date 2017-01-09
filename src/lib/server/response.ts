@@ -199,7 +199,7 @@ export class MockerResponse implements IMockerResponse {
   }
 
   /**
-   * Forward the request to other destination.
+   * Forward the request to another destination.
    * The forwarded request will NOT be captured by service worker.
    *
    * @param input Destination URL or a Request object
@@ -213,33 +213,33 @@ export class MockerResponse implements IMockerResponse {
 
     const { request } = this._event;
 
-    let defaultBody: any;
-
-    if (request.method !== 'GET' && request.method !== 'HEAD') {
-      const req = request.clone();
-      const contentType = req.headers.get('content-type');
-
-      if (contentType) {
-        if (/form-data/.test(contentType)) {
-          defaultBody = await req.formData();
-        } else {
-          defaultBody = await req.blob();
-        }
-      } else {
-        defaultBody = await req.text();
-      }
-    }
-
-    const options: RequestInit = {
-      body: init.body || defaultBody,
-      method: init.method || request.method,
-      headers: init.headers || request.headers,
+    const defaultOptions: RequestInit = {
+      method: request.method,
+      headers: request.headers,
       // always using 'cors'
       mode: 'cors',
       credentials: 'include',
     };
 
-    this._deferred.resolve(nativeFetch(input, options));
+    if (!init.body && request.method !== 'GET' && request.method !== 'HEAD') {
+      const req = request.clone();
+      const contentType = req.headers.get('content-type');
+
+      // request.body maybe consumed
+      try {
+        if (contentType) {
+          if (/form-data/.test(contentType)) {
+            defaultOptions.body = await req.formData();
+          } else {
+            defaultOptions.body = await req.blob();
+          }
+        } else {
+          defaultOptions.body = await req.text();
+        }
+      } catch (e) {}
+    }
+
+    this._deferred.resolve(nativeFetch(input, Object.assign(defaultOptions, init)));
   }
 
   private _getStatusText() {
