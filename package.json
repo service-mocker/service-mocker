@@ -5,7 +5,7 @@
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
-    "lint": "eslint . && tslint -t stylish .",
+    "lint": "eslint . && tslint -t stylish {src,test}/**/*.ts",
     "clean:build": "rimraf ./build",
     "clean:compile": "rimraf ./lib",
     "clean:release": "rimraf ./dist",
