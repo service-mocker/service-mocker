@@ -137,6 +137,27 @@ export function XHRRunner () {
         expect(xhr.response).to.be.a('string');
       });
 
+      it('should NOT throw error when parsing failed', async function() {
+        let error = null;
+
+        try {
+          await XHRtoPromise('/blob', (xhr) => {
+            xhr.responseType = 'document';
+          });
+        } catch (e) {
+          error = e;
+        }
+
+        expect(error).to.be.null;
+      });
+
+      it('should return null when parsing failed', async function() {
+        const xhr = await XHRtoPromise('/blob', (xhr) => {
+          xhr.responseType = 'document';
+        });
+
+        expect(xhr.response).to.be.null;
+      });
     });
 
     describe('.setRequestHeader()', () => {

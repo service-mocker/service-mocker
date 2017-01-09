@@ -231,14 +231,22 @@ async function parseResponse(response: Response, responseType?: string): Promise
         return await res.arrayBuffer();
       case 'document':
         const text = await res.text();
-        const contentType = res.headers.get('content-type');
-        const mime = contentType ? contentType.replace(/;.*/, '') : 'text/html';
         const parser = new DOMParser();
-        return parser.parseFromString(text, mime);
-      default:
-        return null;
+        return parser.parseFromString(text, getDocumentMIME(res));
     }
-  } catch (e) {
-    return null;
+  } catch (e) {}
+
+  return null;
+}
+
+function getDocumentMIME(res: Response): string {
+  const contentType = res.headers.get('content-type');
+
+  /* istanbul ignore if */
+  if (!contentType) {
+    return 'text/html';
   }
+
+  // strip charset
+  return contentType.replace(/;.*/, '');
 }
