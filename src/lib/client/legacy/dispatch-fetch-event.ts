@@ -18,10 +18,6 @@ interface MockFetchEvent extends Event {
   // simulate native `respondWith` interface
   // invoke this method to terminate a fetch event
   respondWith(response: Response | Promise<Response>): void;
-
-  // simulate native `waitUntil` interface
-  // extend fetch event's lifetime until promise resolved
-  waitUntil(promise: any): void;
 }
 
 const fetchEvents: any = [];
@@ -65,12 +61,6 @@ export async function dispatchFetchEvent(request: Request): Promise<Response | n
     }
 
     done(response);
-  };
-
-  fetchEvt.waitUntil = (promise: any) => {
-    Promise.resolve(promise).then(() => {
-      done(null);
-    });
   };
 
   fetchEvents.forEach((listener) => {
