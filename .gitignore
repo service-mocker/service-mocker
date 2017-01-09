@@ -42,6 +42,6 @@ jspm_packages
 # typings
 typings
 
-# release files
-lib/
+# compile & release files
+build/
 dist/

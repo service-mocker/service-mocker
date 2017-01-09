@@ -1,4 +1,4 @@
-import { sendMessageRequest } from 'service-mocker/utils/';
+import { sendMessageRequest } from 'service-mocker/lib/utils/';
 
 export async function sendRequest(url: string, init?: RequestInit) {
   const message = {
