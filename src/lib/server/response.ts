@@ -235,15 +235,17 @@ export class MockerResponse implements IMockerResponse {
       const req = request.clone();
       const contentType = req.headers.get('content-type');
 
-      if (contentType) {
-        if (/form-data/.test(contentType)) {
-          defaultOptions.body = await req.text();
+      try {
+        if (contentType) {
+          if (/form-data/.test(contentType)) {
+            defaultOptions.body = await req.text();
+          } else {
+            defaultOptions.body = await req.blob();
+          }
         } else {
-          defaultOptions.body = await req.blob();
+          defaultOptions.body = await req.text();
         }
-      } else {
-        defaultOptions.body = await req.text();
-      }
+      } catch (e) {}
     }
 
     this._deferred.resolve(nativeFetch(input, objectAssign(defaultOptions, init)));
