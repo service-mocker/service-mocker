@@ -280,12 +280,12 @@ export function responseRunner() {
       });
     });
 
-    describe('.proxy()', () => {
-      it('should transmit request', async () => {
+    describe('.forward()', () => {
+      it('should forward the request', async () => {
         const path = uniquePath();
 
         router.get(path, (_req, res) => {
-          res.proxy('.');
+          res.forward('.');
         });
 
         const { text } = await sendRequest(path);

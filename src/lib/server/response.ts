@@ -23,7 +23,7 @@ export interface IMockerResponse {
   send(body?: any): void;
   sendStatus(code: number): void;
   end(): void;
-  proxy(input: RequestInfo, init?: RequestInit): void;
+  forward(input: RequestInfo, init?: RequestInit): void;
 }
 
 export class MockerResponse implements IMockerResponse {
@@ -178,7 +178,7 @@ export class MockerResponse implements IMockerResponse {
    * @param url Destination URL
    * @param init Fetch request init
    */
-  proxy(url: string, init: RequestInit = {}): void {
+  forward(url: string, init: RequestInit = {}): void {
     const transmit = async () => {
       const { request } = this._event;
 

@@ -1,20 +1,3 @@
-/**
- * Mocha runtime for service worker context
- *
- * Notes:
- * - How to register test cases:
- *   1. Create a suite tree to store all suites and tests
- *   2. When clients request 'MOCHA_TASKS', send the suite tree to them
- *
- * - How to report results:
- *   1. Create a result array to store all test results
- *   2. When clients connect-in, send all results in the array to them
- *   3. The remain results will be broadcasted as per test is done
- *
- * Unlike browser context, scripts in service worker context will not be
- * updated as page reloaded. So we should cache all the test results for
- * the next connection of client.
- */
 const IS_SW = self !== self.window;
 
 const eventListeners = {
@@ -52,6 +35,29 @@ export function serverRunner(register: () => void) {
       });
     }
   });
+}
+
+// make sure test results are update-to-dated
+function runTests(register: () => void) {
+  const mocha: any = new Mocha();
+
+  mocha.ui('bdd');
+  mocha.slow(200);
+  mocha.timeout(10 * 1e3);
+  mocha.reporter(swReporter);
+
+  mocha.suite.emit('pre-require', self, null, mocha);
+
+  // cleanning stuff
+  Object.keys(eventListeners).forEach((type) => {
+    eventListeners[type].length = 0;
+  });
+
+  register();
+
+  mocha.run();
+
+  return getAllSuites(mocha.suite.suites);
 }
 
 function swReporter(runner) {
@@ -100,29 +106,6 @@ function swReporter(runner) {
 
       broadcast(result);
     });
-}
-
-// make sure test results are update-to-dated
-function runTests(register: () => void) {
-  const mocha: any = new Mocha();
-
-  mocha.ui('bdd');
-  mocha.slow(200);
-  mocha.timeout(10 * 1e3);
-  mocha.reporter(swReporter);
-
-  mocha.suite.emit('pre-require', self, null, mocha);
-
-  // cleanning stuff
-  Object.keys(eventListeners).forEach((type) => {
-    eventListeners[type].length = 0;
-  });
-
-  register();
-
-  mocha.run();
-
-  return getAllSuites(mocha.suite.suites);
 }
 
 // get minimal suites
