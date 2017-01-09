@@ -24,7 +24,7 @@ export function responseRunner() {
           errorMsg = args.join('');
         };
 
-        rr.get('*', (_req, res) => {
+        rr.get('/', (_req, res) => {
           timeout = res.timeout;
 
           setTimeout(() => {
@@ -32,7 +32,7 @@ export function responseRunner() {
           }, 1000);
         });
 
-        const { text } = await sendRequest('.');
+        const { text } = await sendRequest('/');
 
         (rr as any)._rules.length = 0;
 
@@ -332,11 +332,11 @@ export function responseRunner() {
         const path = uniquePath();
 
         router.get(path, (_req, res) => {
-          res.forward('.');
+          res.forward(('/'));
         });
 
         const { text } = await sendRequest(path);
-        const realResponse = await sendRequest('.');
+        const realResponse = await sendRequest(('/'));
 
         expect(text).to.equal(realResponse.text);
       });

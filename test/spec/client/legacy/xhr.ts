@@ -158,7 +158,7 @@ export function XHRRunner () {
       });
 
       it('should return native header', async () => {
-        const xhr = await XHRtoPromise('.');
+        const xhr = await XHRtoPromise(('/'));
         const header = xhr.getResponseHeader('X-Powered-By');
 
         expect(header).to.not.equal('ServiceMocker');
@@ -179,7 +179,7 @@ export function XHRRunner () {
       });
 
       it('should return native headers', async () => {
-        const xhr = await XHRtoPromise('.');
+        const xhr = await XHRtoPromise(('/'));
 
         const headers = xhr.getAllResponseHeaders();
 
