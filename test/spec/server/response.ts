@@ -128,6 +128,56 @@ export function responseRunner() {
         expect(headers.get('content-type')).to.equal(mime.lookup('html'));
       });
 
+      it(`should send ArrayBuffer with default contentType "${mime.lookup('bin')}"`, async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.send(new ArrayBuffer(8));
+        });
+
+        const { headers } = await sendRequest(path);
+
+        expect(headers.get('content-type')).to.equal(mime.lookup('bin'));
+      });
+
+      it(`should send Blob with default contentType "${mime.lookup('bin')}"`, async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.send(new Blob());
+        });
+
+        const { headers } = await sendRequest(path);
+
+        expect(headers.get('content-type')).to.equal(mime.lookup('bin'));
+      });
+
+      it(`should send Blob with it's own contentType`, async () => {
+        const path = uniquePath();
+        const contentType = mime.lookup('png');
+
+        router.get(path, (_req, res) => {
+          res.send(new Blob([], { type: contentType }));
+        });
+
+        const { headers } = await sendRequest(path);
+
+        expect(headers.get('content-type')).to.equal(contentType);
+      });
+
+      it('should not override current contentType', async () => {
+        const path = uniquePath();
+        const contentType = mime.lookup('html');
+
+        router.get(path, (_req, res) => {
+          res.type(contentType).send({});
+        });
+
+        const { headers } = await sendRequest(path);
+
+        expect(headers.get('content-type')).to.equal(contentType);
+      });
+
       it('should convert number to JSON', async () => {
         const path = uniquePath();
         const num = 123;
@@ -198,6 +248,18 @@ export function responseRunner() {
         });
 
         expect(text).to.be.empty;
+      });
+
+      it(`should send a response with default contentType "${mime.lookup('text')}"`, async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.end();
+        });
+
+        const { headers } = await sendRequest(path);
+
+        expect(headers.get('content-type')).to.equal(mime.lookup('text'));
       });
 
       it('should send an empty response body for null body status', async function () {

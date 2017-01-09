@@ -53,7 +53,7 @@ export class MockerResponse implements IMockerResponse {
   json(body?: any): void {
     this._body = JSON.stringify(body);
 
-    if (!this.headers.get('content-type')) {
+    if (!this.headers.has('content-type')) {
       this.type('json');
     }
 
@@ -61,39 +61,34 @@ export class MockerResponse implements IMockerResponse {
   }
 
   send(body?: any): void {
-    const contentType = this.headers.get('content-type');
+    let contentType = 'text';
 
     switch (typeof body) {
       case 'string':
         this._body = body;
-        if (!contentType) {
-          this.type('html');
-        }
-        return this.end();
+        contentType = 'html';
+        break;
 
       case 'boolean':
       case 'number':
       case 'object':
         if (body instanceof Blob) {
-          // blob's content type will be set by `Response`
           this._body = body;
-          return this.end();
+          contentType = body.type || 'bin';
         } else if (body instanceof ArrayBuffer) {
-          if (!contentType) {
-            this.type('bin');
-          }
           this._body = body;
-          return this.end();
+          contentType = 'bin';
+        } else {
+          return this.json(body);
         }
-
-        return this.json(body);
-
-      default:
-        if (!contentType) {
-          this.type('text');
-        }
-        return this.end();
+        break;
     }
+
+    if (!this.headers.has('content-type')) {
+      this.type(contentType);
+    }
+
+    this.end();
   }
 
   sendStatus(code: number): void {
@@ -121,6 +116,12 @@ export class MockerResponse implements IMockerResponse {
     // skip body for HEAD requests
     if (request.method === 'HEAD') {
       responseBody = undefined;
+    }
+
+    // set default contentType to 'text/plain', see
+    // https://tools.ietf.org/html/rfc2045#section-5.2
+    if (!this.headers.has('content-type')) {
+      this.type('text');
     }
 
     const responseInit: ResponseInit = {
