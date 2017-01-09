@@ -207,11 +207,11 @@ export class MockerResponse implements IMockerResponse {
    */
   /* istanbul ignore next: unable to test */
   async forward(input: RequestInfo, init: RequestInit = {}): Promise<void> {
-    const { request } = this._event;
-
     if (input instanceof Request) {
       return this._deferred.resolve(nativeFetch(input, init));
     }
+
+    const { request } = this._event;
 
     let defaultBody: any;
 
