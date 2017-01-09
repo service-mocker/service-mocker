@@ -234,14 +234,11 @@ export class MockerResponse implements IMockerResponse {
     if (!init.body && !request.bodyUsed && request.method !== 'GET' && request.method !== 'HEAD') {
       const req = request.clone();
       const contentType = req.headers.get('content-type');
+      const textType = new RegExp(`form-data|${mime.lookup('text')}`);
 
       try {
-        if (contentType) {
-          if (/form-data/.test(contentType)) {
-            defaultOptions.body = await req.text();
-          } else {
-            defaultOptions.body = await req.blob();
-          }
+        if (contentType && !textType.test(contentType)) {
+          defaultOptions.body = await req.blob();
         } else {
           defaultOptions.body = await req.text();
         }
