@@ -390,13 +390,68 @@ export function responseRunner() {
         expect(text).to.equal(realResponse.text);
       });
 
-      it('should forward a request with original body', async () => {
+      it('should forward a request with blob body', async () => {
         const path = uniquePath();
         const init = {
           method: 'OPTIONS',
           body: new Blob([], {
             type: mime.lookup('png'),
           }),
+        };
+
+        router.options(path, (_req, res) => {
+          res.forward('/');
+        });
+
+        const { text } = await sendRequest(path, init);
+        const realResponse = await sendRequest('/', init);
+
+        expect(text).to.equal(realResponse.text);
+      });
+
+      it('should forward a request with formData body', async function() {
+        if (!('formData' in new Response()) || (fetch as any).polyfill) {
+          this.skip();
+        }
+
+        const path = uniquePath();
+        const init = {
+          method: 'OPTIONS',
+          body: new FormData(),
+        };
+
+        router.options(path, (_req, res) => {
+          res.forward('/');
+        });
+
+        const { text } = await sendRequest(path, init);
+        const realResponse = await sendRequest('/', init);
+
+        expect(text).to.equal(realResponse.text);
+      });
+
+      it('should forward a request with arraybuffer body', async () => {
+        const path = uniquePath();
+        const init = {
+          method: 'OPTIONS',
+          body: new ArrayBuffer(8),
+        };
+
+        router.options(path, (_req, res) => {
+          res.forward('/');
+        });
+
+        const { text } = await sendRequest(path, init);
+        const realResponse = await sendRequest('/', init);
+
+        expect(text).to.equal(realResponse.text);
+      });
+
+      it('should forward a request with text body', async () => {
+        const path = uniquePath();
+        const init = {
+          method: 'OPTIONS',
+          body: 'ServiceMocker',
         };
 
         router.options(path, (_req, res) => {
