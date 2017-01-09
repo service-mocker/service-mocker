@@ -390,11 +390,13 @@ export function responseRunner() {
         expect(text).to.equal(realResponse.text);
       });
 
-      it('should forward a request with body', async () => {
+      it('should forward a request with original body', async () => {
         const path = uniquePath();
         const init = {
           method: 'OPTIONS',
-          body: new Blob(),
+          body: new Blob([], {
+            type: mime.lookup('png'),
+          }),
         };
 
         router.options(path, (_req, res) => {
