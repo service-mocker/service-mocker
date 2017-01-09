@@ -2,7 +2,7 @@
 import { AssertionError } from 'chai';
 import 'source-map-support/browser-source-map-support';
 
-import { sendMessageRequest } from 'service-mocker/lib/utils/';
+import { sendMessageRequest, Defer } from 'service-mocker/lib/utils/';
 import { createClient } from 'service-mocker/client';
 
 (self as any).sourceMapSupport.install();
@@ -19,6 +19,10 @@ const client = createClient('server.js', {
   forceLegacy: /legacy/i.test(decodeURIComponent(location.search)),
 });
 
+const serverTests: any = {};
+
+listenResult();
+
 /**
  * Client tests runner:
  *
@@ -30,19 +34,22 @@ const client = createClient('server.js', {
 export async function clientRunner() {
   await client.ready;
 
-  const target = client.controller || window;
+  if (client.isLegacy) {
+    return run();
+  }
 
-  const res = await sendMessageRequest(target, {
+  const res = await sendMessageRequest(navigator.serviceWorker.controller, {
     request: 'MOCHA_TASKS',
   }, 10 * 1e3);
 
   registerTest(res.suites);
 
-  run();
-
-  return sendMessageRequest(target, {
-    request: 'MOCHA_RESULTS',
+  // imporve layout :)
+  (mocha as any).suite.suites.sort((a, b) => {
+    return a.title.charCodeAt(0) < b.title.charCodeAt(0);
   });
+
+  run();
 }
 
 function registerTest(suites?) {
@@ -61,28 +68,13 @@ function registerTest(suites?) {
 }
 
 function addCase(test) {
-  const promise = new Promise((resolve, reject) => {
-    navigator.serviceWorker.addEventListener('message', function handler({ data }) {
-      if (!data || data.composedTitle !== test.composedTitle) {
-        return;
-      }
+  if (!serverTests[test.composedTitle]) {
+    serverTests[test.composedTitle] = new Defer();
+  }
 
-      // one-off listener
-      navigator.serviceWorker.removeEventListener('message', handler);
+  const deferred = serverTests[test.composedTitle];
 
-      if (data.error) {
-        // reflect error to `AssertionError`
-        const err = new AssertionError(data.error.message, data.error);
-        err.stack = data.error.stack;
-
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
-
-  const runner = () => promise;
+  const runner = () => deferred.promise;
 
   // re-map source code
   runner.toString = () => test.body;
@@ -95,6 +87,39 @@ function addCase(test) {
   }
 }
 
+function listenResult() {
+  if (client.isLegacy) {
+    return;
+  }
+
+  navigator.serviceWorker.addEventListener('message', ({ data }) => {
+    if (!data || !data.mochaTest) {
+      return;
+    }
+
+    const {
+      composedTitle,
+      error,
+    } = data;
+
+    if (!serverTests[composedTitle]) {
+      serverTests[composedTitle] = new Defer();
+    }
+
+    const deferred = serverTests[composedTitle];
+
+    if (error) {
+      const err = new AssertionError(error.message, error);
+      err.stack = error.stack;
+
+      deferred.reject(err);
+    } else {
+      deferred.resolve();
+    }
+  });
+}
+
+// handle fetch request from server
 async function sendRequest(event: MessageEvent) {
   const {
     data,
@@ -127,7 +152,7 @@ async function sendRequest(event: MessageEvent) {
   }
 }
 
-if (navigator.serviceWorker) {
+if (!client.isLegacy) {
   navigator.serviceWorker.addEventListener('message', sendRequest);
 }
 

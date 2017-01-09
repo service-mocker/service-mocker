@@ -7,12 +7,6 @@ const server = createServer();
 
 const mode = server.isLegacy ? 'Legacy' : 'Modern';
 
-describe(`${mode} Server Tests`, function() {
-  Object.keys(tests).forEach(name => {
-    tests[name].call(this);
-  });
-});
-
 // mocks
 server.router.get('/api', RESPONSE);
 server.router.get('/blob', new Blob());
@@ -23,4 +17,10 @@ server.router.get('/custom-header', (req, res) => {
   res.send(req.headers.get('X-Custom'));
 });
 
-serverRunner();
+serverRunner(() => {
+  describe(`${mode} Server Tests`, function() {
+    Object.keys(tests).forEach(name => {
+      tests[name].call(this);
+    });
+  });
+});

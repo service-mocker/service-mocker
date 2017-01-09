@@ -16,16 +16,6 @@ if (supportSW()) {
     Object.keys(modernTests).forEach((name) => {
       modernTests[name].call(this);
     });
-
-    // cleanning stuff
-    // NOTICE: to many registrations may case chrome crash
-    after(async () => {
-      try {
-        const reg = await navigator.serviceWorker.getRegistration();
-
-        await reg.unregister();
-      } catch (e) {}
-    });
   });
 } else {
   console.warn('modern client tests are ignored because of the browser compatibility');

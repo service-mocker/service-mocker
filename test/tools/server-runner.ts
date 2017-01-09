@@ -15,18 +15,14 @@
  * updated as page reloaded. So we should cache all the test results for
  * the next connection of client.
  */
-
-// import 'mocha/mocha';
-// import * as swSourceMap from 'source-map-support/sw-source-map-support';
-
-type Result = {
-  error?: Error;
-  composedTitle: string;
-};
-
 const IS_SW = self !== self.window;
 
-const resultCache: Array<Result> = [];
+const eventListeners = {
+  fetch: [],
+  error: [],
+  install: [],
+  activate: [],
+};
 
 // patch mocha env to service worker context
 if (IS_SW) {
@@ -34,40 +30,26 @@ if (IS_SW) {
   require('mocha/mocha');
   require('source-map-support/sw-source-map-support').install();
 
-  mocha.setup({
-    ui: 'bdd',
-    slow: 200,
-    timeout: 10 * 1e3,
-    reporter: swReporter,
-  });
+  patchListener();
 }
 
-export function serverRunner() {
-  if (IS_SW) {
-    mocha.run();
+export function serverRunner(register: () => void) {
+  if (!IS_SW) {
+    // register tests right away on legacy mode
+    register();
   }
 
+  // wait for client request on modern mode
   self.addEventListener('message', (evt: ExtendableMessageEvent) => {
     const {
       data,
-      source,
       ports,
     } = evt;
 
-    if (!data || !data.request) {
-      return;
-    }
-
-    switch (data.request) {
-      case 'MOCHA_TASKS':
-        return ports[0].postMessage({
-          // only send suites in modern mode
-          suites: IS_SW ? getAllSuites() : null,
-        });
-
-      case 'MOCHA_RESULTS':
-        ports[0].postMessage('DONE');
-        return reportResults(source.id);
+    if (data && data.request === 'MOCHA_TASKS') {
+      ports[0].postMessage({
+        suites: runTests(register),
+      });
     }
   });
 }
@@ -76,12 +58,9 @@ function swReporter(runner) {
   runner
     .on('pass', (test) => {
       const result = {
-        composedTitle: `${test.parent.title}-${test.title}`,
+        mochaTest: true,
+        composedTitle: composeTestTitle(test),
       };
-
-      // as long as service worker will not be reloaded when refreshing page
-      // we need save results for further uses
-      resultCache.push(result);
 
       // broadcast result to connected clients
       broadcast(result);
@@ -107,22 +86,47 @@ function swReporter(runner) {
 
       const result = {
         error: fault,
-        composedTitle: `${test.parent.title}-${test.title}`,
+        mochaTest: true,
+        composedTitle: composeTestTitle(test),
       };
 
-      resultCache.push(result);
       broadcast(result);
     });
 }
 
+// make sure test results are update-to-dated
+function runTests(register: () => void) {
+  const mocha: any = new Mocha();
+
+  mocha.ui('bdd');
+  mocha.slow(200);
+  mocha.timeout(10 * 1e3);
+  mocha.reporter(swReporter);
+
+  mocha.suite.emit('pre-require', self, null, mocha);
+
+  // cleanning stuff
+  Object.keys(eventListeners).forEach((type) => {
+    eventListeners[type].length = 0;
+  });
+
+  register();
+
+  mocha.run();
+
+  return getAllSuites(mocha.suite.suites);
+}
+
 // get minimal suites
-function getAllSuites(parent = (mocha as any).suite.suites) {
+function getAllSuites(parent) {
   return parent.map(({ suites, tests, title }) => {
     const allSuites = getAllSuites(suites);
-    const allTests = tests.map(({ body, title, pending, parent }) => {
+    const allTests = tests.map((t) => {
+      const { body, title, pending } = t;
+
       return {
         body, title, pending,
-        composedTitle: `${parent.title}-${title}`,
+        composedTitle: composeTestTitle(t),
       };
     });
 
@@ -134,24 +138,61 @@ function getAllSuites(parent = (mocha as any).suite.suites) {
   });
 }
 
-async function reportResults(currentClientId: string) {
-  if (!resultCache.length) {
-    return;
-  }
+// some event listeners must be must be added
+// on the initial evaluation of worker script.
+function patchListener() {
+  const addEventListener = self.addEventListener.bind(self);
 
-  const client = await self.clients.get(currentClientId);
+  self.addEventListener = function eventProxy(type: string, listener: EventListenerOrEventListenerObject) {
+    if (!eventListeners[type]) {
+      return addEventListener(type, listener);
+    }
 
-  if (!client) {
-    return;
-  }
+    eventListeners[type].push(listener);
+  };
 
-  resultCache.forEach(res => {
-    client.postMessage(res);
+  Object.keys(eventListeners).forEach((type) => {
+    const listeners = eventListeners[type];
+
+    addEventListener(type, function(event) {
+      listeners.forEach((fn) => {
+        fn.call(this, event);
+      });
+    });
+
+    // patch for `on-event` accessors
+    let listener: any;
+    Object.defineProperty(self, `on${type}`, {
+      set(fn) {
+        listener = fn;
+        self.addEventListener(type, listener);
+      },
+      get() {
+        return listener;
+      },
+      enumerable: true,
+      configurable: true,
+    });
   });
 }
 
+function composeTestTitle(test): string {
+  const titles: Array<string> = [];
+
+  let t = test;
+
+  while (t.parent) {
+    titles.unshift(t.title);
+    t = t.parent;
+  }
+
+  return titles.join('-');
+}
+
 async function broadcast(message: any) {
-  const clients = await self.clients.matchAll();
+  const clients = await self.clients.matchAll({
+    includeUncontrolled: true,
+  });
 
   clients.forEach(cli => {
     cli.postMessage(message);
