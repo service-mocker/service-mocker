@@ -10,33 +10,35 @@ export function routerRunner() {
   const methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
 
   describe('Router', () => {
-    it('should have bacic HTTP request methods defined in fetch standard', () => {
-      for (let method of methods) {
-        expect(router).to.have.property(method)
-          .and.that.is.a('function');
-      }
-    });
-
-    it('should intercept client request', async () => {
-      const path = uniquePath();
-
-      router.get(path, (_req, res) => {
-        res.send(RESPONSE);
+    describe('route', () => {
+      it('should have bacic HTTP request methods defined in fetch standard', () => {
+        for (let method of methods) {
+          expect(router).to.have.property(method)
+            .and.that.is.a('function');
+        }
       });
 
-      const { text } = await sendRequest(path);
+      it('should intercept client request', async () => {
+        const path = uniquePath();
 
-      expect(text).to.equal(RESPONSE);
-    });
+        router.get(path, (_req, res) => {
+          res.send(RESPONSE);
+        });
 
-    it('should support shorthand method', async () => {
-      const path = uniquePath();
+        const { text } = await sendRequest(path);
 
-      router.get(path, RESPONSE);
+        expect(text).to.equal(RESPONSE);
+      });
 
-      const { text } = await sendRequest(path);
+      it('should support shorthand method', async () => {
+        const path = uniquePath();
 
-      expect(text).to.equal(RESPONSE);
+        router.get(path, RESPONSE);
+
+        const { text } = await sendRequest(path);
+
+        expect(text).to.equal(RESPONSE);
+      });
     });
 
     describe('.all', () => {
@@ -59,6 +61,39 @@ export function routerRunner() {
         }
 
         expect(count).to.equal(methods.length);
+      });
+    });
+
+    describe('.timeout()', () => {
+      it('should return a new router', () => {
+        const rr = router.timeout(1000);
+
+        expect(rr).not.to.equal(router);
+        expect(rr).to.be.an.instanceof(router.constructor);
+      });
+
+      it('should be set to 1000ms timeout', () => {
+        const rr = router.timeout(1000);
+
+        expect(rr).to.have.property('_timeout')
+          .and.that.equals(1000);
+      });
+    });
+
+    describe('.globalTimeout()', () => {
+      it('should return self', () => {
+        const rr = router.globalTimeout(1000);
+
+        expect(rr).to.equal(router);
+        expect(rr).to.have.property('_timeout')
+          .and.that.equals(1000);
+      });
+
+      it('should be set to 1000ms timeout', () => {
+        const rr = router.timeout(1000);
+
+        expect(rr).to.have.property('_timeout')
+          .and.that.equals(1000);
       });
     });
   });

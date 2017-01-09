@@ -11,6 +11,37 @@ export function responseRunner() {
   const { router } = createServer();
 
   describe('Response', () => {
+    describe('timeout', () => {
+      it('should forward timeout request', async () => {
+        const rr = router.timeout(100);
+        const logError = console.error.bind(console);
+
+        let timeout: any;
+        let errorMsg: any;
+
+        console.error = (...args) => {
+          console.error = logError;
+          errorMsg = args.join('');
+        };
+
+        rr.get('*', (_req, res) => {
+          timeout = res.timeout;
+
+          setTimeout(() => {
+            res.send('failed');
+          }, 1000);
+        });
+
+        const { text } = await sendRequest('.');
+
+        (rr as any)._rules.length = 0;
+
+        expect(timeout).to.equal(100);
+        expect(text).not.to.equal('failed');
+        expect(errorMsg).not.to.be.empty;
+      });
+    });
+
     describe('.headers', () => {
       it('should has a `headers` property', async () => {
         const response = await responseToPromise();

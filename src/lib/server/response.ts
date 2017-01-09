@@ -19,6 +19,7 @@ const responseLog = debug.scope('response');
 const IS_IE_EDGE = /Edge/.test(navigator.userAgent);
 
 export interface IMockerResponse {
+  readonly timeout: number;
   readonly headers: Headers;
 
   status(code: number): this;
@@ -39,7 +40,7 @@ export class MockerResponse implements IMockerResponse {
   private _statusCode = 200;
   private _deferred = new Defer();
 
-  constructor(private _event: FetchEvent) {
+  constructor(private _event: FetchEvent, readonly timeout = 10 * 1e3) {
     const {
       _deferred,
     } = this;
@@ -53,7 +54,7 @@ export class MockerResponse implements IMockerResponse {
       }
       responseLog.error('processing response timeout, forgot to call `res.end()`?');
       this.forward(_event.request);
-    }, 10 * 1e3);
+    }, timeout);
 
     function clear() {
       clearTimeout(timer);
