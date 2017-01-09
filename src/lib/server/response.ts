@@ -6,6 +6,8 @@ import {
   Defer,
 } from '../utils/';
 
+import { MockerRequest } from './request';
+
 // null body statuses, see
 // https://fetch.spec.whatwg.org/#statuses
 const NULL_BODY_STATUS = [
@@ -202,13 +204,21 @@ export class MockerResponse implements IMockerResponse {
    * Forward the request to another destination.
    * The forwarded request will NOT be captured by service worker.
    *
-   * @param input Destination URL or a Request object
+   * @param input Destination URL or a Request object or MockerRequest
    * @param init Fetch request init
    */
   /* istanbul ignore next: unable to test */
-  async forward(input: RequestInfo, init: RequestInit = {}): Promise<void> {
+  async forward(input: RequestInfo, init?: RequestInit): Promise<void>;
+  async forward(input: MockerRequest, init?: RequestInit): Promise<void>;
+  async forward(input: any, init: RequestInit = {}) {
+    // forward native Request
     if (input instanceof Request) {
       return this._deferred.resolve(nativeFetch(input, init));
+    }
+
+    // forward MockerRequest
+    if (input instanceof MockerRequest) {
+      return this._deferred.resolve(nativeFetch((input as any)._native, init));
     }
 
     const { request } = this._event;

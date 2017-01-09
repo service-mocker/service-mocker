@@ -335,7 +335,7 @@ export function responseRunner() {
     });
 
     describe('.forward()', () => {
-      it('should forward the request', async () => {
+      it('should forward the request with given URL', async () => {
         const path = uniquePath();
 
         router.get(path, (_req, res) => {
@@ -343,6 +343,35 @@ export function responseRunner() {
         });
 
         const { text } = await sendRequest(path);
+        const realResponse = await sendRequest(('/'));
+
+        expect(text).to.equal(realResponse.text);
+      });
+
+      it('should forward the request with given Request object', async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.forward(new Request('/'));
+        });
+
+        const { text } = await sendRequest(path);
+        const realResponse = await sendRequest(('/'));
+
+        expect(text).to.equal(realResponse.text);
+      });
+
+      it('should forward original request', async () => {
+        const rr = router.timeout(1000);
+
+        rr.get('/', (req, res) => {
+          res.forward(req);
+        });
+
+        const { text } = await sendRequest('/');
+
+        (rr as any)._rules.length = 0;
+
         const realResponse = await sendRequest(('/'));
 
         expect(text).to.equal(realResponse.text);
