@@ -6,6 +6,7 @@
 }
 
 #main {
+  display: none !important;
   width: 80%;
   max-width: 900px;
   margin: 0 auto;
@@ -13,14 +14,13 @@
   font-family: "Helvetica Neue", "Microsoft Yahei", sans-serif;
 }
 
-#hero {
-  display: none;
-  padding-top: 2em;
-  text-align: center;
+#main.show {
+  display: block !important;
 }
 
-#hero.show {
-  display: block;
+#hero {
+  padding-top: 2em;
+  text-align: center;
 }
 
 @media screen and (max-width: 768px) {
@@ -37,6 +37,7 @@
 #hero canvas {
   width: 100%;
   cursor: pointer;
+  user-select: none;
 }
 
 #hero h2 {

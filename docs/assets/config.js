@@ -15,8 +15,7 @@ function landingScriptsPlugin(scripts) {
       if (to.meta && to.meta.name === 'landing') {
         scripts.forEach(function (url) {
           var el = document.createElement('script');
-          el.src = url;
-          el.async = false;
+          el.src = url; el.async = false;
           document.body.appendChild(el);
         });
       }

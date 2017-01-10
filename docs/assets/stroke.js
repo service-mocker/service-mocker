@@ -113,7 +113,7 @@
     }
 
     banner.insertBefore(canvas, banner.firstChild);
-    banner.className = 'show';
+    banner.parentElement.className = 'show';
     loop();
 
     canvas.onclick = function () {
