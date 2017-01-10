@@ -3,19 +3,19 @@
     google: {
       families: ['Bungee Shade'],
     },
-    fontactive: stroke,
-    fontinactive: stroke,
+    fontactive: stroke.bind(null, false),
+    fontinactive: stroke.bind(null, true),
     timeout: 2000,
   });
 
-  function stroke() {
+  function stroke(failed) {
     var banner = document.getElementById('hero');
     if (!banner) return;
 
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
     var text = 'Service Mocker';
-    var fontFamily = 'Bungee Shade, cursive';
+    var fontFamily = failed ? 'cursive' : 'Bungee Shade, cursive';
     var charSpace = 2;
 
     var DPR = window.devicePixelRatio || 1;
