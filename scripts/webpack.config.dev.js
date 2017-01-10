@@ -58,6 +58,7 @@ module.exports = Object.assign(baseConfig, {
     new HtmlWebpackPlugin({
       title: 'Service Mocker',
       chunks: ['client'],
+      favicon: joinRoot('/docs/assets/favicon.png'),
     }),
     new DashboardPlugin(dashboard.setData),
   ]),
