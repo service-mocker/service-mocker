@@ -44,9 +44,9 @@
 
     var end = false;
     var chars = text.split('');
-    var dashLen = fontSize;
+    var dashLen = fontSize * 2;
     var dashOffset = dashLen;
-    var speed = dashLen / 50 | 0;
+    var speed = dashLen / 60;
     var alpha = 0;
 
     function move(cb) {
@@ -98,10 +98,9 @@
     var animationID = null;
 
     function loop() {
-      cancelAnimationFrame(animationID);
       ctx.clearRect(0, 0, width, height);
 
-      if (dashOffset >= 0) {
+      if (dashOffset > 0) {
         stroke();
       } else {
         fade();
@@ -117,6 +116,7 @@
     loop();
 
     canvas.onclick = function () {
+      cancelAnimationFrame(animationID);
       dashOffset = dashLen;
       alpha = 0;
       end = false;
