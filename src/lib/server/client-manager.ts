@@ -3,22 +3,20 @@ import {
   LEGACY_CLIENT_ID,
 } from '../constants/';
 
+import { delegateEvent } from './delegate-event';
+
 const clients: any = {
   [LEGACY_CLIENT_ID]: true,
 };
 
 /* istanbul ignore next: unable to report coverage from sw context */
 export const clientManager = {
-  _initialized: false,
-
   has(id: string): boolean {
     return !!clients[id];
   },
 
   add(id: string): void {
-    if (id) {
-      clients[id] = true;
-    }
+    clients[id] = true;
   },
 
   delete(id: string): void {
@@ -47,21 +45,15 @@ export const clientManager = {
     throw new Error('no active client is found');
   },
 
-  listenOnce(): void {
-    if (this._initialized) {
-      return;
-    }
-
-    this._initialized = true;
-
-    self.addEventListener('message', async (evt: ExtendableMessageEvent) => {
+  listen(): void {
+    delegateEvent('message', async (evt: ExtendableMessageEvent) => {
       const {
         data,
         source,
         ports,
       } = evt;
 
-      if (!data) {
+      if (!data || !ports) {
         return;
       }
 

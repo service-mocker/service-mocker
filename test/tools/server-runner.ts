@@ -1,4 +1,5 @@
 import { createServer } from 'service-mocker/server';
+import { delegateEvent, clearWorkerEventListeners } from 'service-mocker/lib/server/delegate-event';
 
 export function serverRunner(register: () => void) {
   const server = createServer();
@@ -15,11 +16,7 @@ export function serverRunner(register: () => void) {
       return errorHandler;
     },
     set(fn) {
-      if (!fn) {
-        server.off('error', errorHandler);
-      } else {
-        server.on('error', fn);
-      }
+      delegateEvent('error', fn);
 
       errorHandler = fn;
     },
@@ -51,7 +48,6 @@ export function serverRunner(register: () => void) {
 
 // make sure test results are update-to-dated
 function runTests(register: () => void) {
-  const server = createServer();
   const mocha: any = new Mocha();
 
   mocha.ui('bdd');
@@ -62,12 +58,7 @@ function runTests(register: () => void) {
   mocha.suite.emit('pre-require', self, null, mocha);
 
   // remove previous event listeners
-  Object.keys(self)
-    .filter(prop => /^on/.test(prop))
-    .forEach(prop => {
-      const type = prop.replace(/^on/, '');
-      server.off(type);
-    });
+  clearWorkerEventListeners();
 
   register();
 
