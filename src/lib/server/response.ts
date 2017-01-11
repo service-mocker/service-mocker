@@ -215,8 +215,8 @@ export class MockerResponse implements IMockerResponse {
       method: request.method,
       headers: request.headers,
       // always using 'cors'
-      mode: 'cors',
-      credentials: 'include',
+      mode: request.mode,
+      credentials: request.credentials,
     };
 
     if (!init.body && !request.bodyUsed && request.method !== 'GET' && request.method !== 'HEAD') {
