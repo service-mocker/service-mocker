@@ -350,7 +350,7 @@ export function responseRunner() {
         expect(text).to.equal(realResponse.text);
       });
 
-      it('should forward original request', async () => {
+      it('should forward original MockerRequest', async () => {
         router.get('/', (req, res) => {
           res.forward(req);
         });
@@ -358,6 +358,21 @@ export function responseRunner() {
         const { text } = await sendRequest('/');
 
         const realResponse = await sendRequest('/');
+
+        expect(text).to.equal(realResponse.text);
+      });
+
+      it('should forward a remote address', async () => {
+        const baseURL = 'https://api.spotify.com';
+        const requsetInfo = `${baseURL}/albums/3oTKl46yD2fsb1dtUYq6Nn`;
+
+        router.base(baseURL).get('/albums/:id', (req, res) => {
+          res.forward(`${req.baseURL}/v1${req.path}`);
+        });
+
+        const { text } = await sendRequest(requsetInfo);
+
+        const realResponse = await sendRequest(requsetInfo);
 
         expect(text).to.equal(realResponse.text);
       });

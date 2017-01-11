@@ -28,7 +28,12 @@ export interface IRouterMatcher<T> {
   (path: RoutePath, callback: any): T;
 }
 
+/* tslint:disable member-ordering */
 export interface IMockerRouter {
+  readonly baseURL: string;
+  base(baseURL: string): IMockerRouter;
+
+  // routings
   all: IRouterMatcher<this>;
   get: IRouterMatcher<this>;
   post: IRouterMatcher<this>;
@@ -37,6 +42,7 @@ export interface IMockerRouter {
   delete: IRouterMatcher<this>;
   options: IRouterMatcher<this>;
 }
+/* tslint:enable member-ordering */
 
 type RouteRule = {
   method: string,
@@ -47,7 +53,7 @@ type RouteRule = {
   keys: pathToRegExp.Key[],
 };
 
-// merge interface to pass type checks
+// merge interface to pass type checks (lacking routing methods)
 export interface MockerRouter extends IMockerRouter {}
 
 export class MockerRouter implements IMockerRouter {
@@ -56,8 +62,17 @@ export class MockerRouter implements IMockerRouter {
 
   private _rules: Array<RouteRule> = [];
 
-  constructor() {
+  constructor(readonly baseURL: string = location.origin) {
     MockerRouter.routers.push(this);
+  }
+
+  /**
+   * Get a new router with the given base url
+   */
+  base(baseURL: string = this.baseURL): MockerRouter {
+    const url = new URL(baseURL);
+
+    return new MockerRouter(url.origin);
   }
 
   /**
@@ -103,7 +118,11 @@ export class MockerRouter implements IMockerRouter {
       request,
     } = event;
 
-    const { pathname } = new URL(request.url, location.href);
+    const url = new URL(request.url, location.href);
+
+    if (url.origin !== this.baseURL) {
+      return;
+    }
 
     for (let rule of this._rules) {
       const {
@@ -113,7 +132,7 @@ export class MockerRouter implements IMockerRouter {
         callback,
       } = rule;
 
-      const matches = regex.exec(pathname);
+      const matches = regex.exec(url.pathname);
 
       if (matches && (request.method === method || rule.isAll)) {
         const params: RequestParameter = {};

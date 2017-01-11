@@ -19,12 +19,14 @@ export const ExtandableRequest = (fetch as any).polyfill ? Request : extensify(R
 
 export interface IMockerRequest extends Request {
   readonly path: string;
+  readonly baseURL: string;
   readonly query: RequestQuery;
   readonly params: RequestParameter;
 }
 
 export class MockerRequest extends ExtandableRequest implements IMockerRequest {
   readonly path: string;
+  readonly baseURL: string;
   readonly query: RequestQuery;
   readonly params: RequestParameter;
 
@@ -41,6 +43,7 @@ export class MockerRequest extends ExtandableRequest implements IMockerRequest {
     this._event = event;
     this.params = params;
     this.path = url.pathname;
+    this.baseURL = url.origin;
     this.query = qs.parse(url.search.slice(1)); // remove leading '?'
 
     // overwrite relative URL from fetch polyfill

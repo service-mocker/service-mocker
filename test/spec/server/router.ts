@@ -10,6 +10,42 @@ export function routerRunner() {
   const methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
 
   describe('Router', () => {
+    describe('.baseURL', () => {
+      it('should equal to local machine', () => {
+        expect(router).to.have.property('baseURL')
+          .and.that.equals(location.origin);
+      });
+
+      it('should equal to remote origin', () => {
+        const remote = 'https://api.github.com';
+        expect(router.base(remote).baseURL).to.equal(remote);
+      });
+    });
+
+    describe('.base()', () => {
+      it('should return a new Router', () => {
+        expect(router.base('https://api.github.com')).not.to.equal(router);
+      });
+
+      it('should set to current baseURL when not given', () => {
+        const rr = router.base('https://api.github.com');
+
+        expect(rr.base().baseURL).to.equal(rr.baseURL);
+      });
+
+      it('should throw an error when baseURL is illegal', () => {
+        let error = null;
+
+        try {
+          router.base('illegal');
+        } catch (e) {
+          error = e;
+        }
+
+        expect(error).not.to.be.null;
+      });
+    });
+
     describe('route', () => {
       it('should have bacic HTTP request methods defined in fetch standard', () => {
         for (let method of methods) {
@@ -41,7 +77,7 @@ export function routerRunner() {
       });
     });
 
-    describe('.all', () => {
+    describe('.all()', () => {
       it('should have a `router.all` method', () => {
         expect(router).to.have.property('all')
           .and.that.is.an.instanceof(Function);

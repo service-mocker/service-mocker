@@ -1,9 +1,13 @@
 import { expect } from 'chai';
+import { createServer } from 'service-mocker/server';
 
 import { uniquePath } from './helpers/unique-path';
+import { sendRequest } from './helpers/send-request';
 import { requestToPromise } from './helpers/router-to-promise';
 
 export function requestRunner() {
+  const { router } = createServer();
+
   describe('Request', () => {
     describe('.params', () => {
       it('should have a `.params` property', async () => {
@@ -55,6 +59,30 @@ export function requestRunner() {
 
         expect(request).to.have.property('path')
           .and.that.equals(path);
+      });
+    });
+
+    describe('.baseURL', () => {
+      it('should equal to local machine', async () => {
+        const path = uniquePath();
+        const request = await requestToPromise(path, path);
+
+        expect(request).to.have.property('baseURL')
+          .and.that.equals(location.origin);
+      });
+
+      it('should equal to remote origin', async () => {
+        const remote = 'https://api.github.com';
+        let request: any;
+
+        router.base(remote).get('/', (req, res) => {
+          request = req;
+          res.forward(req);
+        });
+
+        await sendRequest(remote);
+
+        expect(request.baseURL).to.equal(remote);
       });
     });
 
