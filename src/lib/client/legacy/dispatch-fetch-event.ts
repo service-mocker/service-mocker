@@ -25,11 +25,18 @@ const addEventListener = self.addEventListener.bind(self);
 
 // handle fetch events ourselves
 self.addEventListener = function(type: string, listener: (event: any) => void, useCapture?: boolean) {
-  if (type === 'fetch') {
-    fetchEvents.push(listener);
-  } else {
-    addEventListener(type, listener, useCapture);
+  if (type !== 'fetch') {
+    return addEventListener(type, listener, useCapture);
   }
+
+  fetchEvents.push(listener);
+
+  // for self-dispatched fetch event
+  addEventListener('fetch', (evt) => {
+    fetchEvents.forEach((listener) => {
+      listener(evt);
+    });
+  });
 };
 
 /**

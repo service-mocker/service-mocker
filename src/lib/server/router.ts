@@ -1,4 +1,5 @@
 import * as pathToRegExp from 'path-to-regexp';
+import { EventManager } from './event-manager';
 
 import {
   RequestParameter,
@@ -56,7 +57,7 @@ export class MockerRouter implements IMockerRouter {
   private _rules: Array<RouteRule> = [];
 
   constructor() {
-    self.addEventListener('fetch', (event: FetchEvent) => {
+    EventManager.on('fetch', (event: FetchEvent) => {
       const {
         client, // old spec
         clientId,

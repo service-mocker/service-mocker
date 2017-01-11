@@ -34,10 +34,12 @@ listenResult();
 export async function clientRunner() {
   await client.ready;
 
+  // legacy server tests will be added directly
   if (client.isLegacy) {
     return run();
   }
 
+  // fetch test cases from sw
   const res = await sendMessageRequest(navigator.serviceWorker.controller, {
     request: 'MOCHA_TASKS',
   }, 10 * 1e3);

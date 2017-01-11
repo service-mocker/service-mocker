@@ -3,8 +3,6 @@ import { sendRequest } from './send-request';
 import { RESPONSE } from '../../mock-response';
 import { createServer } from 'service-mocker/server';
 
-const { router } = createServer();
-
 export const requestToPromise = routerToPromise.bind(null, true);
 export const responseToPromise = routerToPromise.bind(null, false);
 
@@ -14,6 +12,7 @@ async function routerToPromise(
   requsetInfo?: string | null,
   init: RequestInit = {},
 ): Promise<any> {
+  const { router } = createServer();
   const p = uniquePath();
 
   const method = init.method ? init.method.toLowerCase() : 'get';

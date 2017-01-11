@@ -1,28 +1,38 @@
-const IS_SW = self !== self.window;
+import { createServer } from 'service-mocker/server';
 
-const eventListeners = {
-  fetch: [],
-  error: [],
-  install: [],
-  activate: [],
-};
+export function serverRunner(register: () => void) {
+  const server = createServer();
 
-// patch mocha env to service worker context
-if (IS_SW) {
+  // register tests right away on legacy mode
+  if (server.isLegacy) {
+    return register();
+  }
+
+  // remove annoying warning message caused by mocha
+  let errorHandler: any;
+  Object.defineProperty(self, 'onerror', {
+    get() {
+      return errorHandler;
+    },
+    set(fn) {
+      if (!fn) {
+        server.off('error', errorHandler);
+      } else {
+        server.on('error', fn);
+      }
+
+      errorHandler = fn;
+    },
+    enumerable: true,
+    configurable: true,
+  });
+
   // avoid polluting client env
   require('mocha/mocha');
   require('source-map-support/sw-source-map-support').install();
 
-  patchListener();
-}
-
-export function serverRunner(register: () => void) {
-  if (!IS_SW) {
-    // register tests right away on legacy mode
-    register();
-  }
-
   // wait for client request on modern mode
+  // DON'T use `server.on()`, this listener should be permanently added
   self.addEventListener('message', (evt: ExtendableMessageEvent) => {
     const {
       data,
@@ -37,8 +47,11 @@ export function serverRunner(register: () => void) {
   });
 }
 
+//////// THE FOLLOWING WILL ONLY BE EXECUTED IN MODERN MODE ////////
+
 // make sure test results are update-to-dated
 function runTests(register: () => void) {
+  const server = createServer();
   const mocha: any = new Mocha();
 
   mocha.ui('bdd');
@@ -48,10 +61,13 @@ function runTests(register: () => void) {
 
   mocha.suite.emit('pre-require', self, null, mocha);
 
-  // cleanning stuff
-  Object.keys(eventListeners).forEach((type) => {
-    eventListeners[type].length = 0;
-  });
+  // remove previous event listeners
+  Object.keys(self)
+    .filter(prop => /^on/.test(prop))
+    .forEach(prop => {
+      const type = prop.replace(/^on/, '');
+      server.off(type);
+    });
 
   register();
 
@@ -126,44 +142,6 @@ function getAllSuites(parent) {
       suites: allSuites,
       tests: allTests,
     };
-  });
-}
-
-// some event listeners must be must be added
-// on the initial evaluation of worker script.
-function patchListener() {
-  const addEventListener = self.addEventListener.bind(self);
-
-  self.addEventListener = function eventProxy(type: string, listener: EventListenerOrEventListenerObject) {
-    if (!eventListeners[type]) {
-      return addEventListener(type, listener);
-    }
-
-    eventListeners[type].push(listener);
-  };
-
-  Object.keys(eventListeners).forEach((type) => {
-    const listeners = eventListeners[type];
-
-    addEventListener(type, function(event) {
-      listeners.forEach((fn) => {
-        fn.call(this, event);
-      });
-    });
-
-    // patch for `on-event` accessors
-    let listener: any;
-    Object.defineProperty(self, `on${type}`, {
-      set(fn) {
-        listener = fn;
-        self.addEventListener(type, listener);
-      },
-      get() {
-        return listener;
-      },
-      enumerable: true,
-      configurable: true,
-    });
   });
 }
 
