@@ -1,28 +1,16 @@
 import { createServer } from 'service-mocker/server';
-import { delegateEvent, clearWorkerEventListeners } from 'service-mocker/lib/server/delegate-event';
+
+const server = createServer();
 
 export function serverRunner(register: () => void) {
-  const server = createServer();
-
   // register tests right away on legacy mode
   if (server.isLegacy) {
     return register();
   }
 
-  // remove annoying warning message caused by mocha
-  let errorHandler: any;
-  Object.defineProperty(self, 'onerror', {
-    get() {
-      return errorHandler;
-    },
-    set(fn) {
-      delegateEvent('error', fn);
-
-      errorHandler = fn;
-    },
-    enumerable: true,
-    configurable: true,
-  });
+  // wrap `self.onerror`,
+  // remove the annoying warning caused by mocha
+  wrapErrorEvent();
 
   // avoid polluting client env
   require('mocha/mocha');
@@ -57,8 +45,8 @@ function runTests(register: () => void) {
 
   mocha.suite.emit('pre-require', self, null, mocha);
 
-  // remove previous event listeners
-  clearWorkerEventListeners();
+  // remove previous routers
+  (server.router.constructor as any).routers.length = 0;
 
   register();
 
@@ -156,5 +144,26 @@ async function broadcast(message: any) {
 
   clients.forEach(cli => {
     cli.postMessage(message);
+  });
+}
+
+function wrapErrorEvent() {
+  let errorHandler: any;
+
+  self.addEventListener('error', (...args) => {
+    if (errorHandler) {
+      errorHandler(...args);
+    }
+  });
+
+  Object.defineProperty(self, 'onerror', {
+    get() {
+      return errorHandler;
+    },
+    set(fn) {
+      errorHandler = fn;
+    },
+    enumerable: true,
+    configurable: true,
   });
 }

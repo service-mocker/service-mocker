@@ -1,5 +1,4 @@
 import * as pathToRegExp from 'path-to-regexp';
-import { delegateEvent } from './delegate-event';
 
 import {
   RequestParameter,
@@ -9,8 +8,6 @@ import {
 import {
   MockerResponse,
 } from './response';
-
-import { clientManager } from './client-manager';
 
 // bacic HTTP request methods in fetch standard, see
 // https://fetch.spec.whatwg.org/#concept-method
@@ -54,26 +51,25 @@ type RouteRule = {
 export interface MockerRouter extends IMockerRouter {}
 
 export class MockerRouter implements IMockerRouter {
+  // save all routers for lazy evaluations
+  static routers: Array<MockerRouter> = [];
+
   private _rules: Array<RouteRule> = [];
 
   constructor() {
-    delegateEvent('fetch', (event: FetchEvent) => {
-      const {
-        client, // old spec
-        clientId,
-      } = event;
-
-      /* istanbul ignore next: unable to test old spec */
-      const id = clientId || (client && client.id);
-
-      /* istanbul ignore else */
-      if (clientManager.has(id)) {
-        this._match(event);
-      }
-    });
+    MockerRouter.routers.push(this);
   }
 
-  protected _add(method: string, path: RoutePath, callback: any): this {
+  /**
+   * Add new routing to current router
+   *
+   * @param method HTTP method
+   * @param path Routing path rule
+   * @param callback Routing callback
+   */
+  add(method: string, path: RoutePath, callback: any): this {
+    method = method.toUpperCase();
+
     const regex = pathToRegExp(path);
 
     let cb: RouteCallback;
@@ -97,7 +93,12 @@ export class MockerRouter implements IMockerRouter {
     return this;
   }
 
-  private _match(event: FetchEvent): void {
+  /**
+   * Match the proper routing
+   *
+   * @param event Fetch event
+   */
+  match(event: FetchEvent): void {
     const {
       request,
     } = event;
@@ -139,6 +140,6 @@ export class MockerRouter implements IMockerRouter {
   ...methods,
 ].forEach(type => {
   MockerRouter.prototype[type] = function (path, callback) {
-    return this._add(type.toUpperCase(), path, callback);
+    return this.add(type, path, callback);
   };
 });

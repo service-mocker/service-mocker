@@ -3,8 +3,6 @@ import {
   LEGACY_CLIENT_ID,
 } from '../constants/';
 
-import { delegateEvent } from './delegate-event';
-
 const clients: any = {
   [LEGACY_CLIENT_ID]: true,
 };
@@ -21,6 +19,42 @@ export const clientManager = {
 
   delete(id: string): void {
     delete clients[id];
+  },
+
+  // manage client connections
+  async connect(evt: ExtendableMessageEvent) {
+    const {
+      data,
+      source,
+      ports,
+    } = evt;
+
+    if (!data || !ports.length) {
+      return;
+    }
+
+    const port = ports[0];
+
+    // `evt.source` is null in old webkit, see:
+    // https://bugs.chromium.org/p/chromium/issues/detail?id=403693
+    const clientID = source ? source.id : await this._inferClientID();
+
+    switch (data.action) {
+      case ACTION.PING:
+        this.add(clientID);
+        return port.postMessage({
+          action: ACTION.PONG,
+        });
+
+      case ACTION.REQUEST_CLAIM:
+        await self.clients.claim();
+        return port.postMessage({
+          action: ACTION.ESTABLISHED,
+        });
+
+      case ACTION.DISCONNECT:
+        return this.delete(clientID);
+    }
   },
 
   /**
@@ -43,43 +77,6 @@ export const clientManager = {
     }
 
     throw new Error('no active client is found');
-  },
-
-  listen(): void {
-    delegateEvent('message', async (evt: ExtendableMessageEvent) => {
-      const {
-        data,
-        source,
-        ports,
-      } = evt;
-
-      if (!data || !ports.length) {
-        return;
-      }
-
-      const port = ports[0];
-
-      // `evt.source` is null in old webkit, see:
-      // https://bugs.chromium.org/p/chromium/issues/detail?id=403693
-      const clientID = source ? source.id : await this._inferClientID();
-
-      switch (data.action) {
-        case ACTION.PING:
-          this.add(clientID);
-          return port.postMessage({
-            action: ACTION.PONG,
-          });
-
-        case ACTION.REQUEST_CLAIM:
-          await self.clients.claim();
-          return port.postMessage({
-            action: ACTION.ESTABLISHED,
-          });
-
-        case ACTION.DISCONNECT:
-          return this.delete(clientID);
-      }
-    });
   },
 
   // infer the possible client ID
