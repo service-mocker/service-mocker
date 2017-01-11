@@ -24,7 +24,7 @@ async function listen(evt: MessageEvent): Promise<void> {
     ports,
   } = evt;
 
-  if (!ports.length) {
+  if (!data || !ports.length) {
     return;
   }
 

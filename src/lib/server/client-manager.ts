@@ -53,7 +53,7 @@ export const clientManager = {
         ports,
       } = evt;
 
-      if (!data || !ports) {
+      if (!data || !ports.length) {
         return;
       }
 
