@@ -5,7 +5,7 @@
 const eventListeners = {};
 
 /* istanbul ignore if: unable to report coverage from sw context */
-if (!self.hasOwnProperty('window')) {
+if (self !== self.window) {
   // DON'T use `Object.keys()` here, there're some inherited props like `onerror`
   for (let prop in self) {
     if (/^on/.test(prop)) {
