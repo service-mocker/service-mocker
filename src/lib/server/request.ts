@@ -4,14 +4,6 @@ import {
   extensify,
 } from '../utils/';
 
-export type RequestParameter = {
-  [key: string]: any,
-};
-
-export type RequestQuery = {
-  [key: string]: any,
-};
-
 // convert native `Request` to extendable
 // export or you'll get an error of 'using private'
 /* istanbul ignore next: polyfill is legacy browsers only */
@@ -20,19 +12,19 @@ export const ExtandableRequest = (fetch as any).polyfill ? Request : extensify(R
 export interface IMockerRequest extends Request {
   readonly path: string;
   readonly baseURL: string;
-  readonly query: RequestQuery;
-  readonly params: RequestParameter;
+  readonly query: any;
+  readonly params: any;
 }
 
 export class MockerRequest extends ExtandableRequest implements IMockerRequest {
   readonly path: string;
   readonly baseURL: string;
-  readonly query: RequestQuery;
-  readonly params: RequestParameter;
+  readonly query: any;
+  readonly params: any;
 
   private _event: FetchEvent;
 
-  constructor(event: FetchEvent, params: RequestParameter) {
+  constructor(event: FetchEvent, params: any) {
     const { request } = event;
 
     // avoid polluting original request

@@ -1,9 +1,6 @@
 import * as pathToRegExp from 'path-to-regexp';
 
-import {
-  RequestParameter,
-  MockerRequest,
-} from './request';
+import { MockerRequest } from './request';
 
 import {
   MockerResponse,
@@ -135,7 +132,7 @@ export class MockerRouter implements IMockerRouter {
       const matches = regex.exec(url.pathname);
 
       if (matches && (request.method === method || rule.isAll)) {
-        const params: RequestParameter = {};
+        const params = {};
 
         // skip full matched string at [0]
         const max = matches.length;
