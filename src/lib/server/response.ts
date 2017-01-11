@@ -42,24 +42,13 @@ export class MockerResponse implements IMockerResponse {
   private _statusCode = 200;
   private _deferred = new Defer();
 
-  constructor(private _event: FetchEvent, timeout: number) {
+  constructor(private _event: FetchEvent) {
     const {
       _deferred,
     } = this;
 
     // everything within service worker should be asynchronous
     _event.respondWith(_deferred.promise);
-
-    const timer = setTimeout(() => {
-      responseLog.error('processing response timeout, forgot to call `res.end()`?');
-      this.forward(_event.request);
-    }, timeout);
-
-    function clear() {
-      clearTimeout(timer);
-    }
-
-    _deferred.promise.then(clear, clear);
   }
 
   /**

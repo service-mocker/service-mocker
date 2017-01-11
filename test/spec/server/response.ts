@@ -11,33 +11,6 @@ export function responseRunner() {
   const { router } = createServer();
 
   describe('Response', () => {
-    describe('.timeout', () => {
-      it('should forward timeout request', async () => {
-        const rr = router.timeout(100);
-        const logError = console.error.bind(console);
-
-        let errorMsg: any;
-
-        console.error = (...args) => {
-          console.error = logError;
-          errorMsg = args.join('');
-        };
-
-        rr.get('/', (_req, res) => {
-          setTimeout(() => {
-            res.send('failed');
-          }, 1000);
-        });
-
-        const { text } = await sendRequest('/');
-
-        (rr as any)._rules.length = 0;
-
-        expect(text).not.to.equal('failed');
-        expect(errorMsg).not.to.be.empty;
-      });
-    });
-
     describe('.headers', () => {
       it('should has a `headers` property', async () => {
         const response = await responseToPromise();
@@ -378,15 +351,11 @@ export function responseRunner() {
       });
 
       it('should forward original request', async () => {
-        const rr = router.timeout(1000);
-
-        rr.get('/', (req, res) => {
+        router.get('/', (req, res) => {
           res.forward(req);
         });
 
         const { text } = await sendRequest('/');
-
-        (rr as any)._rules.length = 0;
 
         const realResponse = await sendRequest('/');
 

@@ -38,9 +38,6 @@ export interface IMockerRouter {
   head: IRouterMatcher<this>;
   delete: IRouterMatcher<this>;
   options: IRouterMatcher<this>;
-
-  globalTimeout(ms: number): this;
-  timeout(ms: number): IMockerRouter;
 }
 
 type RouteRule = {
@@ -58,7 +55,7 @@ export interface MockerRouter extends IMockerRouter {}
 export class MockerRouter implements IMockerRouter {
   private _rules: Array<RouteRule> = [];
 
-  constructor(private _timeout = 10 * 1e3) {
+  constructor() {
     self.addEventListener('fetch', (event: FetchEvent) => {
       const {
         client, // old spec
@@ -73,21 +70,6 @@ export class MockerRouter implements IMockerRouter {
         this._match(event);
       }
     });
-  }
-
-  /**
-   * Set global router processing timeout.
-   */
-  globalTimeout(ms = this._timeout): this {
-    this._timeout = ms;
-    return this;
-  }
-
-  /**
-   * Return a new router with temporary timeout.
-   */
-  timeout(ms = this._timeout): MockerRouter {
-    return new MockerRouter(ms);
   }
 
   protected _add(method: string, path: RoutePath, callback: any): this {
@@ -142,7 +124,7 @@ export class MockerRouter implements IMockerRouter {
         }
 
         const request = new MockerRequest(event, params);
-        const response = new MockerResponse(event, this._timeout);
+        const response = new MockerResponse(event);
 
         return callback.call(event, request, response);
       }
