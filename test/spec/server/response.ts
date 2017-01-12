@@ -378,56 +378,70 @@ export function responseRunner() {
       });
 
       it('should forward a request with blob body', async () => {
+        let newRequest: any;
+
+        const contentType = mime.lookup('png');
         const path = uniquePath();
         const init = {
           method: 'OPTIONS',
           body: new Blob([], {
-            type: mime.lookup('png'),
+            type: contentType,
           }),
         };
 
-        router.options(path, (_req, res) => {
-          res.forward('/');
+        router.options(path, async (_req, res) => {
+          newRequest = await res.forward('/');
         });
 
-        const { text } = await sendRequest(path, init);
-        const realResponse = await sendRequest('/', init);
+        await sendRequest(path, init);
 
-        expect(text).to.equal(realResponse.text);
+        const blob = await newRequest.blob();
+
+        expect(blob.type).to.equal(contentType);
       });
 
       it('should forward a request with formData body', async () => {
+        let newRequest: any;
+
         const path = uniquePath();
         const init = {
           method: 'OPTIONS',
           body: new FormData(),
         };
 
-        router.options(path, (_req, res) => {
-          res.forward('/');
+        router.options(path, async (_req, res) => {
+          newRequest = await res.forward('/');
         });
 
-        const { text } = await sendRequest(path, init);
-        const realResponse = await sendRequest('/', init);
+        await sendRequest(path, init);
 
-        expect(text).to.equal(realResponse.text);
+        expect(newRequest).to.be.an.instanceof(Request);
+
+        if (newRequest._bodyInit) {
+          expect(newRequest._bodyInit).to.be.an.instanceof(FormData);
+        } else {
+          const blob = await newRequest.blob();
+          expect(blob.type).to.match(/form-data/);
+        }
       });
 
       it('should forward a request with text body', async () => {
+        let newRequest: any;
+
+        const body = 'ServiceMocker';
         const path = uniquePath();
         const init = {
+          body,
           method: 'OPTIONS',
-          body: 'ServiceMocker',
         };
 
-        router.options(path, (_req, res) => {
-          res.forward('/');
+        router.options(path, async (_req, res) => {
+          newRequest = await res.forward('/');
         });
 
-        const { text } = await sendRequest(path, init);
-        const realResponse = await sendRequest('/', init);
+        await sendRequest(path, init);
 
-        expect(text).to.equal(realResponse.text);
+        expect(await newRequest.text()).to.equal(body);
       });
     });
   });

@@ -1,5 +1,4 @@
 import * as mime from 'mime-component';
-import * as objectAssign from 'object-assign';
 import * as HttpStatus from 'http-status-codes';
 
 import {
@@ -142,7 +141,7 @@ export class MockerResponse implements IMockerResponse {
   sendStatus(code: number): void {
     this.type('text');
     this._statusCode = code;
-    const body = this._getStatusText();
+    const body = getStatusText(code);
 
     this.send(body);
   }
@@ -181,7 +180,7 @@ export class MockerResponse implements IMockerResponse {
     const responseInit: ResponseInit = {
       headers: this.headers,
       status: this._statusCode,
-      statusText: this._getStatusText(),
+      statusText: getStatusText(this._statusCode),
     };
 
     const response = new Response(responseBody, responseInit);
@@ -196,57 +195,29 @@ export class MockerResponse implements IMockerResponse {
    * @param input Destination URL or a Request object or MockerRequest
    * @param init Fetch request init
    */
-  async forward(input: RequestInfo, init?: RequestInit): Promise<void>;
-  async forward(input: MockerRequest, init?: RequestInit): Promise<void>;
-  async forward(input: any, init: RequestInit = {}) {
-    // forward native Request
+  async forward(input: RequestInfo, init?: RequestInit): Promise<Request>;
+  async forward(input: MockerRequest, init?: RequestInit): Promise<Request>;
+  async forward(input: any, init?: RequestInit) {
+    let request: Request;
+
     if (input instanceof Request) {
-      return this._deferred.resolve(nativeFetch(input, init));
+      // forward native Request
+      request = new Request(input, init);
+    } else if (input instanceof MockerRequest) {
+      // forward MockerRequest
+      request = new Request((input as any)._native, init);
+    } else {
+      // create new Request
+      const options = await concatRequestInit(this._event.request, init);
+      request = new Request(input, options);
     }
 
-    // forward MockerRequest
-    if (input instanceof MockerRequest) {
-      return this._deferred.resolve(nativeFetch((input as any)._native, init));
-    }
+    this._deferred.resolve(
+      // fetch will somehow consume the body
+      nativeFetch(request.clone()),
+    );
 
-    const { request } = this._event;
-
-    const defaultOptions: RequestInit = {
-      method: request.method,
-      headers: request.headers,
-      // always using 'cors'
-      mode: request.mode,
-      credentials: request.credentials,
-    };
-
-    if (!init.body && !request.bodyUsed && request.method !== 'GET' && request.method !== 'HEAD') {
-      const req = request.clone();
-      const contentType = req.headers.get('content-type');
-      const textType = new RegExp(`form-data|${mime.lookup('text')}`);
-
-      try {
-        if (contentType && !textType.test(contentType)) {
-          defaultOptions.body = await req.blob();
-        } else {
-          defaultOptions.body = await req.text();
-        }
-      } catch (e) {}
-    }
-
-    this._deferred.resolve(nativeFetch(input, objectAssign(defaultOptions, init)));
-  }
-
-  private _getStatusText() {
-    let statusText: string;
-
-    try {
-      // `http-status-codes` will raise an error on unknown status codes
-      statusText = HttpStatus.getStatusText(this._statusCode);
-    } catch (e) {
-      statusText = JSON.stringify(this._statusCode);
-    }
-
-    return statusText;
+    return request;
   }
 }
 
@@ -292,4 +263,62 @@ function nativeFetch(input: RequestInfo, init?: RequestInit): Promise<Response> 
   }
 
   return fetch(input, init);
+}
+
+/**
+ * Concat request init from given request and new init object
+ */
+async function concatRequestInit(request: Request, init: RequestInit = {}): Promise<RequestInit> {
+  const options: RequestInit = {};
+
+  [
+    'method',
+    'headers',
+    'mode',
+    'credentials',
+    'cache',
+    'redirect',
+    'referrer',
+    'integrity',
+  ].forEach((prop) => {
+    options[prop] = init[prop] || request[prop];
+  });
+
+  if (!request.bodyUsed && options.method !== 'GET' && options.method !== 'HEAD') {
+    options.body = await bodyParser(request);
+  }
+
+  return options;
+}
+
+/**
+ * Parse request body
+ */
+function bodyParser(request: Request): any {
+  // handle github fetch polyfill
+  /* istanbul ignore if */
+  if ((fetch as any).polyfill) {
+    return (request as any)._bodyInit;
+  }
+
+  try {
+    // always parsing as blob
+    return request.clone().blob();
+  } catch (e) {}
+}
+
+/**
+ * Get default status text from the given status code
+ */
+function getStatusText(statusCode: number): string {
+  let statusText: string;
+
+  try {
+    // `http-status-codes` will raise an error on unknown status codes
+    statusText = HttpStatus.getStatusText(statusCode);
+  } catch (e) {
+    statusText = JSON.stringify(statusCode);
+  }
+
+  return statusText;
 }
