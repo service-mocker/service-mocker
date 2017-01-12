@@ -397,7 +397,17 @@ export function responseRunner() {
         };
 
         router.options(path, async (_req, res) => {
-          newRequest = await res.forward('/');
+          const global: any = self;
+          const nativeFetch = self.fetch;
+
+          global.fetch = (input, init) => {
+            newRequest = new Request(input, init);
+            res.end();
+          };
+
+          await res.forward('/');
+
+          global.fetch = nativeFetch;
         });
 
         await sendRequest(path, init);
@@ -405,31 +415,6 @@ export function responseRunner() {
         const blob = await newRequest.blob();
 
         expect(blob.type).to.equal(contentType);
-      });
-
-      it('should forward a request with formData body', async () => {
-        let newRequest: any;
-
-        const path = uniquePath();
-        const init = {
-          method: 'OPTIONS',
-          body: new FormData(),
-        };
-
-        router.options(path, async (_req, res) => {
-          newRequest = await res.forward('/');
-        });
-
-        await sendRequest(path, init);
-
-        expect(newRequest).to.be.an.instanceof(Request);
-
-        if (newRequest._bodyInit) {
-          expect(newRequest._bodyInit).to.be.an.instanceof(FormData);
-        } else {
-          const blob = await newRequest.blob();
-          expect(blob.type).to.match(/form-data/);
-        }
       });
 
       it('should forward a request with text body', async () => {
@@ -443,7 +428,17 @@ export function responseRunner() {
         };
 
         router.options(path, async (_req, res) => {
-          newRequest = await res.forward('/');
+          const global: any = self;
+          const nativeFetch = self.fetch;
+
+          global.fetch = (input, init) => {
+            newRequest = new Request(input, init);
+            res.end();
+          };
+
+          await res.forward('/');
+
+          global.fetch = nativeFetch;
         });
 
         await sendRequest(path, init);

@@ -195,8 +195,8 @@ export class MockerResponse implements IMockerResponse {
    * @param input Destination URL or a Request object or MockerRequest
    * @param init Fetch request init
    */
-  async forward(input: RequestInfo, init?: RequestInit): Promise<Request>;
-  async forward(input: MockerRequest, init?: RequestInit): Promise<Request>;
+  async forward(input: RequestInfo, init?: RequestInit): Promise<void>;
+  async forward(input: MockerRequest, init?: RequestInit): Promise<void>;
   async forward(input: any, init?: RequestInit) {
     let request: Request;
 
@@ -212,12 +212,8 @@ export class MockerResponse implements IMockerResponse {
       request = new Request(input, options);
     }
 
-    this._deferred.resolve(
-      // fetch will somehow consume the body
-      nativeFetch(request.clone()),
-    );
-
-    return request;
+    // fetch will somehow consume the body
+    this._deferred.resolve(nativeFetch(request));
   }
 }
 
