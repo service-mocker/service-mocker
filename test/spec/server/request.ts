@@ -3,7 +3,6 @@ import { createServer } from 'service-mocker/server';
 
 import { uniquePath } from './helpers/unique-path';
 import { sendRequest } from './helpers/send-request';
-import { requestToPromise } from './helpers/router-to-promise';
 
 export function requestRunner() {
   const { router } = createServer();
@@ -195,4 +194,24 @@ export function requestRunner() {
     });
   });
 
+  async function requestToPromise(
+    path?: string,
+    requestURL?: string,
+    init: RequestInit = {},
+  ): Promise<any> {
+    const p = uniquePath();
+
+    const method = init.method ? init.method.toLowerCase() : 'get';
+
+    const promise = new Promise((resolve) => {
+      router[method](path || p, (req, res) => {
+        resolve(req);
+        res.end();
+      });
+    });
+
+    await sendRequest(requestURL || p, init);
+
+    return promise;
+  }
 }

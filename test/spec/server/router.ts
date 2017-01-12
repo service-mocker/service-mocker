@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import { createServer } from 'service-mocker/server';
 
-import { RESPONSE } from '../mock-response';
 import { uniquePath } from './helpers/unique-path';
 import { sendRequest } from './helpers/send-request';
 
@@ -73,22 +72,22 @@ export function routerRunner() {
         const path = uniquePath();
 
         router.get(path, (_req, res) => {
-          res.send(RESPONSE);
+          res.send('whatever');
         });
 
         const { text } = await sendRequest(path);
 
-        expect(text).to.equal(RESPONSE);
+        expect(text).to.equal('whatever');
       });
 
       it('should support shorthand method', async () => {
         const path = uniquePath();
 
-        router.get(path, RESPONSE);
+        router.get(path, 'whatever');
 
         const { text } = await sendRequest(path);
 
-        expect(text).to.equal(RESPONSE);
+        expect(text).to.equal('whatever');
       });
     });
 
@@ -120,12 +119,12 @@ export function routerRunner() {
         const path = uniquePath();
 
         router.route(path).get((_req, res) => {
-          res.send(RESPONSE);
+          res.send('whatever');
         });
 
         const { text } = await sendRequest(path);
 
-        expect(text).to.equal(RESPONSE);
+        expect(text).to.equal('whatever');
       });
 
       it('should have all supported routing methods', async () => {

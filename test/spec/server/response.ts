@@ -5,7 +5,6 @@ import * as HttpStatus from 'http-status-codes';
 
 import { uniquePath } from './helpers/unique-path';
 import { sendRequest } from './helpers/send-request';
-import { responseToPromise } from './helpers/router-to-promise';
 
 export function responseRunner() {
   const { router } = createServer();
@@ -13,7 +12,15 @@ export function responseRunner() {
   describe('Response', () => {
     describe('.headers', () => {
       it('should has a `headers` property', async () => {
-        const response = await responseToPromise();
+        let response: any;
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          response = res;
+          res.end();
+        });
+
+        await sendRequest(path);
 
         expect(response).to.have.property('headers')
           .and.that.is.an.instanceof(Headers);
