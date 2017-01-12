@@ -19,6 +19,13 @@ export function routerRunner() {
       it('should not include trailing slash', () => {
         expect(router.baseURL).not.to.match(/\/$/);
       });
+
+      it('should be set via `createServer()`', () => {
+        const baseURL = 'http://a.com/api/v1';
+        const { router } = createServer(baseURL);
+
+        expect(router.baseURL).to.equal(baseURL);
+      });
     });
 
     describe('.base()', () => {

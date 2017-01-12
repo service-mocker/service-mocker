@@ -5,6 +5,6 @@ import {
 
 export { IMockerServer };
 
-export function createServer(): IMockerServer {
-  return new MockerServer();
+export function createServer(baseURL?: string): IMockerServer {
+  return new MockerServer(baseURL);
 }

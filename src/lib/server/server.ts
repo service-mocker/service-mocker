@@ -10,8 +10,12 @@ export interface IMockerServer {
 
 export class MockerServer implements IMockerServer {
   readonly isLegacy = self === self.window;
-  readonly router = new MockerRouter();
   readonly storage = new MockerStorage();
+  readonly router: MockerRouter;
+
+  constructor(baseURL?: string) {
+    this.router = new MockerRouter(baseURL);
+  }
 }
 
 // Event listeners MUST be added on the initial evaluation of worker scripts.
