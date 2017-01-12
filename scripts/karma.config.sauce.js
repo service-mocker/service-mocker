@@ -1,7 +1,7 @@
 const baseConfig = require('./karma.config.base');
 
 const {
-  CIRCLE_CI,
+  CI,
   CIRCLE_BRANCH,
   CIRCLE_BUILD_NUM,
   FORCE_MOBILE_TEST,
@@ -103,7 +103,7 @@ module.exports = function (config) {
     },
     nyanReporter: {
       suppressErrorHighlighting: true,
-      renderOnRunCompleteOnly: !!CIRCLE_CI,
+      renderOnRunCompleteOnly: !!CI,
     },
   }));
 };
