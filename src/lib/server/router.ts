@@ -21,14 +21,35 @@ export type RoutePath = string | RegExp;
 export type RouteCallback = (request: MockerRequest, response: MockerResponse) => void;
 
 export interface IRouterMatcher<T> {
+  /**
+   * Register a routing
+   *
+   * @param path An express style route path.
+   * @param callback A function that will be invoked with `request` and `response`,
+   *                 if the second argument is provided with a non-function value,
+   *                 then the value will be regarded as response body.
+   */
   (path: RoutePath, callback: RouteCallback): T;
   (path: RoutePath, callback: any): T;
+}
+
+export interface IScopedRouterMatcher<T> {
+  /**
+   * Register a routing to current scope
+   *
+   * @param callback A function that will be invoked with `request` and `response`,
+   *                 if the second argument is provided with a non-function value,
+   *                 then the value will be regarded as response body.
+   */
+  (callback: RouteCallback): T;
+  (callback: any): T;
 }
 
 /* tslint:disable member-ordering */
 export interface IMockerRouter {
   readonly baseURL: string;
   base(baseURL: string): IMockerRouter;
+  route(path: RoutePath): IScopedRouter;
 
   // routings
   all: IRouterMatcher<this>;
@@ -40,6 +61,17 @@ export interface IMockerRouter {
   options: IRouterMatcher<this>;
 }
 /* tslint:enable member-ordering */
+
+export interface IScopedRouter {
+  // routings
+  all: IScopedRouterMatcher<this>;
+  get: IScopedRouterMatcher<this>;
+  post: IScopedRouterMatcher<this>;
+  put: IScopedRouterMatcher<this>;
+  head: IScopedRouterMatcher<this>;
+  delete: IScopedRouterMatcher<this>;
+  options: IScopedRouterMatcher<this>;
+}
 
 type RouteRule = {
   baseURL: string,
@@ -78,7 +110,7 @@ export class MockerRouter implements IMockerRouter {
   }
 
   /**
-   * Get a new router with the given base url,
+   * Create a new router with the given baseURL,
    * relative `baseURL` will be resolved to current origin
    */
   base(baseURL: string = this.baseURL): MockerRouter {
@@ -88,13 +120,21 @@ export class MockerRouter implements IMockerRouter {
   }
 
   /**
+   * Create a scoped router with the given path as
+   * route path for every routing method.
+   */
+  route(path: RoutePath): ScopedRouter {
+    return new ScopedRouter(this, path);
+  }
+
+  /**
    * Add new routing to current router
    *
    * @param method HTTP method
    * @param path Routing path rule
    * @param callback Routing callback
    */
-  add(method: string, path: RoutePath, callback: any): this {
+  protected _add(method: string, path: RoutePath, callback: any): this {
     method = method.toUpperCase();
 
     const regex = pathToRegExp(path);
@@ -126,7 +166,7 @@ export class MockerRouter implements IMockerRouter {
    *
    * @param event Fetch event
    */
-  match(event: FetchEvent): void {
+  protected _match(event: FetchEvent): void {
     const {
       request,
     } = event;
@@ -158,12 +198,36 @@ export class MockerRouter implements IMockerRouter {
   }
 }
 
-// assign all methods
-[
+export interface ScopedRouter extends IScopedRouter {}
+
+export class ScopedRouter implements IScopedRouter {
+  constructor(
+    private _router: MockerRouter,
+    private _path: RoutePath,
+  ) {}
+
+  protected _add(method: string, callback: any) {
+    // convert to 'any' type to access private method
+    (this._router as any)._add(method, this._path, callback);
+
+    return this;
+  }
+}
+
+const allMethods = [
   'all',
   ...methods,
-].forEach(type => {
-  MockerRouter.prototype[type] = function (path, callback) {
-    return this.add(type, path, callback);
+];
+
+// assign all methods to router
+allMethods.forEach(method => {
+  MockerRouter.prototype[method] = function(path, callback) {
+    return this._add(method, path, callback);
+  };
+});
+
+allMethods.forEach(method => {
+  ScopedRouter.prototype[method] = function(callback) {
+    return this._add(method, callback);
   };
 });
