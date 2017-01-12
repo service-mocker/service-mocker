@@ -11,38 +11,46 @@ export function routerRunner() {
 
   describe('Router', () => {
     describe('.baseURL', () => {
-      it('should equal to local machine', () => {
+      it('should have a `.baseURL` property', () => {
         expect(router).to.have.property('baseURL')
-          .and.that.equals(location.origin);
+          .and.that.is.a('string');
       });
 
-      it('should equal to remote origin', () => {
-        const remote = 'https://api.github.com';
-        expect(router.base(remote).baseURL).to.equal(remote);
+      it('should not include trailing slash', () => {
+        expect(router.baseURL).not.to.match(/\/$/);
       });
     });
 
     describe('.base()', () => {
       it('should return a new Router', () => {
-        expect(router.base('https://api.github.com')).not.to.equal(router);
+        expect(router.base('/')).not.to.equal(router);
+      });
+
+      it('should strip the trailing slash', () => {
+        const baseURL = 'http://a.com/api/v1';
+        const rr = router.base(baseURL + '/');
+
+        expect(rr.baseURL).to.equal(baseURL);
       });
 
       it('should set to current baseURL when not given', () => {
-        const rr = router.base('https://api.github.com');
+        const rr = router.base('http://a.com/api');
 
         expect(rr.base().baseURL).to.equal(rr.baseURL);
       });
 
-      it('should throw an error when baseURL is illegal', () => {
-        let error = null;
+      it('should resolve with current origin when giving a relative path', () => {
+        const origin = 'http://a.com';
+        const rr = router.base(origin);
 
-        try {
-          router.base('illegal');
-        } catch (e) {
-          error = e;
-        }
+        expect(rr.base('/whatever').baseURL).to.equal(origin + '/whatever');
+      });
 
-        expect(error).not.to.be.null;
+      it('should resolve to the given absolute path', () => {
+        const baseURL = 'http://a.com/api';
+        const rr = router.base(baseURL);
+
+        expect(rr.baseURL).to.equal(baseURL);
       });
     });
 

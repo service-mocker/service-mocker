@@ -42,6 +42,7 @@ export interface IMockerRouter {
 /* tslint:enable member-ordering */
 
 type RouteRule = {
+  baseURL: string,
   method: string,
   isAll: boolean,
   path: RoutePath,
@@ -57,19 +58,33 @@ export class MockerRouter implements IMockerRouter {
   // save all routers for lazy evaluations
   static routers: Array<MockerRouter> = [];
 
+  readonly baseURL: string;
+
+  private _origin: string;
+  private _basePath: string;
   private _rules: Array<RouteRule> = [];
 
-  constructor(readonly baseURL: string = location.origin) {
+  constructor(baseURL: string = '/') {
     MockerRouter.routers.push(this);
+
+    // resolve url based on current origin for relative path
+    // `location.origin` is not supported in IE
+    const url = new URL(baseURL, location.href);
+
+    this._origin = url.origin;
+    this._basePath = url.pathname.replace(/\/$/, ''); // remove trailing slash
+
+    this.baseURL = this._origin + this._basePath;
   }
 
   /**
-   * Get a new router with the given base url
+   * Get a new router with the given base url,
+   * relative `baseURL` will be resolved to current origin
    */
   base(baseURL: string = this.baseURL): MockerRouter {
-    const url = new URL(baseURL);
+    const url = new URL(baseURL, this._origin);
 
-    return new MockerRouter(url.origin);
+    return new MockerRouter(url.href);
   }
 
   /**
@@ -99,6 +114,7 @@ export class MockerRouter implements IMockerRouter {
       method, path, regex,
       callback: cb,
       keys: regex.keys,
+      baseURL: this.baseURL,
       isAll: method === 'ALL',
     });
 
@@ -115,33 +131,25 @@ export class MockerRouter implements IMockerRouter {
       request,
     } = event;
 
+    // `request.url` maybe relative in legacy mode
     const url = new URL(request.url, location.href);
 
-    if (url.origin !== this.baseURL) {
+    if (url.origin !== this._origin) {
       return;
     }
+
+    // strip router's base path
+    const path = url.pathname.replace(this._basePath, '');
 
     for (let rule of this._rules) {
       const {
         method,
         regex,
-        keys,
         callback,
       } = rule;
 
-      const matches = regex.exec(url.pathname);
-
-      if (matches && (request.method === method || rule.isAll)) {
-        const params = {};
-
-        // skip full matched string at [0]
-        const max = matches.length;
-        for (let i = 1; i < max; i++) {
-          const { name } = keys[i - 1];
-          params[name] = matches[i];
-        }
-
-        const request = new MockerRequest(event, params);
+      if (regex.test(path) && (request.method === method || rule.isAll)) {
+        const request = new MockerRequest(event, rule);
         const response = new MockerResponse(event);
 
         return callback.call(event, request, response);

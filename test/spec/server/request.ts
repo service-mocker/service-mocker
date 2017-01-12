@@ -60,6 +60,22 @@ export function requestRunner() {
         expect(request).to.have.property('path')
           .and.that.equals(path);
       });
+
+      it('should shrink to the given baseURL', async () => {
+        let request: any;
+
+        const path = uniquePath();
+        const baseURL = '/api/v1';
+
+        router.base(baseURL).get(path, (req, res) => {
+          request = req;
+          res.end();
+        });
+
+        await sendRequest(baseURL + path);
+
+        expect(request.path).to.equal(path);
+      });
     });
 
     describe('.baseURL', () => {
@@ -71,13 +87,13 @@ export function requestRunner() {
           .and.that.equals(location.origin);
       });
 
-      it('should equal to remote origin', async () => {
-        const remote = 'https://api.github.com';
+      it('should equal to remote address', async () => {
+        const remote = 'https://a.com/api';
         let request: any;
 
         router.base(remote).get('/', (req, res) => {
           request = req;
-          res.forward(req);
+          res.end();
         });
 
         await sendRequest(remote);
