@@ -61,6 +61,7 @@
     "karma-coverage": "^1.1.1",
     "karma-firefox-launcher": "^1.0.0",
     "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.1",
     "karma-nyan-reporter": "git+https://github.com/idiotWu/karma-nyan-reporter.git",
     "karma-remap-istanbul": "^0.3.2",
     "karma-safari-launcher": "^1.0.0",
