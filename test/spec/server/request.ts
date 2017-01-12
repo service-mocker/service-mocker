@@ -79,11 +79,10 @@ export function requestRunner() {
 
     describe('.baseURL', () => {
       it('should equal to local machine', async () => {
-        const path = uniquePath();
-        const request = await requestToPromise(path, path);
+        const request = await requestToPromise();
 
         expect(request).to.have.property('baseURL')
-          .and.that.equals(location.origin);
+          .and.that.equals(new URL(location.href).origin);
       });
 
       it('should equal to remote address', async () => {
