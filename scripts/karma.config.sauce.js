@@ -103,7 +103,7 @@ module.exports = function (config) {
     },
     nyanReporter: {
       suppressErrorHighlighting: true,
-      renderOnRunCompleteOnly: !!CI,
+      minimal: !!CI,
     },
   }));
 };
