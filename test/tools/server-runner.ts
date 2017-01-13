@@ -80,11 +80,8 @@ function swReporter(runner) {
 
         if (typeof error.toJSON === 'function') {
           // `AssertionError`
-          fault = error.toJSON();
+          fault = JSON.stringify(error);
           fault.stack = stack;
-
-          // err.actual is a function
-          delete fault.actual;
         } else if (error instanceof Error) {
           fault = {
             stack,
