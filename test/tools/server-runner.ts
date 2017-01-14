@@ -80,8 +80,14 @@ function swReporter(runner) {
 
         if (typeof error.toJSON === 'function') {
           // `AssertionError`
-          fault = JSON.stringify(error);
+          fault = error.toJSON();
           fault.stack = stack;
+
+          for (let prop in fault) {
+            if (typeof fault[prop] === 'function') {
+              delete fault[prop];
+            }
+          }
         } else if (error instanceof Error) {
           fault = {
             stack,

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { createServer } from 'service-mocker/server';
 import * as mime from 'mime-component';
-import * as HttpStatus from 'http-status-codes';
+import * as httpStatus from 'statuses';
 
 import { uniquePath } from './helpers/unique-path';
 import { sendRequest } from './helpers/send-request';
@@ -53,7 +53,7 @@ export function responseRunner() {
         expect(status).to.equal(202);
       });
 
-      it(`should send a response with "${HttpStatus.getStatusText(202)}" statusText`, async () => {
+      it(`should send a response with "${httpStatus[202]}" statusText`, async () => {
         const path = uniquePath();
 
         router.get(path, (_req, res) => {
@@ -62,7 +62,7 @@ export function responseRunner() {
 
         const { statusText } = await sendRequest(path);
 
-        expect(statusText).to.equal(HttpStatus.getStatusText(202));
+        expect(statusText).to.equal(httpStatus[202]);
       });
 
       it(`should be able to set unknown status code`, async () => {
@@ -72,10 +72,11 @@ export function responseRunner() {
           res.status(222).end();
         });
 
-        const { status, statusText } = await sendRequest(path);
+        const { status, statusText, text } = await sendRequest(path);
 
         expect(status).to.equals(222);
         expect(statusText).to.equal('222');
+        expect(text).to.be.empty;
       });
     });
 
@@ -265,9 +266,25 @@ export function responseRunner() {
           res.sendStatus(202);
         });
 
-        const { status } = await sendRequest(path);
+        const { status, statusText, text } = await sendRequest(path);
 
         expect(status).to.equal(202);
+        expect(statusText).to.equal(httpStatus[202]);
+        expect(text).to.equal(httpStatus[202]);
+      });
+
+      it(`should be able to set unknown status code`, async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.sendStatus(222);
+        });
+
+        const { status, statusText, text } = await sendRequest(path);
+
+        expect(status).to.equals(222);
+        expect(statusText).to.equal('222');
+        expect(text).to.equal('222');
       });
     });
 

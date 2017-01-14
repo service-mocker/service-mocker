@@ -1,5 +1,5 @@
 import * as mime from 'mime-component';
-import * as HttpStatus from 'http-status-codes';
+import * as httpStatus from 'statuses';
 
 import {
   debug,
@@ -7,15 +7,6 @@ import {
 } from '../utils/';
 
 import { MockerRequest } from './request';
-
-// null body statuses, see
-// https://fetch.spec.whatwg.org/#statuses
-const NULL_BODY_STATUS = [
-  101,
-  204,
-  205,
-  304,
-];
 
 const responseLog = debug.scope('response');
 const IS_IE_EDGE = /Edge/.test(navigator.userAgent);
@@ -139,11 +130,9 @@ export class MockerResponse implements IMockerResponse {
    * @param code Status code
    */
   sendStatus(code: number): void {
-    this.type('text');
-    this._statusCode = code;
-    const body = getStatusText(code);
+    const body = httpStatus[code] || JSON.stringify(code);
 
-    this.send(body);
+    this.type('text').status(code).send(body);
   }
 
   /**
@@ -157,10 +146,10 @@ export class MockerResponse implements IMockerResponse {
     let responseBody = this._body;
 
     // leave body empty for null body status
-    if (NULL_BODY_STATUS.indexOf(this._statusCode) > -1) {
+    if (httpStatus.empty[this._statusCode]) {
       /* istanbul ignore if */
       if (IS_IE_EDGE) {
-        responseLog.warn('using null body status in IE Edge may raise a `TypeMismatchError` Error');
+        responseLog.warn('sending response with null body status in IE Edge may raise a `TypeMismatchError` Error');
       }
 
       responseBody = undefined;
@@ -180,7 +169,7 @@ export class MockerResponse implements IMockerResponse {
     const responseInit: ResponseInit = {
       headers: this.headers,
       status: this._statusCode,
-      statusText: getStatusText(this._statusCode),
+      statusText: httpStatus[this._statusCode] || JSON.stringify(this._statusCode),
     };
 
     const response = new Response(responseBody, responseInit);
@@ -301,20 +290,4 @@ function bodyParser(request: Request): any {
     // always parsing as blob
     return request.clone().blob();
   } catch (e) {}
-}
-
-/**
- * Get default status text from the given status code
- */
-function getStatusText(statusCode: number): string {
-  let statusText: string;
-
-  try {
-    // `http-status-codes` will raise an error on unknown status codes
-    statusText = HttpStatus.getStatusText(statusCode);
-  } catch (e) {
-    statusText = JSON.stringify(statusCode);
-  }
-
-  return statusText;
 }
