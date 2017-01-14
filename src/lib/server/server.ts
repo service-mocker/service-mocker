@@ -38,8 +38,7 @@ self.addEventListener('fetch', (event: FetchEvent) => {
   }
 
   MockerRouter.routers.forEach((router) => {
-    // convert to 'any' type to access private method
-    (router as any)._match(event);
+    router.match(event);
   });
 });
 

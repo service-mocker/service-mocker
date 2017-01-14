@@ -1,10 +1,7 @@
 import * as pathToRegExp from 'path-to-regexp';
 
 import { MockerRequest } from './request';
-
-import {
-  MockerResponse,
-} from './response';
+import { MockerResponse } from './response';
 
 // bacic HTTP request methods in fetch standard, see
 // https://fetch.spec.whatwg.org/#concept-method
@@ -30,7 +27,13 @@ export interface IRouterMatcher<T> {
    *                 then the value will be regarded as response body.
    */
   (path: RoutePath, callback: RouteCallback): T;
-  (path: RoutePath, callback: any): T;
+  /**
+   * Register a routing
+   *
+   * @param path An express style route path.
+   * @param responseBody The response body to be sent.
+   */
+  (path: RoutePath, responseBody: any): T;
 }
 
 export interface IScopedRouterMatcher<T> {
@@ -42,7 +45,12 @@ export interface IScopedRouterMatcher<T> {
    *                 then the value will be regarded as response body.
    */
   (callback: RouteCallback): T;
-  (callback: any): T;
+  /**
+   * Register a routing to current scope
+   *
+   * @param responseBody The response body to be sent.
+   */
+  (responseBody: any): T;
 }
 
 /* tslint:disable member-ordering */
@@ -128,13 +136,13 @@ export class MockerRouter implements IMockerRouter {
   }
 
   /**
-   * Add new routing to current router
+   * Register a new routing to current router
    *
    * @param method HTTP method
    * @param path Routing path rule
-   * @param callback Routing callback
+   * @param callback Routing callback handler
    */
-  protected _add(method: string, path: RoutePath, callback: any): this {
+  register(method: string, path: RoutePath, callback: any): this {
     method = method.toUpperCase();
 
     const regex = pathToRegExp(path);
@@ -166,7 +174,7 @@ export class MockerRouter implements IMockerRouter {
    *
    * @param event Fetch event
    */
-  protected _match(event: FetchEvent): void {
+  match(event: FetchEvent): void {
     const {
       request,
     } = event;
@@ -206,9 +214,14 @@ export class ScopedRouter implements IScopedRouter {
     private _path: RoutePath,
   ) {}
 
-  protected _add(method: string, callback: any) {
+  /**
+   * Register a new scoped routing
+   * @param method HTTP method
+   * @param callback Routing callback handler
+   */
+  register(method: string, callback: any) {
     // convert to 'any' type to access private method
-    (this._router as any)._add(method, this._path, callback);
+    this._router.register(method, this._path, callback);
 
     return this;
   }
@@ -222,12 +235,12 @@ const allMethods = [
 // assign all methods to router
 allMethods.forEach(method => {
   MockerRouter.prototype[method] = function(path, callback) {
-    return this._add(method, path, callback);
+    return this.register(method, path, callback);
   };
 });
 
 allMethods.forEach(method => {
   ScopedRouter.prototype[method] = function(callback) {
-    return this._add(method, callback);
+    return this.register(method, callback);
   };
 });
