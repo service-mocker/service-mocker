@@ -90,6 +90,12 @@ export class MockerResponse implements IMockerResponse {
    * @param body Response body, one of Blob, ArrayBuffer, Object, or any primitive types
    */
   send(body?: any): void {
+    // don't parse native Response objects
+    if (body instanceof Response) {
+      this._body = body;
+      return this.end();
+    }
+
     let contentType = 'text';
 
     switch (typeof body) {
@@ -141,6 +147,11 @@ export class MockerResponse implements IMockerResponse {
    * if you want to respond with data, use `res.send()` and `res.json()`.
    */
   end(): void {
+    // respond with body if it's a native Response object
+    if (this._body instanceof Response) {
+      return this._deferred.resolve(this._body);
+    }
+
     const { request } = this._event;
 
     let responseBody = this._body;
@@ -149,7 +160,7 @@ export class MockerResponse implements IMockerResponse {
     if (httpStatus.empty[this._statusCode]) {
       /* istanbul ignore if */
       if (IS_IE_EDGE) {
-        responseLog.warn('sending response with null body status in IE Edge may raise a `TypeMismatchError` Error');
+        responseLog.warn('using null body status in IE Edge may raise a `TypeMismatchError` Error');
       }
 
       responseBody = undefined;
@@ -197,12 +208,60 @@ export class MockerResponse implements IMockerResponse {
       request = new Request((input as any)._native, init);
     } else {
       // create new Request
-      const options = await concatRequestInit(this._event.request, init);
+      const options = await concatRequest(this._event.request, init);
       request = new Request(input, options);
     }
 
     // fetch will somehow consume the body
     this._deferred.resolve(nativeFetch(request));
+  }
+}
+
+/**
+ * Concat given request object with new requset init
+ */
+async function concatRequest(request: Request, init: RequestInit = {}): Promise<RequestInit> {
+  const options: RequestInit = {};
+
+  [
+    'method',
+    'headers',
+    'mode',
+    'credentials',
+    'cache',
+    'redirect',
+    'referrer',
+    'integrity',
+  ].forEach((prop) => {
+    options[prop] = init[prop] || request[prop];
+  });
+
+  if (!request.bodyUsed && options.method !== 'GET' && options.method !== 'HEAD') {
+    options.body = await bodyParser(request);
+  }
+
+  return options;
+}
+
+/**
+ * Parse request body
+ *
+ * 1. If you're using github fetch polyfill, return the private member `_bodyInit`,
+ * 2. Else parsing request body as blob.
+ */
+function bodyParser(request: Request): any {
+  // handle github fetch polyfill
+  /* istanbul ignore if */
+  if ((fetch as any).polyfill) {
+    return (request as any)._bodyInit;
+  }
+
+  try {
+    // always parse as blob
+    return request.clone().blob();
+  } catch (e) {
+    /* istanbul ignore next */
+    responseLog.warn('parsing request body failed, you may need to parse it manually', e);
   }
 }
 
@@ -213,7 +272,7 @@ export class MockerResponse implements IMockerResponse {
  *    legacy mode with fetch support, return with `fetch.native`.
  *
  * 2. Else if `XMLHttpRequest.mockerPatched` is found, you're possibly
- *    using a fetch polyfill, processing as following:
+ *    using a fetch polyfill, processing as the following:
  *    2.1. Reset `XMLHttpRequest` to native one `(patched)XMLHttpRequest.native`,
  *    2.2. Run fetch polyfill (with native XHR),
  *    2.3. Restore `XMLHttpRequest` to patched one,
@@ -248,46 +307,4 @@ function nativeFetch(input: RequestInfo, init?: RequestInit): Promise<Response> 
   }
 
   return fetch(input, init);
-}
-
-/**
- * Concat request init from given request and new init object
- */
-async function concatRequestInit(request: Request, init: RequestInit = {}): Promise<RequestInit> {
-  const options: RequestInit = {};
-
-  [
-    'method',
-    'headers',
-    'mode',
-    'credentials',
-    'cache',
-    'redirect',
-    'referrer',
-    'integrity',
-  ].forEach((prop) => {
-    options[prop] = init[prop] || request[prop];
-  });
-
-  if (!request.bodyUsed && options.method !== 'GET' && options.method !== 'HEAD') {
-    options.body = await bodyParser(request);
-  }
-
-  return options;
-}
-
-/**
- * Parse request body
- */
-function bodyParser(request: Request): any {
-  // handle github fetch polyfill
-  /* istanbul ignore if */
-  if ((fetch as any).polyfill) {
-    return (request as any)._bodyInit;
-  }
-
-  try {
-    // always parsing as blob
-    return request.clone().blob();
-  } catch (e) {}
 }

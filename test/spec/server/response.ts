@@ -194,6 +194,18 @@ export function responseRunner() {
         expect(body).to.equal('whatever');
       });
 
+      it('should send native Response object' , async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.send(new Response('whatever'));
+        });
+
+        const { body } = await sendRequest(path);
+
+        expect(body).to.equal('whatever');
+      });
+
       it(`should send a response with contentType "${mime.lookup('html')}"`, async () => {
         const path = uniquePath();
 
