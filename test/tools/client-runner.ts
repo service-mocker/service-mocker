@@ -157,7 +157,7 @@ async function sendRequest(event: MessageEvent) {
 
       ports[0].postMessage({
         headers,
-        text: await res.text(),
+        body: await res.text(),
         status: res.status,
         statusText: res.statusText,
       });

@@ -72,11 +72,11 @@ export function responseRunner() {
           res.status(222).end();
         });
 
-        const { status, statusText, text } = await sendRequest(path);
+        const { status, statusText, body } = await sendRequest(path);
 
         expect(status).to.equals(222);
         expect(statusText).to.equal('222');
-        expect(text).to.be.empty;
+        expect(body).to.be.empty;
       });
     });
 
@@ -104,7 +104,6 @@ export function responseRunner() {
 
         expect(headers.get('content-type')).to.equal('text/plain');
       });
-
     });
 
     describe('.json()', () => {
@@ -116,10 +115,52 @@ export function responseRunner() {
           res.json(obj);
         });
 
-        const { headers, text } = await sendRequest(path);
+        const { headers, body } = await sendRequest(path);
 
         expect(headers.get('content-type')).to.equal(mime.lookup('json'));
-        expect(JSON.parse(text)).to.deep.equal(obj);
+        expect(JSON.parse(body)).to.deep.equal(obj);
+      });
+    });
+
+    describe('.sendStatus()', () => {
+      it('should send a response with 202 status', async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.sendStatus(202);
+        });
+
+        const { status, statusText, body } = await sendRequest(path);
+
+        expect(status).to.equal(202);
+        expect(statusText).to.equal(httpStatus[202]);
+        expect(body).to.equal(httpStatus[202]);
+      });
+
+      it(`should send response with text type`, async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.sendStatus(222);
+        });
+
+        const { headers } = await sendRequest(path);
+
+        expect(headers.get('content-type')).to.equals(mime.lookup('text'));
+      });
+
+      it(`should be able to set unknown status code`, async () => {
+        const path = uniquePath();
+
+        router.get(path, (_req, res) => {
+          res.sendStatus(222);
+        });
+
+        const { status, statusText, body } = await sendRequest(path);
+
+        expect(status).to.equals(222);
+        expect(statusText).to.equal('222');
+        expect(body).to.equal('222');
       });
     });
 
@@ -131,10 +172,10 @@ export function responseRunner() {
           res.send();
         });
 
-        const { headers, text } = await sendRequest(path);
+        const { headers, body } = await sendRequest(path);
 
         expect(headers.get('content-type')).to.equal(mime.lookup('text'));
-        expect(text).to.be.empty;
+        expect(body).to.be.empty;
       });
 
       it('should be able to do some asynchronous stuffs' , async () => {
@@ -145,12 +186,12 @@ export function responseRunner() {
           res.send(body);
         });
 
-        const { text } = await sendRequest(path, {
+        const { body } = await sendRequest(path, {
           method: 'POST',
           body: 'whatever',
         });
 
-        expect(text).to.equal('whatever');
+        expect(body).to.equal('whatever');
       });
 
       it(`should send a response with contentType "${mime.lookup('html')}"`, async () => {
@@ -223,10 +264,10 @@ export function responseRunner() {
           res.send(num);
         });
 
-        const { headers, text } = await sendRequest(path);
+        const { headers, body } = await sendRequest(path);
 
         expect(headers.get('content-type')).to.equal(mime.lookup('json'));
-        expect(text).to.equal(JSON.stringify(num));
+        expect(body).to.equal(JSON.stringify(num));
       });
 
       it('should convert boolean to JSON', async () => {
@@ -237,10 +278,10 @@ export function responseRunner() {
           res.send(bool);
         });
 
-        const { headers, text } = await sendRequest(path);
+        const { headers, body } = await sendRequest(path);
 
         expect(headers.get('content-type')).to.equal(mime.lookup('json'));
-        expect(text).to.equal(JSON.stringify(bool));
+        expect(body).to.equal(JSON.stringify(bool));
       });
 
       it('should convert object to JSON', async () => {
@@ -251,40 +292,10 @@ export function responseRunner() {
           res.send(obj);
         });
 
-        const { headers, text } = await sendRequest(path);
+        const { headers, body } = await sendRequest(path);
 
         expect(headers.get('content-type')).to.equal(mime.lookup('json'));
-        expect(JSON.parse(text)).to.deep.equal(obj);
-      });
-    });
-
-    describe('.sendStatus()', () => {
-      it('should send a response with 202 status', async () => {
-        const path = uniquePath();
-
-        router.get(path, (_req, res) => {
-          res.sendStatus(202);
-        });
-
-        const { status, statusText, text } = await sendRequest(path);
-
-        expect(status).to.equal(202);
-        expect(statusText).to.equal(httpStatus[202]);
-        expect(text).to.equal(httpStatus[202]);
-      });
-
-      it(`should be able to set unknown status code`, async () => {
-        const path = uniquePath();
-
-        router.get(path, (_req, res) => {
-          res.sendStatus(222);
-        });
-
-        const { status, statusText, text } = await sendRequest(path);
-
-        expect(status).to.equals(222);
-        expect(statusText).to.equal('222');
-        expect(text).to.equal('222');
+        expect(JSON.parse(body)).to.deep.equal(obj);
       });
     });
 
@@ -296,11 +307,11 @@ export function responseRunner() {
           res.send('whatever');
         });
 
-        const { text } = await sendRequest(path, {
+        const { body } = await sendRequest(path, {
           method: 'HEAD',
         });
 
-        expect(text).to.be.empty;
+        expect(body).to.be.empty;
       });
 
       it(`should send a response with default contentType "${mime.lookup('text')}"`, async () => {
@@ -327,9 +338,9 @@ export function responseRunner() {
           res.status(204).send('whatever');
         });
 
-        const { text } = await sendRequest(path);
+        const { body } = await sendRequest(path);
 
-        expect(text).to.be.empty;
+        expect(body).to.be.empty;
       });
     });
 
@@ -341,10 +352,10 @@ export function responseRunner() {
           res.forward('/');
         });
 
-        const { text } = await sendRequest(path);
+        const { body } = await sendRequest(path);
         const realResponse = await sendRequest('/');
 
-        expect(text).to.equal(realResponse.text);
+        expect(body).to.equal(realResponse.body);
       });
 
       it('should forward the request with given RequestInit', async () => {
@@ -356,9 +367,9 @@ export function responseRunner() {
           });
         });
 
-        const { text } = await sendRequest(path);
+        const { body } = await sendRequest(path);
 
-        expect(text).to.be.empty;
+        expect(body).to.be.empty;
       });
 
       it('should forward the request with given Request object', async () => {
@@ -368,10 +379,10 @@ export function responseRunner() {
           res.forward(new Request('/'));
         });
 
-        const { text } = await sendRequest(path);
+        const { body } = await sendRequest(path);
         const realResponse = await sendRequest('/');
 
-        expect(text).to.equal(realResponse.text);
+        expect(body).to.equal(realResponse.body);
       });
 
       it('should forward original MockerRequest', async () => {
@@ -379,11 +390,11 @@ export function responseRunner() {
           res.forward(req);
         });
 
-        const { text } = await sendRequest('/');
+        const { body } = await sendRequest('/');
 
         const realResponse = await sendRequest('/');
 
-        expect(text).to.equal(realResponse.text);
+        expect(body).to.equal(realResponse.body);
       });
 
       it('should forward a remote address', async () => {
@@ -394,11 +405,11 @@ export function responseRunner() {
           res.forward(`${req.baseURL}/v1${req.path}`);
         });
 
-        const { text } = await sendRequest(requsetInfo);
+        const { body } = await sendRequest(requsetInfo);
 
         const realResponse = await sendRequest(requsetInfo);
 
-        expect(text).to.equal(realResponse.text);
+        expect(body).to.equal(realResponse.body);
       });
 
       it('should forward a request with blob body', async () => {

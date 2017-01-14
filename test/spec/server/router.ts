@@ -75,9 +75,9 @@ export function routerRunner() {
           res.send('whatever');
         });
 
-        const { text } = await sendRequest(path);
+        const { body } = await sendRequest(path);
 
-        expect(text).to.equal('whatever');
+        expect(body).to.equal('whatever');
       });
 
       it('should support shorthand method', async () => {
@@ -85,9 +85,9 @@ export function routerRunner() {
 
         router.get(path, 'whatever');
 
-        const { text } = await sendRequest(path);
+        const { body } = await sendRequest(path);
 
-        expect(text).to.equal('whatever');
+        expect(body).to.equal('whatever');
       });
     });
 
@@ -122,9 +122,9 @@ export function routerRunner() {
           res.send('whatever');
         });
 
-        const { text } = await sendRequest(path);
+        const { body } = await sendRequest(path);
 
-        expect(text).to.equal('whatever');
+        expect(body).to.equal('whatever');
       });
 
       it('should have all supported routing methods', async () => {

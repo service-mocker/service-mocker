@@ -1,9 +1,16 @@
 import { sendMessageRequest } from 'service-mocker/lib/utils/';
 
+export type ClientResponse = {
+  headers: Headers,
+  body: any,
+  status: number,
+  statusText: string,
+};
+
 /**
  * Request client to send a http request
  */
-export async function sendRequest(url: string, init: RequestInit = {}) {
+export async function sendRequest(url: string, init: RequestInit = {}): Promise<ClientResponse> {
   if (init.body instanceof FormData) {
     init.body = 'FORM_DATA';
   }
