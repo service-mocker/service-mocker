@@ -142,12 +142,10 @@ class MockerXHR extends ExtandableXHR {
     // set body to `null` will raise a TypeMismatchError in IE Edge
     const body = (this._method === 'GET' || this._method === 'HEAD') ? undefined : data;
 
-    // we are not able to handling cookies
-    // const credentials = this.withCredentials ? 'include' : 'omit';
+    const credentials = this.withCredentials ? 'include' : 'omit';
 
     const request = new Request(this._url, {
-      body,
-      // credentials,
+      body, credentials,
       method: this._method,
       headers: this._requestHeaders,
     });

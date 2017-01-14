@@ -271,6 +271,18 @@ export function XHRRunner () {
 
         expect(await request.text()).to.equal('whatever');
       });
+
+      it('should include credentials', async () => {
+        const promise = fetchRequestToPromise();
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/', true);
+        xhr.withCredentials = true;
+        xhr.send();
+
+        const request = await promise;
+
+        expect(request.credentials).to.equal('include');
+      });
     });
   });
 }
