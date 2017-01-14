@@ -25,7 +25,7 @@ module.exports = {
   singleRun: true,
 
   frameworks: ['mocha'],
-  reporters: ['nyan'],
+  reporters: ['mocha'],
 
   basePath: '..',
   files: [
@@ -60,9 +60,5 @@ module.exports = {
   // disable logs
   client: {
     captureConsole: false,
-  },
-
-  nyanReporter: {
-    suppressErrorHighlighting: true,
   },
 };

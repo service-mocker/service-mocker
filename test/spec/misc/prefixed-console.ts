@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { PrefixedConsole } from 'service-mocker/lib/utils';
 
-export function PrefixedConsoleRunner() {
+export default function() {
   describe('PrefixedConsole', () => {
     describe('inheritance', () => {
       it('should inherit from `console` object', () => {

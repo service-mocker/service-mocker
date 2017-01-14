@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { LEGACY_CLIENT_ID } from 'service-mocker/lib/constants';
 
-export function fetchEventRunner() {
+export default function() {
   describe('fetch event', () => {
-    describe('.clientId', () => {
+    describe('event.clientId', () => {
       it('should have a `.clientId` property', async () => {
         const event = await fetchEventToPromise();
 
@@ -12,7 +12,7 @@ export function fetchEventRunner() {
       });
     });
 
-    describe('.request', () => {
+    describe('event.request', () => {
       it('should have a `.request` property', async () => {
         const event = await fetchEventToPromise();
 
@@ -21,7 +21,7 @@ export function fetchEventRunner() {
       });
     });
 
-    describe('.respondWith()', () => {
+    describe('event.respondWith()', () => {
       it('should have a `.respondWith()` method', async () => {
         const event = await fetchEventToPromise();
 

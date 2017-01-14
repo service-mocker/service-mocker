@@ -1,7 +1,6 @@
 const baseConfig = require('./karma.config.base');
 
 const {
-  CI,
   CIRCLE_BRANCH,
   CIRCLE_BUILD_NUM,
   FORCE_MOBILE_TEST,
@@ -90,7 +89,7 @@ const buildNum = CIRCLE_BUILD_NUM ? `#${CIRCLE_BUILD_NUM}` : `@${Date.now()}`;
 
 module.exports = function (config) {
   config.set(Object.assign(baseConfig, {
-    reporters: ['nyan', 'saucelabs'],
+    reporters: ['mocha', 'saucelabs'],
     browsers: Object.keys(customLaunchers),
     customLaunchers: customLaunchers,
     // wait for mobile emulators
@@ -101,9 +100,8 @@ module.exports = function (config) {
       recordScreenshots: false,
       build: `service-worker ${buildNum}`,
     },
-    nyanReporter: {
-      suppressErrorHighlighting: true,
-      minimal: !!CI,
+    mochaReporter: {
+      output: 'minimal',
     },
   }));
 };

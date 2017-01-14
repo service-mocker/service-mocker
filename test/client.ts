@@ -1,11 +1,11 @@
 import 'service-mocker-polyfills';
 
-import { clientRunner } from './tools/client-runner';
+import { clientRunner } from './runner/client-runner';
 import { createClient } from 'service-mocker/client';
 
-import * as modernTests from './spec/client/modern/';
-import * as legacyTests from './spec/client/legacy/';
-import * as miscTests from './spec/misc/';
+const modernTests = (require as any).context('./spec/client/modern/', true, /\.ts$/);
+const legacyTests = (require as any).context('./spec/client/legacy/', true, /\.ts$/);
+const miscTests = (require as any).context('./spec/misc/', true, /\.ts$/);
 
 if (supportSW()) {
   describe('Modern Client Tests', function() {
@@ -14,8 +14,8 @@ if (supportSW()) {
       return client.ready;
     });
 
-    Object.keys(modernTests).forEach((name) => {
-      modernTests[name].call(this);
+    modernTests.keys().forEach((module) => {
+      modernTests(module).default.call(this);
     });
   });
 } else {
@@ -31,14 +31,14 @@ describe('Legacy Client Tests', function() {
     return client.ready;
   });
 
-  Object.keys(legacyTests).forEach((name) => {
-    legacyTests[name].call(this);
+  legacyTests.keys().forEach((module) => {
+    legacyTests(module).default.call(this);
   });
 });
 
 describe('Utils & Misc', function() {
-  Object.keys(miscTests).forEach((name) => {
-    miscTests[name].call(this);
+  miscTests.keys().forEach((module) => {
+    miscTests(module).default.call(this);
   });
 });
 

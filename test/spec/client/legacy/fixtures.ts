@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { createClient } from 'service-mocker/client';
 
-export function baseRunner() {
+export default function() {
   describe('Infrastructure', () => {
     describe('.isLegacy', () => {
       it('should have a `.isLegacy` property', () => {

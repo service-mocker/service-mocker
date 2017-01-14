@@ -39,7 +39,7 @@ function runTests(register: () => void) {
   const mocha: any = new Mocha();
 
   mocha.ui('bdd');
-  mocha.slow(200);
+  mocha.slow(500);
   mocha.timeout(10 * 1e3);
   mocha.reporter(swReporter);
 
@@ -83,11 +83,12 @@ function swReporter(runner) {
           fault = error.toJSON();
           fault.stack = stack;
 
-          for (let prop in fault) {
+          // strip the un-cloneable
+          Object.keys(fault).forEach(prop => {
             if (typeof fault[prop] === 'function') {
               delete fault[prop];
             }
-          }
+          });
         } else if (error instanceof Error) {
           fault = {
             stack,

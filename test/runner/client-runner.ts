@@ -11,7 +11,7 @@ import { createClient } from 'service-mocker/client';
 
 mocha.setup({
   ui: 'bdd',
-  slow: 200,
+  slow: 500,
   timeout: 10 * 1e3,
 });
 
@@ -179,7 +179,7 @@ if ((XMLHttpRequest as any).mockerPatched) {
 
   XMLHttpRequest.prototype.send = function send(data) {
     if (this._url.match(/(client|server)\.js/)) {
-      return this._nativeXHR.send(data);
+      return this._native.send(data);
     }
 
     originalSend.call(this, data);

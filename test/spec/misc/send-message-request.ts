@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { sendMessageRequest } from 'service-mocker/lib/utils';
 
-export function sendMessageRequestRunner() {
+export default function() {
   describe('sendMessageRequest', () => {
     it('should send message via MessageChannel', async () => {
       const promise = messageToPromise();

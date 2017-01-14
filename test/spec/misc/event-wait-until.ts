@@ -1,6 +1,6 @@
 import { eventWaitUntil } from 'service-mocker/lib/utils';
 
-export function eventWaitUntilRunner() {
+export default function() {
   describe('eventWaitUntil', () => {
     it('should be resolved', () => {
       const xhr = new XMLHttpRequest();

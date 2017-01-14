@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { extensify } from 'service-mocker/lib/utils';
 
-export function extensifyRunner() {
+export default function() {
   describe('extensify', () => {
     it('should copy all properties from native', () => {
       const RR = extensify(Request);

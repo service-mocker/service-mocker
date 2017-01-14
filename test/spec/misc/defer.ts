@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Defer } from 'service-mocker/lib/utils';
 
-export function deferRunner() {
+export default function() {
   describe('Defer', () => {
     describe('.done', () => {
       it('should have a `.done` property', () => {
