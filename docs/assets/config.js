@@ -1,6 +1,13 @@
 self.$config = {
   landing: true,
-  debug: true,
+  tocVisibleDepth: 2,
+  nav: [{
+    title: 'Getting Started',
+    path: '/home',
+  }, {
+    title: 'API Reference',
+    path: '/api',
+  }],
   plugins: [
     landingScriptsPlugin([
       'https://unpkg.com/webfontloader@latest',
