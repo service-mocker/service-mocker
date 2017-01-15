@@ -127,13 +127,20 @@
   box-sizing: border-box;
 }
 
-#footer p {
-  margin: 0;
-  text-align: center;
+#copyright {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   color: #ccc;
+  text-align: center;
+  transform: translate(-50%, -50%);
 }
 
-#footer a {
+#copyright p {
+  margin: 0;
+}
+
+#copyright a {
   color: #eee;
 }
 
