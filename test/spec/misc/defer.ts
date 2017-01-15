@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Defer } from 'service-mocker/lib/utils';
+import { Defer } from 'service-mocker/utils';
 
 export default function() {
   describe('Defer', () => {

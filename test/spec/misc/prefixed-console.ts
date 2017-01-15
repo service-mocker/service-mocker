@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { PrefixedConsole } from 'service-mocker/lib/utils';
+import { PrefixedConsole } from 'service-mocker/utils';
 
 export default function() {
   describe('PrefixedConsole', () => {

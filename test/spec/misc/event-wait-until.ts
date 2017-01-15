@@ -1,4 +1,4 @@
-import { eventWaitUntil } from 'service-mocker/lib/utils';
+import { eventWaitUntil } from 'service-mocker/utils';
 
 export default function() {
   describe('eventWaitUntil', () => {

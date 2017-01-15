@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { LEGACY_CLIENT_ID } from 'service-mocker/lib/constants';
+import { LEGACY_CLIENT_ID } from 'service-mocker/constants';
 
 export default function() {
   describe('fetch event', () => {

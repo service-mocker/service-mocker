@@ -2,7 +2,7 @@
 import { AssertionError } from 'chai';
 import 'source-map-support/browser-source-map-support';
 
-import { sendMessageRequest, Defer } from 'service-mocker/lib/utils/';
+import { sendMessageRequest, Defer } from 'service-mocker/utils/';
 import { createClient } from 'service-mocker/client';
 
 (self as any).sourceMapSupport.install();

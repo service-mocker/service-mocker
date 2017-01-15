@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { sendMessageRequest } from 'service-mocker/lib/utils';
+import { sendMessageRequest } from 'service-mocker/utils';
 
 export default function() {
   describe('sendMessageRequest', () => {

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { extensify } from 'service-mocker/lib/utils';
+import { extensify } from 'service-mocker/utils';
 
 export default function() {
   describe('extensify', () => {

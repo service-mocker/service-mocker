@@ -1,4 +1,4 @@
-import { sendMessageRequest } from 'service-mocker/lib/utils/';
+import { sendMessageRequest } from 'service-mocker/utils/';
 
 export type ClientResponse = {
   headers: Headers,
