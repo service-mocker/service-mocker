@@ -4,6 +4,10 @@
   color: #4594a9 !important;
 }
 
+.router-link-active {
+  border-color: #4594a9 !important;
+}
+
 .markdown-heading:focus {
   color: #4594a9 !important;
 }
