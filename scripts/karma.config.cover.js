@@ -5,11 +5,8 @@ module.exports = function (config) {
   // instrument only testing sources with Istanbul
   baseConfig.webpack.module.postLoaders = [{
     test: /\.ts$/,
-    loader: 'sourcemap-istanbul-instrumenter',
+    loader: 'istanbul-instrumenter',
     include: path.join(__dirname, '..', 'src'),
-    query: {
-      'force-sourcemap': true,
-    },
   }];
 
   const istanbulReports = {
