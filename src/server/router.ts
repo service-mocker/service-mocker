@@ -159,7 +159,9 @@ export class MockerRouter implements IMockerRouter {
     }
 
     this._rules.push({
-      method, path, regex,
+      method,
+      path,
+      regex,
       callback: cb,
       keys: regex.keys,
       baseURL: this.baseURL,
@@ -170,11 +172,11 @@ export class MockerRouter implements IMockerRouter {
   }
 
   /**
-   * Match the proper routing
+   * Match the proper routing, return `true` if rule matched
    *
    * @param event Fetch event
    */
-  match(event: FetchEvent): void {
+  match(event: FetchEvent): boolean {
     const {
       request,
     } = event;
@@ -183,7 +185,7 @@ export class MockerRouter implements IMockerRouter {
     const url = new URL(request.url, location.href);
 
     if (url.origin !== this._origin) {
-      return;
+      return false;
     }
 
     // strip router's base path
@@ -200,9 +202,12 @@ export class MockerRouter implements IMockerRouter {
         const request = new MockerRequest(event, rule);
         const response = new MockerResponse(event);
 
-        return callback.call(event, request, response);
+        callback.call(event, request, response);
+        return true;
       }
     }
+
+    return false;
   }
 }
 

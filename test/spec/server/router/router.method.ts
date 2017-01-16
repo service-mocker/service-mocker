@@ -67,4 +67,32 @@ export default function() {
       expect(count).to.equal(methods.length);
     });
   });
+
+  describe('when matching multiple rules', () => {
+    it('should only invoke the first matched route', async () => {
+      const path = uniquePath();
+      const rr = router.base();
+
+      let id = 0;
+
+      router.get(path, (_req, res) => {
+        id = 1;
+        res.end();
+      });
+
+      router.get(path, (_req, res) => {
+        id = 2;
+        res.end();
+      });
+
+      rr.get(path, (_req, res) => {
+        id = 3;
+        res.end();
+      });
+
+      await sendRequest(path);
+
+      expect(id).to.equal(1);
+    });
+  });
 }

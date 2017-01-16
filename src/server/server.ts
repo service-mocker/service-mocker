@@ -37,8 +37,8 @@ self.addEventListener('fetch', (event: FetchEvent) => {
     return;
   }
 
-  MockerRouter.routers.forEach((router) => {
-    router.match(event);
+  MockerRouter.routers.some((router) => {
+    return router.match(event);
   });
 });
 
