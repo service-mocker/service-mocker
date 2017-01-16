@@ -1,4 +1,4 @@
-/*!
+/**
  * Patch native `XMLHttpRequest`
  *
  * Notes:
@@ -26,8 +26,11 @@
  */
 
 import { createEvent } from './create-event';
-import { ExtandableXHR } from './extendable-xhr';
 import { dispatchFetchEvent } from './dispatch-fetch-event';
+
+import {
+  extensify,
+} from '../../utils/';
 
 export function patchXHR() {
   if ((XMLHttpRequest as any).mockerPatched) {
@@ -45,6 +48,8 @@ const EVENTS_LIST = [
   'load',
   'loadend',
 ];
+
+const ExtandableXHR = extensify(XMLHttpRequest);
 
 class MockerXHR extends ExtandableXHR {
   // marked with `mockerPatched` symbol
@@ -86,14 +91,23 @@ class MockerXHR extends ExtandableXHR {
 
     const results: Array<string> = [];
 
-    this._requestHeaders.forEach((value, name) => {
-      results.push(`${name}: ${value}`);
+    // https://xhr.spec.whatwg.org/#dom-xmlhttprequest-getallresponseheaders
+    const seperator = String.fromCharCode(0x3A) + String.fromCharCode(0x20);
+    const linebreaker = String.fromCharCode(0x0D) + String.fromCharCode(0x0A);
+
+    this._responseHeaders.forEach((value, name) => {
+      results.push([name, value].join(seperator));
     });
 
-    return results.join('\n');
+    return results.join(linebreaker);
   }
 
   overrideMimeType(mime: string): void {
+    /* istanbul ignore if */
+    if (!super.overrideMimeType) {
+      return;
+    }
+
     super.overrideMimeType(mime);
     this._responseMIME = mime;
   }
@@ -128,12 +142,10 @@ class MockerXHR extends ExtandableXHR {
     // set body to `null` will raise a TypeMismatchError in IE Edge
     const body = (this._method === 'GET' || this._method === 'HEAD') ? undefined : data;
 
-    // we are not able to handling cookies
-    // const credentials = this.withCredentials ? 'include' : 'omit';
+    const credentials = this.withCredentials ? 'include' : 'omit';
 
     const request = new Request(this._url, {
-      body,
-      // credentials,
+      body, credentials,
       method: this._method,
       headers: this._requestHeaders,
     });
@@ -217,14 +229,22 @@ async function parseResponse(response: Response, responseType?: string): Promise
         return await res.arrayBuffer();
       case 'document':
         const text = await res.text();
-        const contentType = res.headers.get('content-type');
-        const mime = contentType ? contentType.replace(/;.*/, '') : 'text/html';
         const parser = new DOMParser();
-        return parser.parseFromString(text, mime);
-      default:
-        return null;
+        return parser.parseFromString(text, getDocumentMIME(res));
     }
-  } catch (e) {
-    return null;
+  } catch (e) {}
+
+  return null;
+}
+
+function getDocumentMIME(res: Response): string {
+  const contentType = res.headers.get('content-type');
+
+  /* istanbul ignore if */
+  if (!contentType) {
+    return 'text/html';
   }
+
+  // strip charset
+  return contentType.replace(/;.*/, '');
 }

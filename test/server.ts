@@ -1,15 +1,16 @@
-import * as tests from './spec/server/';
 import { createServer } from 'service-mocker/server';
-import { serverRunner } from './tools/server-runner';
+import { serverRunner } from './runner/server-runner';
 
-const server = createServer();
+const serverTests = (require as any).context('./spec/server/', true, /\.ts$/);
 
-const mode = server.isLegacy ? 'Legacy' : 'Modern';
+serverRunner(() => {
+  const server = createServer();
 
-describe(`${mode} Server Tests`, () => {
-  Object.keys(tests).forEach(name => {
-    tests[name](server);
+  const mode = server.isLegacy ? 'Legacy' : 'Modern';
+
+  describe(`${mode} Server Tests`, function() {
+    serverTests.keys().forEach((module) => {
+      serverTests(module).default.call(this);
+    });
   });
 });
-
-serverRunner();

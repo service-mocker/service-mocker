@@ -1,3 +1,5 @@
+import './storage';
+
 import {
   IMockerClient,
 } from './client';
@@ -7,16 +9,21 @@ import { LegacyClient } from './legacy/client';
 
 export { IMockerClient };
 
+export type MockerClientOptions = {
+  forceLegacy?: boolean,
+};
+
 export function createClient(
   scriptURL: string,
-  forceLegacy?: boolean,
+  options: MockerClientOptions = {},
 ): IMockerClient {
-  if (forceLegacy) {
+  if (options.forceLegacy) {
     return new LegacyClient(scriptURL);
   }
 
   const useLegacy = isLegacyMode();
 
+  /* istanbul ignore if */
   if (useLegacy) {
     console.warn('Switching to legacy mode...');
     return new LegacyClient(scriptURL);
@@ -25,6 +32,7 @@ export function createClient(
   return new ModernClient(scriptURL);
 }
 
+/* istanbul ignore next */
 function isLegacyMode(): boolean {
   if (!('serviceWorker' in navigator)) {
     // tslint:disable-next-line max-line-length

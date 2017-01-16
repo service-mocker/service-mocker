@@ -1,5 +1,5 @@
 export class Defer {
-  public done: boolean;
+  public done = false;
   public promise: Promise<any>;
 
   public resolve: (result?: any) => void;

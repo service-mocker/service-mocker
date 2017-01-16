@@ -58,32 +58,17 @@ read -r -p "Releasing version:$VERSION - are you sure? (y/N) "
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo "Releasing version $VERSION"
   npm run lint
-  npm run test:sauce
-  npm run clean
+  # npm run test:sauce
   npm run compile
 
   NPM_VERSION=`npm version $VERSION`
 
   echo "Copying files to $DIST_DIR"
   mkdir -p $DIST_DIR
-  cp -r src $DIST_DIR
-  cp -r lib $DIST_DIR
+  cp -r build/* $DIST_DIR
   cp package.json $DIST_DIR
+  cp README.md $DIST_DIR
   cp LICENSE $DIST_DIR
-
-  echo "Creating entry points"
-  cd $DIST_DIR
-  # Alignment!
-  echo 'exports.createClient = require("./client").createClient;'      >  index.js
-  echo 'exports.createServer = require("./server").createServer;'      >> index.js
-  echo 'export { createClient, IMockerClient } from "./client";'       >  index.d.ts
-  echo 'export { createServer } from "./server";'                      >> index.d.ts
-
-  echo 'exports.createClient = require("./lib/client/").createClient;' > client.js
-  echo 'export { createClient, IMockerClient } from "./lib/client/";'  > client.d.ts
-
-  echo 'exports.createServer = require("./lib/server/").createServer;' > server.js
-  echo 'export { createServer } from "./lib/server/";'                 > server.d.ts
 
   echo "Publishing $NPM_VERSION"
   git push

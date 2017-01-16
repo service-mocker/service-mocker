@@ -4,18 +4,22 @@ import {
 
 import {
   debug,
+  sendMessageRequest,
 } from '../../utils/';
 
-import { ClientStorageService } from '../storage';
+import {
+  ACTION,
+} from '../../constants/';
+
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
 
-const registrations = {};
+const clientLog = debug.scope('legacy');
+const registrations: any = {};
 
 export class LegacyClient implements IMockerClient {
   readonly isLegacy = true;
   readonly ready: Promise<null>;
-  readonly storage = new ClientStorageService(true);
 
   controller = null;
   private _registration = null;
@@ -24,27 +28,37 @@ export class LegacyClient implements IMockerClient {
     patchXHR();
     patchFetch();
 
+    let promise: Promise<any>;
+
     // avoid duplications
-    if (registrations.hasOwnProperty(scriptURL)) {
-      return registrations[scriptURL];
+    if (registrations[scriptURL]) {
+      promise = registrations[scriptURL];
+    } else {
+      registrations[scriptURL] =
+      promise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = scriptURL;
+        script.onload = resolve;
+        script.onerror = reject;
+
+        document.body.appendChild(script);
+      });
     }
 
-    registrations[scriptURL] = this;
-
-    const script = document.createElement('script');
-    script.src = scriptURL;
-
-    this.ready = new Promise<null>((resolve, reject) => {
-      script.onload = () => {
-        resolve(null);
-      };
-
-      script.onerror = () => {
-        reject(new Error('legacy mode bootstrap failed'));
-      };
-    });
-
-    document.body.appendChild(script);
+    /* istanbul ignore next */
+    this.ready = promise.then(() => {
+        return sendMessageRequest(window, {
+          action: ACTION.PING,
+        });
+      })
+      .then(() => {
+        clientLog.info('connection established');
+        return this._registration;
+      })
+      .catch(error => {
+        // `ready` should never be rejected
+        clientLog.error('bootstrap failed', error);
+      });
   }
 
   async update(): Promise<null> {
@@ -55,6 +69,7 @@ export class LegacyClient implements IMockerClient {
     return Promise.resolve(this._registration);
   }
 
+  /* istanbul ignore next */
   async unregister(): Promise<boolean> {
     debug.scope('legacy').warn('mocker in legacy mode can\'t be unregistered');
 

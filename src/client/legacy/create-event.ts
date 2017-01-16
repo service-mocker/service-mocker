@@ -1,6 +1,4 @@
-/**
- * Create a custom event
- */
+/* istanbul ignore next */
 export function createEvent(name: string): any {
   try {
     return new Event(name);

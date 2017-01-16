@@ -19,6 +19,9 @@ module.exports = {
         joinRoot('src'),
         joinRoot('test'),
       ],
+    }, {
+      test: /\.json$/,
+      loader: 'json',
     }],
     noParse: [
       // remove "Critical dependency" warning

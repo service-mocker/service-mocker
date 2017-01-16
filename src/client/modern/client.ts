@@ -10,26 +10,23 @@ import { register } from './register';
 import { connect } from './connect';
 import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
-import { ClientStorageService } from '../storage';
 
 export class ModernClient implements IMockerClient {
   readonly isLegacy = false;
-  readonly storage = new ClientStorageService();
   readonly ready: Promise<ServiceWorkerRegistration>;
 
   controller: ServiceWorker;
 
   constructor(scriptURL: string) {
-    this.ready = new Promise(resolve => {
-      this._init(scriptURL)
-        .then(registration => {
-          this.controller = registration.active;
-          resolve(registration);
-        })
-        .catch(error => {
-          debug.error('mocker initialization failed: ', error);
-        });
-    });
+    /* istanbul ignore next */
+    this.ready = this._init(scriptURL)
+      .then(registration => {
+        this.controller = registration.active;
+        return registration;
+      })
+      .catch(error => {
+        debug.error('mocker initialization failed: ', error);
+      });
   }
 
   async update(): Promise<ServiceWorkerRegistration> {
@@ -40,6 +37,7 @@ export class ModernClient implements IMockerClient {
     return this.ready;
   }
 
+  /* istanbul ignore next: don't unregister sw in tests */
   async unregister(): Promise<boolean> {
     const registration = await this.getRegistration();
 
@@ -69,15 +67,16 @@ export class ModernClient implements IMockerClient {
 
     const updateLog = debug.scope('update');
 
+    /* istanbul ignore next: won't occur in tests */
     serviceWorker.addEventListener('controllerchange', async () => {
       try {
-        const registration = await connect(true);
+        const registration = await connect();
         this.controller = registration.active;
 
         updateLog.color('crimson')
           .warn('mocker updated, reload your requests to take effect');
       } catch (error) {
-        updateLog.error('connecting to new mocker failed', error);
+        updateLog.error('connecting to new service worker failed', error);
       }
     });
   }

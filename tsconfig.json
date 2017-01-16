@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "outDir": ".",
     "lib": [
         "dom",
         "es2017"
@@ -21,7 +22,7 @@
   },
   "exclude": [
     "node_modules",
-    "lib",
+    "build",
     "dist"
   ]
 }

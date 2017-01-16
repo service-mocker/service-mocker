@@ -9,24 +9,20 @@ import {
 
 import { getNewestReg } from './get-newest-reg';
 
-const connectLog = debug.scope('connect');
-
-export async function connect(skipUpdateCheck = false): Promise<ServiceWorkerRegistration> {
+export async function connect(): Promise<ServiceWorkerRegistration> {
   const {
     serviceWorker,
   } = navigator;
 
-  // check update
-  if (!skipUpdateCheck && serviceWorker.controller) {
-    return getNewestReg().then(handshake);
-  }
+  const reg = serviceWorker.controller ? await getNewestReg() : await serviceWorker.ready;
 
-  return serviceWorker.ready.then(handshake);
+  return handshake(reg);
 }
 
 async function handshake(registration: ServiceWorkerRegistration): Promise<ServiceWorkerRegistration> {
   const controller = registration.active;
 
+  /* istanbul ignore if */
   if (!controller) {
     throw new Error('no active service worker registration is found');
   }
@@ -34,30 +30,16 @@ async function handshake(registration: ServiceWorkerRegistration): Promise<Servi
   // uncontrolled
   // possibly a newly install
   if (!navigator.serviceWorker.controller) {
-    await requestClaim(controller);
+    await sendMessageRequest(controller, {
+      action: ACTION.REQUEST_CLAIM,
+    });
   }
 
-  const response = await sendMessageRequest(controller, {
+  await sendMessageRequest(controller, {
     action: ACTION.PING,
   });
 
-  if (response.action !== ACTION.PONG) {
-    throw new Error(`unknown error during ping: ${JSON.stringify(response)}`);
-  }
-
-  connectLog.info('connected to mocker successfully');
+  debug.scope('modern').info('connection established');
 
   return registration;
-}
-
-async function requestClaim(worker: ServiceWorker): Promise<void> {
-  const response = await sendMessageRequest(worker, {
-    action: ACTION.REQUEST_CLAIM,
-  });
-
-  if (response.action !== ACTION.ESTABLISHED) {
-    throw new Error(`claiming failed: ${JSON.stringify(response)}`);
-  }
-
-  connectLog.info(`mocker claimed successfully`);
 }

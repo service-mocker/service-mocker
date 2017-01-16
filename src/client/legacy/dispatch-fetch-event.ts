@@ -1,18 +1,3 @@
-/**
- * Dispatch a native-like fetch event in GlobalScope.
- *
- * Notes:
- * - 300ms timeout VS `end()` hook:
- *    Both of them work well, but if every request is delayed for 300ms,
- *    it would be a huge burden for daily development.
- *
- * - Re-fetch unhandled events or not:
- *   No.
- *   When a XHR fails, we invoke `nativeXHR.send()`;
- *   But when a fetch fails, we call `nativeFetch()` again to fetch response.
- *   They are handled respectively, so I think we should not do a re-fetch when `respondWith` is not invoked.
- */
-
 import {
   Defer,
 } from '../../utils/';
@@ -23,10 +8,7 @@ import {
 
 import { createEvent } from './create-event';
 
-interface CustomFetchEvent extends Event {
-  // symbol for legacy mode
-  isLegacy: boolean;
-
+interface MockFetchEvent extends Event {
   // legacy client ID
   clientId: string;
 
@@ -36,37 +18,34 @@ interface CustomFetchEvent extends Event {
   // simulate native `respondWith` interface
   // invoke this method to terminate a fetch event
   respondWith(response: Response | Promise<Response>): void;
-
-  // simulate native `waitUntil` interface
-  // extend fetch event's lifetime until promise resolved
-  waitUntil(promise: any): void;
-
-  // hook method for terminating fetch event.
-  // since we are not able to know whether a fetch event is handled,
-  // we need provide a method to terminate it from outside.
-  // a `end()` call will resolve the event with `null`
-  end(): void;
 }
+
+const fetchEvents: any = [];
+const addEventListener = self.addEventListener.bind(self);
+
+// handle fetch events ourselves
+self.addEventListener = function(type: string, listener: (event: any) => void, useCapture?: boolean) {
+  if (type === 'fetch') {
+    fetchEvents.push(listener);
+  } else {
+    addEventListener(type, listener, useCapture);
+  }
+};
 
 /**
  * Dispatch fetch event on GlobalScope in legacy mode.
  * Resolved with `null` if `event.respondWith` isn't called.
  */
 export async function dispatchFetchEvent(request: Request): Promise<Response | null> {
-  const fetchEvt: CustomFetchEvent = createEvent('fetch');
+  const fetchEvt: MockFetchEvent = createEvent('fetch');
   const deferred = new Defer();
 
   let finished = false;
 
-  fetchEvt.isLegacy = true;
   fetchEvt.request = request;
   fetchEvt.clientId = LEGACY_CLIENT_ID;
 
   function done(result: any) {
-    if (finished) {
-      return;
-    }
-
     finished = true;
     deferred.resolve(result);
   }
@@ -80,17 +59,14 @@ export async function dispatchFetchEvent(request: Request): Promise<Response | n
     done(response);
   };
 
-  fetchEvt.waitUntil = (promise: any) => {
-    Promise.resolve(promise).then(() => {
-      done(null);
-    });
-  };
+  fetchEvents.forEach((listener) => {
+    listener(fetchEvt);
+  });
 
-  fetchEvt.end = () => {
+  // `event.respondWith` wasn't called
+  if (!finished) {
     done(null);
-  };
-
-  self.dispatchEvent(fetchEvt);
+  }
 
   return deferred.promise;
 }

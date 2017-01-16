@@ -101,7 +101,6 @@ module.exports = function (config) {
       build: `service-worker ${buildNum}`,
     },
     mochaReporter: {
-      // modern tests won't be reported on 'full' mode
       output: 'minimal',
     },
   }));

@@ -5,10 +5,7 @@ import {
 
 const updateLog = debug.scope('update');
 
-/**
- * Update and get the newest registration.
- * @async
- */
+/* istanbul ignore next: unable to test it on single run */
 export async function getNewestReg(): Promise<ServiceWorkerRegistration> {
   const {
     serviceWorker,
@@ -19,7 +16,7 @@ export async function getNewestReg(): Promise<ServiceWorkerRegistration> {
   const registration = await serviceWorker.getRegistration();
 
   if (!registration) {
-    throw new Error('no active registration found');
+    throw new Error('no active service worker registration is found');
   }
 
   // reg.update() resolved with `reg.installing` set when updates are found, see

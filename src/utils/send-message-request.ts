@@ -20,7 +20,7 @@ export async function sendMessageRequest(
   const { port1, port2 } = new MessageChannel();
 
   return new Promise((resolve, reject) => {
-    const timer = timeout && setTimeout(() => {
+    const timer = isFinite(timeout) && setTimeout(() => {
       reject(new Error(`messaging timeout: ${JSON.stringify(message)}`));
     }, timeout);
 
@@ -34,6 +34,7 @@ export async function sendMessageRequest(
       port1.close();
       port2.close();
 
+      /* istanbul ignore else */
       if (typeof data === 'object') {
         data.request = message;
       }
