@@ -9,6 +9,6 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 # indent
-[*.{js, ts, scss}]
+[*.{js, ts, css, md}]
 indent_style = space
 indent_size = 2
