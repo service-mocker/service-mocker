@@ -36,7 +36,11 @@
     "service",
     "worker"
   ],
-  "author": "Dolphin Wood <dolphin.w.e@gmail.com>",
+  "author": "Service Mocker Team <https://github.com/service-mocker>",
+  "contributors": [
+    "Dolphin Wood <dolphin.w.e@gmail.com>",
+    "Vincent Bel <buaazqh@gmail.com>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/idiotWu/service-mocker/issues"
