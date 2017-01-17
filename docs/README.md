@@ -110,6 +110,11 @@ If you are interested in the details, you can view [this pull request](https://g
 
 <p class="tip">When running in modern mode, it's recommended to use the latest browsers to avoid some weird behaviors. For more information, please check the [Is ServiceWorker ready](https://jakearchibald.github.io/isserviceworkerready/) page.</p>
 
+## Service Worker Debugging
+
+- For Chrome users, please follow [this guide](https://developers.google.com/web/fundamentals/getting-started/codelabs/debugging-service-workers/).
+- For Firefox users, please follow [this guide](https://hacks.mozilla.org/2016/03/debugging-service-workers-and-push-with-firefox-devtools/).
+
 ## What's next...
 
 Now you are likely to understand the basic ideas of Service Mocker. For further development, you may need to check the <a router-link="/api" href="API.md">API documentations</a>.
