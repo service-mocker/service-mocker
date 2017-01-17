@@ -72,11 +72,6 @@ if (CIRCLE_BRANCH === 'develop' || CIRCLE_BRANCH === 'master' || FORCE_MOBILE_TE
       browserName: 'iphone',
       version: '10.0',
     },
-    sl_android_4: {
-      base: 'SauceLabs',
-      browserName: 'android',
-      version: '4.4',
-    },
     sl_android_5: {
       base: 'SauceLabs',
       browserName: 'android',
@@ -98,7 +93,7 @@ module.exports = function (config) {
     sauceLabs: {
       testName: 'Service Mocker tests',
       recordScreenshots: false,
-      build: `service-worker ${buildNum}`,
+      build: `service-mocker ${buildNum}`,
     },
     mochaReporter: {
       output: 'minimal',
