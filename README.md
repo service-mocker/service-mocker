@@ -7,7 +7,7 @@
 
 [![Build Status](https://saucelabs.com/browser-matrix/Service_Mocker.svg)](https://saucelabs.com/u/Service_Mocker)
 
-Service Mocker is an API mocking framework for frontend developers. With the power of [service workers](https://w3c.github.io/ServiceWorker/), we can easily set up mocking services without any real servers. It sets developers free from intricate workflows, complex documentations and endless proxies from server to server.
+Service Mocker is an API mocking framework for frontend developers. With the power of [service workers](https://w3c.github.io/ServiceWorker/), we can easily set up mocking services **without any real servers**. It sets developers free from intricate workflows, complex documentations and endless proxies from server to server.
 
 > Q: Is Service Worker ready?
 >
@@ -16,6 +16,22 @@ Service Mocker is an API mocking framework for frontend developers. With the pow
 > Q: Is Service Mocker ready?
 >
 > A: Yes! Welcome to the future!
+
+## Installation
+
+```
+npm install service-mocker --save-dev
+```
+
+## Features
+
+- **No server is required**.
+- [express](https://github.com/expressjs/express) style routing system.
+- IE10+ compatibility.
+
+## Hello new world
+
+A typical mocker includes two parts: `client` and `server`. First, let's create a server script named `server.js`:
 
 ```js
 // server.js
@@ -28,11 +44,37 @@ router.get('/greet', (req, res) => {
 });
 ```
 
-## Installation
+Then, we need to write a client script to connect to the server:
+
+```js
+// app.js
+import 'service-mocker-polyfills';
+import { createClient } from 'service-mocker/client';
+
+const client = createClient('server.js'); // the path to your server script
+
+client.ready.then(async () => {
+  const response = await fetch('/greet');
+
+  console.log(await response.text());
+});
+```
+
+After that, create a `.html` file and include **ONLY** the client script:
+
+```html
+<script src="app.js"></script>
+```
+
+Now navigate your browser to your local dev server (e.g. `http://localhost:3000`). Open the console and you will the following messages:
 
 ```
-npm install service-mocker --save-dev
+> [mocker:modern] connection established
+>
+> Hello new world!
 ```
+
+Welcome to the future :clap:.
 
 ## Docs & Demos
 
