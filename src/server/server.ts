@@ -1,16 +1,13 @@
 import { MockerRouter } from './router';
-import { MockerStorage } from './storage';
 import { clientManager } from './client-manager';
 
 export interface IMockerServer {
   readonly isLegacy: boolean;
   readonly router: MockerRouter;
-  readonly storage: MockerStorage;
 }
 
 export class MockerServer implements IMockerServer {
   readonly isLegacy = self === self.window;
-  readonly storage = new MockerStorage();
   readonly router: MockerRouter;
 
   constructor(baseURL?: string) {
@@ -32,6 +29,7 @@ self.addEventListener('fetch', (event: FetchEvent) => {
   /* istanbul ignore next: unable to test old spec */
   const id = clientId || (client && client.id);
 
+  // only the connected clients should be intercepted
   /* istanbul ignore if */
   if (!clientManager.has(id)) {
     return;

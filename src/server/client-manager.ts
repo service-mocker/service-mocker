@@ -57,28 +57,6 @@ export const clientManager = {
     }
   },
 
-  /**
-   * Get current available client
-   * - If server is running in legacy mode, return window
-   * - Else pick the connected client
-   */
-  async getAvailable(): Promise<ServiceWorkerClient | Window> {
-    if (self === self.window) {
-      // legacy
-      return window;
-    }
-
-    const clients = await self.clients.matchAll();
-
-    for (let client of clients) {
-      if (this.has(client.id)) {
-        return client;
-      }
-    }
-
-    throw new Error('no active client is found');
-  },
-
   // infer the possible client ID
   async _inferClientID(): Promise<any> {
     // legacy mode
