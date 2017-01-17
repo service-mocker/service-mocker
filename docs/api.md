@@ -24,7 +24,7 @@ createClient(scriptURL, options?): MockerClient
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `scriptURL` | string | The location of your **server script**. |
 | `options` | object, _optional_ | Initial options, currently possible options are: <br> <ul><li>`forceLegacy?: boolean`: When this option is set to `true`, you will always get a legacy client despite what the browser you are using.</li></ul> |
 
@@ -54,7 +54,7 @@ createServer(baseURL?): MockerServer
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `baseURL` | string, _optional_ | The base URL of all routes, default is `'/'`. |
 
 The `createServer()` function constructs a new <a href="#server" jump-to-id="server">`Server`</a> instance. The `baseURL` parameter defines the base URL for the router of this server, you can regard it as the **prefix** for every routes:
@@ -254,14 +254,14 @@ router.METHOD(path, responseBody): this
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path. |
 | `callback` | (req, res) => void | A routing handler which will be executed when the route is matched. The `callback` function receives two parameters:<br> <ol><li>`req`: A <a href="#request" jump-to-id="request">`Request()`</a> object.</li><li>`res`: A <a href="#response" jump-to-id="response">`Response()`</a> object.</li></ol> |
 
 If the second argument is provided with a non-function value, then the value will be regarded as response body:
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path. |
 | `responseBody` | any | The body to be sent. This can be one of [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob), [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), [Array](https://developer.mozilla.org/en-US/docs/Glossary/array), [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), and [Primitives](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) except `Symbol`. |
 
@@ -292,7 +292,7 @@ With this router, you will get the following results:
 As everything inside service workers is asynchronous, you may want to do some asynchronous stuff in the `callback` block:
 
 ```js
-router.put('/post/:id', async (req, res) => {
+router.put('/posts/:id', async (req, res) => {
   const posts = await storage.get('posts');
   posts[req.params.id] = await req.text();
 
@@ -321,14 +321,14 @@ router.all(path, responseBody): this
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path. |
 | `callback` | (req, res) => void | A Routing handler which will be executed when the route is matched. The `callback` function receives two parameters:<br> <ol><li>`req`: A <a href="#request" jump-to-id="request">`Request()`</a> object.</li><li>`res`: A <a href="#response" jump-to-id="response">`Response()`</a> object.</li></ol> |
 
 If the second argument is provided with a non-function value, then the value will be regarded as response body:
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path. |
 | `responseBody` | any | The body to be sent. This can be one of [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob), [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), [Array](https://developer.mozilla.org/en-US/docs/Glossary/array), [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), and [Primitives](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) except `Symbol`. |
 
@@ -361,7 +361,7 @@ router.base(baseURL?): Router
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `baseURL` | string | The base URL of the new router. |
 
 This method creates a **new router** with the given `baseURL`. A base URL can be either an absolute or a relative path, the relative `baseURL` will be resolved to current origin.
@@ -402,7 +402,7 @@ router.route(path?): ScopedRouter
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `path` | string | The route path for this sub router. |
 
 `router.route()` method creates a sub router of which all route paths are bound with the given `path`. The sub router contains all routing methods from <a href="#router" jump-to-id="router">`Router`</a>, use this method to avoid duplicate route naming and thus typing errors:
@@ -643,7 +643,7 @@ res.type(type): this
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `type` | string | The MIME type to be set. |
 
 Sets the `Content-Type` HTTP header to the MIME type using the [mime-component](https://github.com/component/mime).
@@ -660,7 +660,7 @@ res.status(code): this
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `code` | number | The HTTP status for the response. |
 
 Sets the HTTP status for this response.
@@ -677,7 +677,7 @@ res.json(body?): void
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `body` | any, _optional_ | The response body to be sent. This can be any JSON compatible type includes [Array](https://developer.mozilla.org/en-US/docs/Glossary/array), [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), and [Primitives](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) except `Symbol`. |
 
 Sends a JSON response, the given `body` will be converted to a JSON string using [`JSON.stringify()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify).
@@ -694,7 +694,7 @@ res.send(body?): void
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `body` | any, _optional_ | The response body to be sent. This can be one of [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob), [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), [Array](https://developer.mozilla.org/en-US/docs/Glossary/array), [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), and [Primitives](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) except `Symbol`. |
 
 Sends the HTTP response with given `body` as the response body.
@@ -751,7 +751,7 @@ res.forward(input, init?): void
 ```
 
 | Param | Type | Description |
-| --- | --- | --- |
+| --- | :-: | --- |
 | `input` | string &#124; Request | The resource that you wish to fetch. This  can either be a `string` or a [native `Request` object](https://developer.mozilla.org/en-US/docs/Web/API/Request). |
 | `init` | object, _optional_ | The [request init options](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters). |
 

@@ -87,7 +87,7 @@ Welcome to the future :clap:.
 ## Team
 
 [![Dolphin Wood](https://avatars2.githubusercontent.com/u/6022672?v=3&s=130)](https://github.com/idiotWu) | [![Vincent Bel](https://avatars3.githubusercontent.com/u/6076919?v=3&s=130)](https://github.com/VincentBel)
----|---
+:---:|:---:
 [Dolphin Wood](https://github.com/idiotWu) | [Vincent Bel](https://github.com/VincentBel)
 
 ## License
