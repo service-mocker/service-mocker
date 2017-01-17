@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/idiotWu/service-mocker.git"
+    "url": "git+https://github.com/service-mocker/service-mocker.git"
   },
   "keywords": [
     "mock",
@@ -43,9 +43,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/idiotWu/service-mocker/issues"
+    "url": "https://github.com/service-mocker/service-mocker/issues"
   },
-  "homepage": "https://github.com/idiotWu/service-mocker#readme",
+  "homepage": "https://github.com/service-mocker/service-mocker#readme",
   "devDependencies": {
     "@types/chai": "^3.4.34",
     "@types/mocha": "^2.2.35",
