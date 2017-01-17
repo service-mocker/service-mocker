@@ -39,7 +39,7 @@
     ctx.lineJoin = 'round';
     ctx.textBaseline = isSmallDevice ? 'top' : 'middle';
     ctx.font = fontSize + 'px ' + fontFamily;
-    ctx.strokeStyle = ctx.fillStyle = '#4594a9';
+    ctx.strokeStyle = ctx.fillStyle = '#3292ab';
     ctx.scale(DPR, DPR);
 
     var end = false;

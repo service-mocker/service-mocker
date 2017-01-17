@@ -1,12 +1,17 @@
 self.$config = {
   landing: true,
   tocVisibleDepth: 2,
+  repo: 'service-mocker/service-mocker',
+  'edit-link': 'https://github.com/service-mocker/service-mocker/blob/master/docs',
   nav: [{
     title: 'Getting Started',
     path: '/home',
   }, {
     title: 'API Reference',
     path: '/api',
+  }, {
+    title: 'Caveats',
+    path: '/caveats',
   }],
   plugins: [
     landingScriptsPlugin([

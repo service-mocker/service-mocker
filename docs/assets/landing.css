@@ -64,14 +64,14 @@
 
 #landing-buttons a {
   display: inline-block;
-  color: #4594a9;
+  color: #3292ab;
   margin: 0.5em 1em;
   padding: 0 2em;
   line-height: 40px;
   border-radius: 20px;
   cursor: pointer;
   text-decoration: none;
-  border: 1px solid #4594a9;
+  border: 1px solid #3292ab;
   text-transform: uppercase;
 }
 
@@ -82,7 +82,7 @@
 
 #landing-buttons a.home {
   color: #f5f5f5;
-  background-color: #4594a9;
+  background-color: #3292ab;
 }
 
 #intro {
@@ -109,7 +109,7 @@
 }
 
 .card a {
-  color: #4594a9;
+  color: #3292ab;
 }
 
 .card p {
@@ -129,11 +129,11 @@
 
 #copyright {
   position: absolute;
+  width: 100%;
   top: 50%;
-  left: 50%;
   color: #ccc;
   text-align: center;
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
 }
 
 #copyright p {
@@ -158,14 +158,25 @@
 
   #hero {
     padding-top: 4em;
-  }
-
-  #hero h2 {
     text-align: left;
   }
 
+  #hero pre {
+    display: block;
+  }
+
+  #landing-buttons {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+  }
+
   #landing-buttons a {
-    font-size: 12px;
+    flex: 1;
+    padding: 0;
   }
 
   .card {

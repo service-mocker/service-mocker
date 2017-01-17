@@ -1,119 +1,92 @@
 /* Override default styles of docute */
 .sidebar-heading-anchor.active,
 .sidebar-heading-anchor:hover {
-  color: #4594a9 !important;
+  color: #3292ab !important;
 }
 
 .router-link-active {
-  border-color: #4594a9 !important;
+  border-color: #3292ab !important;
+}
+
+.is-mobile .router-link-active {
+  color: #3292ab !important;
 }
 
 .markdown-heading:focus {
-  color: #4594a9 !important;
+  color: #3292ab !important;
+}
+
+.header-left {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .tip {
-  border-left-color: #4594a9 !important;
+  border-left-color: #f7d24c !important;
+  background-color: #fefbed !important;
 }
 
 .tip::before {
-  background-color: #4594a9 !important;
+  background-color: #f7d24c !important;
+}
+
+.warning {
+  background: #fff8f8 !important;
+}
+
+.main {
+  padding-bottom: 50px;
+}
+
+.no-sidebar .main {
+  margin-bottom: 0;
+  border-bottom: none;
 }
 
 #nprogress .bar {
-  background: #4594a9;
+  background: #3292ab;
 }
 
 #nprogress .spinner-icon {
-  border-top-color: #4594a9;
-  border-left-color: #4594a9;
+  border-top-color: #3292ab;
+  border-left-color: #3292ab;
 }
 
-/*
-Description: Foundation 4 docs style for highlight.js
-Author: Dan Allen <dan.j.allen@gmail.com>
-Website: http://foundation.zurb.com/docs/
-Version: 1.0
-Date: 2013-04-02
-*/
-
-.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  background: #eee; color: black;
+.markdown-body pre {
+  border-radius: 0;
 }
 
-.hljs-link,
-.hljs-emphasis,
-.hljs-attribute,
-.hljs-addition {
-  color: #070;
+.markdown-body pre::after {
+  content: none;
 }
 
-.hljs-emphasis {
-  font-style: italic;
+.markdown-heading + pre {
+  color: #000;
+  background: #f5fafb;
 }
 
-.hljs-strong,
-.hljs-string,
-.hljs-deletion {
-  color: #d14;
+.markdown-heading + pre::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: #3292ab;
 }
 
-.hljs-strong {
-  font-weight: bold;
+.markdown-body :not(pre) code {
+  color: #2c8196;
 }
 
-.hljs-quote,
-.hljs-comment {
-  color: #998;
-  font-style: italic;
+/* Type field */
+.markdown-body table td:nth-child(2) {
+  white-space: nowrap;
+  text-align: center;
 }
 
-.hljs-section,
-.hljs-title {
-  color: #900;
+.sidebar-heading[data-level="3"] .sidebar-heading-anchor {
+  padding-left: 2em;
 }
-
-.hljs-class .hljs-title,
-.hljs-type {
-  color: #458;
-}
-
-.hljs-variable,
-.hljs-template-variable {
-  color: #336699;
-}
-
-.hljs-bullet {
-  color: #997700;
-}
-
-.hljs-meta {
-  color: #3344bb;
-}
-
-.hljs-code,
-.hljs-number,
-.hljs-literal,
-.hljs-keyword,
-.hljs-selector-tag {
-  color: #099;
-}
-
-.hljs-regexp {
-  background-color: #fff0ff;
-  color: #880088;
-}
-
-.hljs-symbol {
-  color: #990073;
-}
-
-.hljs-tag,
-.hljs-name,
-.hljs-selector-id,
-.hljs-selector-class {
-  color: #007700;
+.token.string {
+  color: #690;
 }
