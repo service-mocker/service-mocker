@@ -3,7 +3,7 @@
 [![Coverage](https://img.shields.io/codecov/c/github/service-mocker/service-mocker/develop.svg)](https://codecov.io/gh/service-mocker/service-mocker/branch/develop)
 [![Version](https://img.shields.io/npm/v/service-mocker.svg)](https://www.npmjs.com/package/service-mocker)
 [![Downloads](https://img.shields.io/npm/dt/service-mocker.svg)](https://www.npmjs.com/package/service-mocker)
-[![License](https://img.shields.io/npm/l/service-mocker.svg)](https://www.npmjs.com/package/service-mocker)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 [![Build Status](https://saucelabs.com/browser-matrix/Service_Mocker.svg)](https://saucelabs.com/u/Service_Mocker)
 
