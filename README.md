@@ -69,7 +69,7 @@ After that, create a `.html` file and include **ONLY** the client script:
 <script src="app.js"></script>
 ```
 
-Now navigate your browser to your local dev server (e.g. `http://localhost:3000`). Open the console and you will the following messages:
+Now navigate your browser to your local dev server (e.g. `http://localhost:3000`). Open the console and you will see the following messages:
 
 ```
 > [mocker:modern] connection established
