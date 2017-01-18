@@ -54,7 +54,7 @@ export default function() {
       const nativeLog = console.error.bind(console);
 
       console.error = (...msg) => {
-        error = msg;
+        error = msg.join();
       };
 
       router.get(`${path}/:id`, (res, req) => {
@@ -65,8 +65,7 @@ export default function() {
 
       const { body } = await sendRequest(`${path}/${badURI}`);
 
-      console.log(error);
-      expect(error).not.to.be.undefined;
+      expect(error).to.include(`decode param: ${badURI} failed`);
       expect(body).to.equal(JSON.stringify(null));
     });
   });
