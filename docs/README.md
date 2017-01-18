@@ -136,6 +136,10 @@ So if you are running on an insecure page other than `localhost`, you could only
 
 No. At least not currently. According to the security restrictions, we are not likely to add cookie support in the future.
 
+### Do I have to use `fetch` to send requests?
+
+No, there's no limitation here. The [fetch](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch), [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest), [jQuery](https://jquery.com/), or some built-in helpers like the [$http](https://docs.angularjs.org/api/ng/service/$http) module in the old [Angular.js](https://angularjs.org/), feel free to choose the one you like!
+
 ### I got a `Module parse failed: ./~/statuses/codes.json` error from webpack.
 
 Using the [json-loader](https://github.com/webpack/json-loader) will solve this problem, the following is an example of configuration:
