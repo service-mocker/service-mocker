@@ -6,28 +6,20 @@ const joinRoot = path.join.bind(path, __dirname, '..');
 module.exports = {
   devtool: 'cheap-module-source-map',
   resolve: {
-    extensions: ['', '.js', '.ts', '.css'],
+    extensions: ['.js', '.ts', '.css'],
     alias: {
       'service-mocker': joinRoot('src'),
     },
   },
   module: {
-    loaders: [{
+    rules: [{
       test: /\.ts$/,
-      loader: 'ts',
+      use: [ 'ts-loader' ],
       include: [
         joinRoot('src'),
         joinRoot('test'),
       ],
-    }, {
-      test: /\.json$/,
-      loader: 'json',
     }],
-    noParse: [
-      // remove "Critical dependency" warning
-      require.resolve('mocha/mocha'),
-      path.dirname(require.resolve('source-map-support')),
-    ],
   },
   plugins: [
     new CircularDependencyPlugin({
