@@ -3,14 +3,20 @@
     google: {
       families: ['Bungee Shade'],
     },
-    fontactive: stroke.bind(null, false),
-    fontinactive: stroke.bind(null, true),
+    active: animation.bind(null, false),
+    inactive: animation.bind(null, true),
     timeout: 2000,
   });
 
-  function stroke(failed) {
+  function animation(failed) {
     var banner = document.getElementById('hero');
-    if (!banner) return;
+
+    if (!banner) {
+      // in case content didn't load
+      return setTimeout(function () {
+        animation(failed);
+      }, 300);
+    }
 
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
