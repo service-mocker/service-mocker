@@ -3,11 +3,12 @@ const baseConfig = require('./karma.config.base');
 
 module.exports = function (config) {
   // instrument only testing sources with Istanbul
-  baseConfig.webpack.module.postLoaders = [{
+  baseConfig.webpack.module.rules.push({
     test: /\.ts$/,
-    loader: 'istanbul-instrumenter',
+    enforce: 'post',
+    use: [ 'istanbul-instrumenter-loader' ],
     include: path.join(__dirname, '..', 'src'),
-  }];
+  });
 
   const istanbulReports = {
     'text-summary': null,
