@@ -39,10 +39,15 @@ export default function() {
       expect(params.track).to.equal(trackName);
     });
 
-    it('should throw an error to console', async () => {
+    it('should throw an error to console', async function () {
+      if (/Edge|Trident/.test(navigator.userAgent)) {
+        // bad URI can be sent in IE
+        return this.skip();
+      }
+
       const { router } = createServer();
       const path = uniquePath();
-      const nonURI = '%E0%A4%A';
+      const badURI = '%E0%A4%A';
 
       let error: any;
 
@@ -58,8 +63,9 @@ export default function() {
         console.error = nativeLog;
       });
 
-      const { body } = await sendRequest(`${path}/${nonURI}`);
+      const { body } = await sendRequest(`${path}/${badURI}`);
 
+      console.log(error);
       expect(error).not.to.be.undefined;
       expect(body).to.equal(JSON.stringify(null));
     });
