@@ -1,25 +1,4 @@
-const webpack = require('webpack');
-const webpackConfig = require('./webpack.config.base');
-
-webpackConfig.plugins.push(
-  // fix source map, see
-  // https://github.com/webpack/webpack.js.org/issues/151
-  new webpack.SourceMapDevToolPlugin({
-    test: /\.(js|css|jsx|ts|tsx)($|\?)/i,
-  }),
-
-  // ts-loader doesn't fail the build when error occurs, see
-  // https://github.com/TypeStrong/ts-loader#failing-the-build-on-typescript-compilation-error
-  function exitOnError() {
-    this.plugin('done', stats => {
-      if (stats.compilation.errors && stats.compilation.errors.length) {
-        setImmediate(() => {
-          process.exit(1);
-        });
-      }
-    });
-  }
-);
+const webpackConfig = require('./webpack.config.test');
 
 module.exports = {
   singleRun: true,

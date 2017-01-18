@@ -33,6 +33,9 @@ const { router } = createServer();
 router.get('/greet', (req, res) => {
   res.send('Hello new world!');
 });
+
+// or you can use the shorthand method
+router.get('/greet', 'Hello new world!');
 ```
 
 Then, we need to write a client script to connect to the server:
@@ -109,6 +112,11 @@ In modern mode, all requests are processed in service worker context, and you'll
 If you are interested in the details, you can view [this pull request](https://github.com/idiotWu/service-mocker/pull/6).
 
 <p class="tip">When running in modern mode, it's recommended to use the latest browsers to avoid some weird behaviors. For more information, please check the [Is ServiceWorker ready](https://jakearchibald.github.io/isserviceworkerready/) page.</p>
+
+## Service Worker Debugging
+
+- For Chrome users, please follow [this guide](https://developers.google.com/web/fundamentals/getting-started/codelabs/debugging-service-workers/).
+- For Firefox users, please follow [this guide](https://hacks.mozilla.org/2016/03/debugging-service-workers-and-push-with-firefox-devtools/).
 
 ## What's next...
 

@@ -58,7 +58,7 @@ read -r -p "Releasing version:$VERSION - are you sure? (y/N) "
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo "Releasing version $VERSION"
   npm run lint
-  # npm run test:sauce
+  npm run test:sauce
   npm run compile
 
   NPM_VERSION=`npm version $VERSION`

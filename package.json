@@ -1,7 +1,7 @@
 {
   "name": "service-mocker",
   "version": "0.0.1",
-  "description": "Next generation api mocker.",
+  "description": "The next generation front-end API mocking framework.",
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/idiotWu/service-mocker.git"
+    "url": "git+https://github.com/service-mocker/service-mocker.git"
   },
   "keywords": [
     "mock",
@@ -43,9 +43,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/idiotWu/service-mocker/issues"
+    "url": "https://github.com/service-mocker/service-mocker/issues"
   },
-  "homepage": "https://github.com/idiotWu/service-mocker#readme",
+  "homepage": "https://github.com/service-mocker/service-mocker#readme",
   "devDependencies": {
     "@types/chai": "^3.4.34",
     "@types/mocha": "^2.2.35",
@@ -60,10 +60,9 @@
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
-    "html-webpack-plugin": "^2.24.1",
+    "html-webpack-plugin": "^2.26.0",
     "ip": "^1.1.4",
     "istanbul-instrumenter-loader": "^1.2.0",
-    "json-loader": "^0.5.4",
     "karma": "^1.3.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-coverage": "^1.1.1",
@@ -74,7 +73,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-sauce-launcher": "^1.1.0",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^1.8.1",
+    "karma-webpack": "^2.0.1",
     "mocha": "^3.2.0",
     "mocha-loader": "^1.0.0",
     "npm-run-all": "^3.1.2",
@@ -87,9 +86,8 @@
     "tslint-loader": "^3.3.0",
     "typescript": "^2.1.4",
     "uuid": "^3.0.1",
-    "webpack": "^1.13.3",
-    "webpack-dashboard": "^0.2.0",
-    "webpack-dev-server": "^1.16.2"
+    "webpack": "^2.2.0",
+    "webpack-dev-server": "^2.2.0"
   },
   "dependencies": {
     "@types/service_worker_api": "0.0.0-next.0",

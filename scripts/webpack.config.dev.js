@@ -2,12 +2,8 @@ const ip = require('ip');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const Dashboard = require('webpack-dashboard');
-const DashboardPlugin = require('webpack-dashboard/plugin');
-
 const baseConfig = require('./webpack.config.base');
 
-const dashboard = new Dashboard();
 const joinRoot = path.join.bind(path, __dirname, '..');
 
 module.exports = Object.assign(baseConfig, {
@@ -25,33 +21,26 @@ module.exports = Object.assign(baseConfig, {
     filename: '[name].js',
   },
 
-  module: Object.assign(baseConfig.module, {
-    preLoaders: [{
+  module: {
+    rules: baseConfig.module.rules.concat([{
       test: /\.ts$/,
-      loader: 'tslint',
+      enforce: 'pre',
       include: [
         joinRoot('src'),
         joinRoot('test'),
       ],
-    }],
-    postLoaders: [{
+      use: [{
+        loader: 'tslint-loader',
+        options: {
+          formatter: 'stylish',
+        },
+      }],
+    }, {
       test: /\.ts$/,
-      loader: 'mocha',
+      enforce: 'post',
+      use: [ 'mocha-loader' ],
       include: joinRoot('test/client.ts'),
-    }],
-  }),
-
-  tslint: {
-    formatter: 'stylish',
-  },
-  ts: {
-    silent: true,
-    // with `transpileOnly` enabled, we can cache result and speed up compilation
-    // but modules are marked as isolated thus some typing checks will be bypassed
-    // transpileOnly: true,
-    compilerOptions: {
-      declaration: false,
-    },
+    }]),
   },
 
   plugins: baseConfig.plugins.concat([
@@ -60,6 +49,5 @@ module.exports = Object.assign(baseConfig, {
       chunks: ['client'],
       favicon: joinRoot('/docs/assets/favicon.png'),
     }),
-    new DashboardPlugin(dashboard.setData),
   ]),
 });

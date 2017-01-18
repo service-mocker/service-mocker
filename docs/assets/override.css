@@ -1,4 +1,8 @@
 /* Override default styles of docute */
+body {
+  font-family: "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+}
+
 .sidebar-heading-anchor.active,
 .sidebar-heading-anchor:hover {
   color: #3292ab !important;
@@ -35,6 +39,10 @@
 
 .main {
   padding-bottom: 50px;
+}
+
+.header {
+  overflow: hidden;
 }
 
 .no-sidebar .main {
