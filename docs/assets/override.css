@@ -38,11 +38,8 @@ body {
 }
 
 .main {
-  padding-bottom: 50px;
-}
-
-.header {
   overflow: hidden;
+  padding-bottom: 50px;
 }
 
 .no-sidebar .main {
