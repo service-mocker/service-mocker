@@ -34,6 +34,7 @@ npm i service-mocker-polyfills --save-dev
 ## Features
 
 - **No server is required**.
+- **Real** HTTP requests and responses that can be inspected in modern browsers.
 - [express](https://github.com/expressjs/express) style routing system.
 - IE10+ compatibility.
 
