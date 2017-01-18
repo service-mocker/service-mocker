@@ -19,8 +19,16 @@ Service Mocker is an API mocking framework for frontend developers. With the pow
 
 ## Installation
 
+Since you are likely to run Service Mocker only during development, you will need to add `service-mocker` as a devDependency:
+
 ```
 npm install service-mocker --save-dev
+```
+
+For legacy browsers, you may also need the [polyfills](https://github.com/service-mocker/service-mocker-polyfills):
+
+```
+npm i service-mocker-polyfills --save-dev
 ```
 
 ## Features

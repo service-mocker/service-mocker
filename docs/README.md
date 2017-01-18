@@ -54,7 +54,7 @@ client.ready.then(async () => {
 });
 ```
 
-Then create a `.html` file and include **ONLY** the client script:
+After that, create a `.html` file and include **ONLY** the client script:
 
 ```html
 <script src="app.js"></script>
