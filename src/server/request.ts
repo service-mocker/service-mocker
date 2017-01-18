@@ -1,8 +1,11 @@
 import * as qs from 'qs';
 
 import {
+  debug,
   extensify,
 } from '../utils/';
+
+const requestLog = debug.scope('request');
 
 // convert native `Request` to extendable
 // export or you'll get an error of 'using private'
@@ -49,7 +52,7 @@ export class MockerRequest extends ExtandableRequest implements IMockerRequest {
     const max = matches.length;
     for (let i = 1; i < max; i++) {
       const { name } = keys[i - 1];
-      params[name] = matches[i];
+      params[name] = decodeParam(matches[i]);
     }
 
     this._event = event;
@@ -74,5 +77,15 @@ export class MockerRequest extends ExtandableRequest implements IMockerRequest {
 
   clone() {
     return new MockerRequest(this._event, this._route);
+  }
+}
+
+function decodeParam(value: string): string | null {
+  try {
+    return decodeURIComponent(value);
+  } catch (err) {
+    requestLog.error(`decode param: ${value} failed`, err);
+
+    return null;
   }
 }

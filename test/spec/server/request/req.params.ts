@@ -1,7 +1,9 @@
 import { expect } from 'chai';
+import { createServer } from 'service-mocker/server';
 
 import {
   uniquePath,
+  sendRequest,
   requestToPromise,
 } from '../../helpers/';
 
@@ -23,6 +25,43 @@ export default function() {
 
       expect(params).to.have.property('user')
         .and.that.equals('dolphin');
+    });
+
+    it('should decode URI component', async () => {
+      const path = uniquePath();
+      const trackName = 'なんでもないや';
+
+      const { params } = await requestToPromise({
+        route: `${path}/:track`,
+        requestURL: `${path}/${encodeURIComponent(trackName)}`,
+      });
+
+      expect(params.track).to.equal(trackName);
+    });
+
+    it('should throw an error to console', async () => {
+      const { router } = createServer();
+      const path = uniquePath();
+      const nonURI = '%E0%A4%A';
+
+      let error: any;
+
+      const nativeLog = console.error.bind(console);
+
+      console.error = (...msg) => {
+        error = msg;
+      };
+
+      router.get(`${path}/:id`, (res, req) => {
+        req.send(res.params.id);
+
+        console.error = nativeLog;
+      });
+
+      const { body } = await sendRequest(`${path}/${nonURI}`);
+
+      expect(error).not.to.be.undefined;
+      expect(body).to.equal(JSON.stringify(null));
     });
   });
 }
