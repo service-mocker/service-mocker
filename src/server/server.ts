@@ -40,12 +40,14 @@ self.addEventListener('fetch', (event: FetchEvent) => {
   });
 });
 
-/* istanbul ignore next: unable to report coverage from sw context */
-self.addEventListener('install', (event: InstallEvent) => {
-  event.waitUntil(self.skipWaiting());
-});
+// IE will somehow fires `activate` event on form elements
+/* istanbul ignore if: unable to report coverage from sw context */
+if (self !== self.window) {
+  self.addEventListener('install', (event: InstallEvent) => {
+    event.waitUntil(self.skipWaiting());
+  });
 
-/* istanbul ignore next */
-self.addEventListener('activate', (event: ExtendableEvent) => {
-  event.waitUntil(self.clients.claim());
-});
+  self.addEventListener('activate', (event: ExtendableEvent) => {
+    event.waitUntil(self.clients.claim());
+  });
+}
