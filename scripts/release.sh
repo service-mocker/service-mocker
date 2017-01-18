@@ -77,6 +77,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo "Publishing $NPM_VERSION"
   git push
   git push --tags
+
   cd $DIST_DIR
   npm publish
 fi
