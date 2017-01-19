@@ -729,6 +729,25 @@ res.send({ user: 'dolphin '}); // => res.json({ user: 'dolphin '})
 res.send([1, 2, 3]); // => res.json([1, 2, 3])
 ```
 
+### res.sendStatus()
+
+```js
+res.sendStatus(code): void
+```
+
+| Param | Type | Description |
+| --- | :-: | --- |
+| `code` | number | The HTTP status for the response. |
+
+Sets the response HTTP status code to the given `code` and send its string representation as the response body.
+
+This method is equivalent to `res.status(code).send(statusText)`.
+
+```js
+res.sendStatus(200); // => res.status(200).send('OK')
+res.sendStatus(404); // => res.status(404).send('Not Found')
+```
+
 ### res.end()
 
 ```js
