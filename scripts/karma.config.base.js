@@ -40,4 +40,8 @@ module.exports = {
   client: {
     captureConsole: false,
   },
+
+  mochaReporter: {
+    printFirstSuccess: true,
+  },
 };
