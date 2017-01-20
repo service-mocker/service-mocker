@@ -95,5 +95,8 @@ module.exports = function (config) {
       recordScreenshots: false,
       build: `service-mocker ${buildNum}`,
     },
+    mochaReporter: {
+      output: 'minimal',
+    },
   }));
 };
