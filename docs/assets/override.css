@@ -24,19 +24,6 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.tip {
-  border-left-color: #f7d24c !important;
-  background-color: #fefbed !important;
-}
-
-.tip::before {
-  background-color: #f7d24c !important;
-}
-
-.warning {
-  background: #fff8f8 !important;
-}
-
 .main {
   overflow: hidden;
   padding-bottom: 50px;

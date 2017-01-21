@@ -18,7 +18,7 @@ npm i service-mocker-polyfills --save-dev
 
 ## Hello new world
 
-<p class="tip">Before starting, make sure you are using a develop server (e.g. `webpack-dev-server`) to serve your static assets. Assuming we are hosting our app in `http://localhost:3000`:</p>
+<p class="warning">Before starting, make sure you are using a develop server (e.g. `webpack-dev-server`) to serve your static assets. Assuming we are hosting our app in `http://localhost:3000`:</p>
 
 A typical mocker includes two parts: `client` and `server`. First, let's create a server script named `server.js`:
 
@@ -128,7 +128,7 @@ Now you are likely to understand the basic ideas of Service Mocker. For further 
 
 As per [service worker spec](https://github.com/w3c/ServiceWorker/blob/master/explainer.md#getting-started):
 
-<p class="warning">The registering page must have been served securely (HTTPS without cert errors)</p>
+<p class="danger">The registering page must have been served securely (HTTPS without cert errors)</p>
 
 So if you are running on an insecure page other than `localhost`, you could only bootstrap mocker in legacy mode.
 
@@ -165,4 +165,4 @@ module.exports = {
 };
 ```
 
-<p class="warning">If you are already using the `json-loader` but still getting this error, please add `node_modules` to the `include` array.</p>
+<p class="danger">If you are already using the `json-loader` but still getting this error, please add `node_modules` to the `include` array.</p>

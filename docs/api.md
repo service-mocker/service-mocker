@@ -165,7 +165,7 @@ client.update().then(() => {
 });
 ```
 
-<p class="tip">The `client.update()` method has no effect in legacy mode.</p>
+<p class="warning">The `client.update()` method has no effect in legacy mode.</p>
 
 ### client.getRegistration()
 
@@ -195,7 +195,7 @@ client.unregister().then(() => {
 });
 ```
 
-<p class="tip">The `client.unregister()` method has no effect in legacy mode.</p>
+<p class="warning">The `client.unregister()` method has no effect in legacy mode.</p>
 
 ## Server
 
@@ -244,7 +244,7 @@ const remoteServer = createServer('https://a.com/api');
 console.log(remoteServer.router.baseURL); // 'https://a.com/api'
 ```
 
-<p class="tip">The value of `router.baseURL` will always be an **absolute** path.</p>
+<p class="warning">The value of `router.baseURL` will always be an **absolute** path.</p>
 
 ### router.METHOD()
 
@@ -761,7 +761,7 @@ res.end();
 res.status(200).end();
 ```
 
-<p class="warning">If an HTTP request matches your route and you didn't respond to it, the request will be hanging thus you will not receive any data.</p>
+<p class="danger">If an HTTP request matches your route and you didn't respond to it, the request will be hanging thus you will not receive any data.</p>
 
 ### res.forward()
 
