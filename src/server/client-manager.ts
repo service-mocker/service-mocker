@@ -3,6 +3,10 @@ import {
   LEGACY_CLIENT_ID,
 } from '../constants/';
 
+import {
+  sendMessageRequest,
+} from '../utils/';
+
 const clients: any = {
   [LEGACY_CLIENT_ID]: true,
 };
@@ -54,6 +58,19 @@ export const clientManager = {
 
       case ACTION.DISCONNECT:
         return this.delete(clientID);
+    }
+  },
+
+  // reconnect clients after resumed from termination
+  async reconnect(client: ServiceWorkerClient): Promise<void> {
+    try {
+      await sendMessageRequest(client, {
+        action: ACTION.RECONNECT,
+      });
+
+      this.add(client.id);
+    } catch (e) {
+      this.delete(client.id);
     }
   },
 

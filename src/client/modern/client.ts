@@ -3,6 +3,10 @@ import {
 } from '../../utils/';
 
 import {
+  ACTION,
+} from '../../constants/';
+
+import {
   IMockerClient,
 } from '../client';
 
@@ -55,6 +59,7 @@ export class ModernClient implements IMockerClient {
     const registration = await register(scriptURL);
 
     this._autoSyncClient();
+    this._handleReconnect();
     this._handleUnload();
 
     return registration;
@@ -79,6 +84,29 @@ export class ModernClient implements IMockerClient {
         updateLog.error('connecting to new service worker failed', error);
       }
     });
+  }
+
+  /* istanbul ignore next: unable to test */
+  private _handleReconnect() {
+    // also register a listener on window, see
+    // https://jakearchibald.github.io/isserviceworkerready/#postmessage-to-&-from-worker
+    self.addEventListener('message', listener);
+    navigator.serviceWorker.addEventListener('message', listener);
+
+    function listener(evt: MessageEvent) {
+      const {
+        data,
+        ports,
+      } = evt;
+
+      if (!data || !ports.length || data.action !== ACTION.RECONNECT) {
+        return;
+      }
+
+      ports[0].postMessage({
+        action: ACTION.CLIENT_FOUND,
+      });
+    }
   }
 
   private _handleUnload() {
