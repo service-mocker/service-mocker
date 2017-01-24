@@ -3,6 +3,10 @@ import {
   LEGACY_CLIENT_ID,
 } from '../constants/';
 
+import {
+  sendMessageRequest,
+} from '../utils/';
+
 const clients: any = {
   [LEGACY_CLIENT_ID]: true,
 };
@@ -55,6 +59,19 @@ export const clientManager = {
       case ACTION.DISCONNECT:
         return this.delete(clientID);
     }
+  },
+
+  // reconnect clients after resumed from termination
+  reconnect(client: ServiceWorkerClient) {
+    // add client first in case sw is awaken by a fetch event
+    // this has a low probability of mismatching some non-mocker clients
+    this.add(client.id);
+
+    sendMessageRequest(client, {
+      action: ACTION.RECONNECT,
+    }, 300).catch(() => {
+      this.delete(client.id);
+    });
   },
 
   // infer the possible client ID

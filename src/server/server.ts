@@ -51,3 +51,11 @@ if (self !== self.window) {
     event.waitUntil(self.clients.claim());
   });
 }
+
+// try to reconnect clients after resumed from termination
+/* istanbul ignore if: unable to report coverage from sw context */
+if (self.clients) {
+  self.clients.matchAll().then(clients => {
+    clients.forEach(cli => clientManager.reconnect(cli));
+  });
+}
