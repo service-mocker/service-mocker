@@ -16,7 +16,7 @@ export class MockerServer implements IMockerServer {
 }
 
 // Event listeners MUST be added on the initial evaluation of worker scripts.
-// handle connections
+/* istanbul ignore next: unable to report coverage from sw context */
 self.addEventListener('message', async (event: ExtendableMessageEvent) => {
   const {
     data,
@@ -29,6 +29,7 @@ self.addEventListener('message', async (event: ExtendableMessageEvent) => {
 
   const port = ports[0];
 
+  // handle connections
   switch (data.action) {
     case ACTION.PING:
       return port.postMessage({
