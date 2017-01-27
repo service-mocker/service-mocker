@@ -8,7 +8,6 @@ import {
 
 import { register } from './register';
 import { connect } from './connect';
-import { disconnect } from './disconnect';
 import { getNewestReg } from './get-newest-reg';
 
 export class ModernClient implements IMockerClient {
@@ -55,7 +54,6 @@ export class ModernClient implements IMockerClient {
     const registration = await register(scriptURL);
 
     this._autoSyncClient();
-    this._handleUnload();
 
     return registration;
   }
@@ -79,9 +77,5 @@ export class ModernClient implements IMockerClient {
         updateLog.error('connecting to new service worker failed', error);
       }
     });
-  }
-
-  private _handleUnload() {
-    window.addEventListener('beforeunload', disconnect);
   }
 }

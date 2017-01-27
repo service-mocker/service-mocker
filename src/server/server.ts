@@ -1,5 +1,5 @@
 import { MockerRouter } from './router';
-import { clientManager } from './client-manager';
+import { ACTION } from '../constants/';
 
 export interface IMockerServer {
   readonly isLegacy: boolean;
@@ -16,25 +16,34 @@ export class MockerServer implements IMockerServer {
 }
 
 // Event listeners MUST be added on the initial evaluation of worker scripts.
-self.addEventListener('message', (event: ExtendableMessageEvent) => {
-  clientManager.connect(event);
-});
-
-self.addEventListener('fetch', (event: FetchEvent) => {
+// handle connections
+self.addEventListener('message', async (event: ExtendableMessageEvent) => {
   const {
-    client, // old spec
-    clientId,
+    data,
+    ports,
   } = event;
 
-  /* istanbul ignore next: unable to test old spec */
-  const id = clientId || (client && client.id);
-
-  // only the connected clients should be intercepted
-  /* istanbul ignore if */
-  if (!clientManager.has(id)) {
+  if (!data || !ports.length) {
     return;
   }
 
+  const port = ports[0];
+
+  switch (data.action) {
+    case ACTION.PING:
+      return port.postMessage({
+        action: ACTION.PONG,
+      });
+
+    case ACTION.REQUEST_CLAIM:
+      await self.clients.claim();
+      return port.postMessage({
+        action: ACTION.ESTABLISHED,
+      });
+  }
+});
+
+self.addEventListener('fetch', (event: FetchEvent) => {
   MockerRouter.routers.some((router) => {
     return router.match(event);
   });

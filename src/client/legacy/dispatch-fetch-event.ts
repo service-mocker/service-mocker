@@ -2,16 +2,9 @@ import {
   Defer,
 } from '../../utils/';
 
-import {
-  LEGACY_CLIENT_ID,
-} from '../../constants/';
-
 import { createEvent } from './create-event';
 
 interface MockFetchEvent extends Event {
-  // legacy client ID
-  clientId: string;
-
   // source request
   request: Request;
 
@@ -43,7 +36,6 @@ export async function dispatchFetchEvent(request: Request): Promise<Response | n
   let finished = false;
 
   fetchEvt.request = request;
-  fetchEvt.clientId = LEGACY_CLIENT_ID;
 
   function done(result: any) {
     finished = true;
