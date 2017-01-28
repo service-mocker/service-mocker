@@ -33,22 +33,15 @@ export async function dispatchFetchEvent(request: Request): Promise<Response | n
   const fetchEvt: MockFetchEvent = createEvent('fetch');
   const deferred = new Defer();
 
-  let finished = false;
-
   fetchEvt.request = request;
 
-  function done(result: any) {
-    finished = true;
-    deferred.resolve(result);
-  }
-
   fetchEvt.respondWith = (response: Response | Promise<Response>) => {
-    if (finished) {
+    if (deferred.done) {
       // tslint:disable-next-line max-line-length
       throw new Error(`Failed to execute 'respondWith' on 'FetchEvent': The fetch event has already been responded to.`);
     }
 
-    done(response);
+    deferred.resolve(response);
   };
 
   fetchEvents.forEach((listener) => {
@@ -56,8 +49,8 @@ export async function dispatchFetchEvent(request: Request): Promise<Response | n
   });
 
   // `event.respondWith` wasn't called
-  if (!finished) {
-    done(null);
+  if (!deferred.done) {
+    deferred.resolve(null);
   }
 
   return deferred.promise;
