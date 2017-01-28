@@ -1,5 +1,6 @@
 # Service Mocker
-[![CircleCI](https://circleci.com/gh/service-mocker/service-mocker/tree/develop.svg?style=shield)](https://circleci.com/gh/service-mocker/service-mocker)
+
+[![CircleCI branch](https://img.shields.io/circleci/project/github/service-mocker/service-mocker/develop.svg)](https://circleci.com/gh/service-mocker/service-mocker)
 [![Coverage](https://img.shields.io/codecov/c/github/service-mocker/service-mocker/develop.svg)](https://codecov.io/gh/service-mocker/service-mocker/branch/develop)
 [![Version](https://img.shields.io/npm/v/service-mocker.svg)](https://www.npmjs.com/package/service-mocker)
 [![Downloads](https://img.shields.io/npm/dt/service-mocker.svg)](https://www.npmjs.com/package/service-mocker)
