@@ -15,7 +15,7 @@ So if you are serving the server script from a non-root path, e.g. `'assets/js/s
 | `assets/js/index.html` | ✅ |
 | `assets/js/what/ever` | ✅ |
 
-If you want to override the path restriction, you need to add a `Service-Worker-Allowed` header to the response. The following is an example of [webpack-dev-server](https://github.com/webpack/webpack-dev-server):
+To override the path restriction, simply add a `Service-Worker-Allowed` header to the response. The following is an example of [webpack-dev-server](https://github.com/webpack/webpack-dev-server):
 
 ```js
 const devServer = new WebpackDevServer(compiler, {
