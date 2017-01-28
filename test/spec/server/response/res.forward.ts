@@ -130,6 +130,30 @@ export default function() {
 
       expect(body).to.be.empty;
     });
+
+    it('should forward the request with given body', async () => {
+      const contentType = mime.lookup('png');
+      const path = uniquePath();
+      const init = {
+        method: 'POST',
+        body: new Blob([], {
+          type: contentType,
+        }),
+      };
+
+      let capture: any;
+
+      router.get(path, (_req, res) => {
+        capture = captureFetch();
+        res.forward('/', init);
+      });
+
+      await sendRequest(path);
+
+      const blob = await capture.request.blob();
+
+      expect(blob.type).to.equal(contentType);
+    });
   });
 }
 
