@@ -51,7 +51,9 @@ export class ModernClient implements IMockerClient {
   }
 
   private async _init(scriptURL: string): Promise<ServiceWorkerRegistration> {
-    const registration = await register(scriptURL);
+    const registration = await register(scriptURL, {
+      scope: location.pathname,
+    });
 
     this._autoSyncClient();
 
