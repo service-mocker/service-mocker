@@ -80,7 +80,7 @@ const devServer = new WebpackDevServer(compiler, {
 });
 ```
 
-For more information, please check the [Service Worker Script Response](https://w3c.github.io/ServiceWorker/#service-worker-script-response) section.
+For more information, please check the <a href="caveats.md#path-restriction" router-link="/caveats?id=path-restriction">Path restriction</a> section.
 
 ## Integrating into current project
 
