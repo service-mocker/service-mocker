@@ -208,8 +208,7 @@ export class MockerResponse implements IMockerResponse {
       request = new Request((input as any)._native, init);
     } else {
       // create new Request
-      const options = await concatRequest(this._event.request, init);
-      request = new Request(input, options);
+      request = await concatRequest(this._event.request, input, init);
     }
 
     // fetch will somehow consume the body
@@ -218,29 +217,16 @@ export class MockerResponse implements IMockerResponse {
 }
 
 /**
- * Concat given request object with new requset init
+ * Concat new request info with given old request
  */
-async function concatRequest(request: Request, init: RequestInit = {}): Promise<RequestInit> {
-  const options: RequestInit = {};
+async function concatRequest(oldRequest: Request, input: RequestInfo, init: RequestInit = {}): Promise<Request> {
+  const tempRequest = new Request(input, oldRequest);
 
-  [
-    'method',
-    'headers',
-    'mode',
-    'credentials',
-    'cache',
-    'redirect',
-    'referrer',
-    'integrity',
-  ].forEach((prop) => {
-    options[prop] = init[prop] || request[prop];
-  });
-
-  if (!request.bodyUsed && options.method !== 'GET' && options.method !== 'HEAD') {
-    options.body = await bodyParser(request);
+  if (!init.body && tempRequest.method !== 'GET' && tempRequest.method !== 'HEAD') {
+    init.body = await bodyParser(oldRequest);
   }
 
-  return options;
+  return new Request(tempRequest, init);
 }
 
 /**
