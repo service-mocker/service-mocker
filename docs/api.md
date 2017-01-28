@@ -282,7 +282,7 @@ router.get('/greet', 'Hello new world!');
 With this router, you will get the following results:
 
 ```md
-⭕  GET  /greet
+✅  GET  /greet
 ❌  POST /greet
 ❌  GET  /knock
 ❌  GET  /greet/ding
@@ -347,8 +347,8 @@ router.all('/whatever', 'Yoooo');
 With this router, you will get the following results:
 
 ```md
-⭕  GET  /whatever
-⭕  POST /whatever
+✅  GET  /whatever
+✅  POST /whatever
 ❌  GET  /greet
 ❌  GET  /whatever/yo
 ❌  GET  https://a.com/whatever
@@ -391,7 +391,7 @@ apiRouter.get('/greet', 'Hello new world');
 ```
 
 ```md
-⭕  GET  /api/greet
+✅  GET  /api/greet
 ❌  GET  /greet
 ```
 

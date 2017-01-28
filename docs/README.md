@@ -22,8 +22,6 @@ npm i service-mocker-polyfills --save-dev
 
 A typical mocker includes two parts: `client` and `server`. First, let's create a server script named `server.js`:
 
-<p class="tip">As the max scope a service worker can control is its location (e.g. `/server/a.js -> /server/**`). It's recommended to put your server script in the **root directory** so that you can intercept the whole site.</p>
-
 ```js
 // server.js
 import { createServer } from 'service-mocker/server';
@@ -67,6 +65,22 @@ Now navigate your browser to `http://localhost:3000`. Open the console and you w
 >
 > Hello new world!
 ```
+
+### Non-root registrations
+
+When you are serving server script from a non-root path (e.g. `'/assets/js/server.js'`), you may need to add a `Service-Worker-Allowed` header to it. The following is an example of [webpack-dev-server](https://github.com/webpack/webpack-dev-server):
+
+```js
+const devServer = new WebpackDevServer(compiler, {
+  ...
+  // override service worker path restriction
+  headers: {
+    'Service-Worker-Allowed': '/'
+  }
+});
+```
+
+For more information, please check the [Service Worker Script Response](https://w3c.github.io/ServiceWorker/#service-worker-script-response) section.
 
 ## Integrating into current project
 
