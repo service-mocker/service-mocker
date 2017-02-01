@@ -189,7 +189,8 @@ export class MockerRouter implements IMockerRouter {
     }
 
     // strip router's base path
-    const path = url.pathname.replace(this._basePath, '');
+    const re = new RegExp(`^${this._basePath}`);
+    const path = url.pathname.replace(re, '');
 
     for (let rule of this._rules) {
       const {

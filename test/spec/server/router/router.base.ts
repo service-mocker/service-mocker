@@ -1,6 +1,11 @@
 import { expect } from 'chai';
 import { createServer } from 'service-mocker/server';
 
+import {
+  uniquePath,
+  sendRequest,
+} from '../../helpers/';
+
 export default function() {
   const { router } = createServer();
 
@@ -22,6 +27,17 @@ export default function() {
       const rr = router.base(baseURL + '/');
 
       expect(rr.baseURL).to.equal(baseURL);
+    });
+
+    it('should match baseURL from begining', async () => {
+      const path = uniquePath();
+
+      router.base('/api').get('/greet' + path, 'Something is wrong');
+      router.base('/greet').get('/api' + path, 'Hello world');
+
+      const { body } = await sendRequest('/greet/api' + path);
+
+      expect(body).to.equal('Hello world');
     });
 
     describe('with a relative path', () => {
