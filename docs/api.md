@@ -313,7 +313,7 @@ Up to now, we support the following routing methods:
 - delete
 - options
 
-### router.all
+### router.all()
 
 ```js
 router.all(path, callback): this
@@ -367,8 +367,7 @@ router.base(baseURL?): Router
 This method creates a **new router** with the given `baseURL`. A base URL can be either an absolute or a relative path, the relative `baseURL` will be resolved to current origin.
 
 ```js
-// assuming you are running on http://localhost:3000, and
-// router.baseURL = '/'
+// router.baseURL = 'http://localhost:3000'
 
 // when giving a relative path
 const apiRouter = router.base('/api');
@@ -450,7 +449,7 @@ The `req.baseURL` property is literally equivalent to <a href="#router-baseurl" 
 // assuming you are running on http://localhost:3000
 router.base('/api').get('/whatever', (req, res) => {
   console.log(req.baseURL); // 'http://localhost:3000/api'
-  console.log(req.baseURL === localServer.router.baseURL); // true
+  console.log(req.baseURL === router.baseURL); // true
 });
 
 router.base('https://a.com/api').get('/whatever', (req, res) => {
