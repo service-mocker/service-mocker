@@ -2,7 +2,7 @@
 
 ### Bug Fixes
 
-- **router**: matching `baseURL` from the begining of `request.url`. ([#19])
+- **router**: matching `baseURL` from the begining of `request.url`. ([#19](https://github.com/service-mocker/service-mocker/pull/19))
 
 # [1.0.3](https://github.com/service-mocker/service-mocker/compare/v1.0.2...v1.0.3) (2017-01-28)
 
