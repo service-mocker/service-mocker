@@ -13,7 +13,7 @@ npm install service-mocker --save-dev
 For legacy browsers, you may also need the [polyfills](https://github.com/service-mocker/service-mocker-polyfills):
 
 ```
-npm i service-mocker-polyfills --save-dev
+npm install service-mocker-polyfills --save-dev
 ```
 
 ## Hello new world
@@ -43,7 +43,7 @@ Then, we need to write a client script to connect to the server:
 import 'service-mocker-polyfills';
 import { createClient } from 'service-mocker/client';
 
-const client = createClient('server.js'); // the path to your server script
+const client = createClient('path/to/server.js');
 
 client.ready.then(async () => {
   const response = await fetch('/greet');
