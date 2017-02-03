@@ -26,7 +26,7 @@ body {
 
 .main {
   overflow: hidden;
-  padding-bottom: 50px;
+  padding-bottom: 0;
 }
 
 .no-sidebar .main {
@@ -77,4 +77,26 @@ body {
 }
 .token.string {
   color: #690;
+}
+
+/* footer */
+#page-footer {
+  margin-top: 3em;
+  padding: 1em 2em;
+  font-size: 12px;
+  border-top: 1px solid #f2f2f2;
+}
+
+#page-footer span {
+  color: #ccc;
+  padding-right: 0.5em;
+}
+
+#page-footer a {
+  color: #aaa;
+  text-decoration: none;
+}
+
+#page-footer a:hover {
+  text-decoration: underline;
 }

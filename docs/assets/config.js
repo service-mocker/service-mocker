@@ -19,6 +19,7 @@ self.$config = {
       'assets/twitter-widget.js',
       'assets/stroke.js',
     ]),
+    footerPlugin(),
   ],
 };
 
@@ -38,6 +39,21 @@ function landingScriptsPlugin(scripts) {
           document.body.appendChild(el);
         });
       }
+    });
+  };
+}
+
+function footerPlugin() {
+  var footer = [
+    '<footer id="page-footer">',
+    '<span><a href="https://github.com/service-mocker">Service Mocker Team</a> &copy;2017.</span>',
+    '<span>Proudly published with <a href="https://github.com/egoist/docute" target="_blank">docute</a>.</span>',
+    '</footer>',
+  ].join('');
+
+  return function appendFooter(context) {
+    context.registerComponent('content:end', {
+      template: footer,
     });
   };
 }
