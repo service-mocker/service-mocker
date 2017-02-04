@@ -1,17 +1,15 @@
-<!--- Provide a general summary of the issue in the Title above -->
-
 ## Issue Summary
-<!-- A summary of the issue and the browser/OS environment in which it occurs.  -->
+<!-- A summary of the issue and the browser environment in which it occurs.  -->
 
 ## Expected Behavior
-<!--- If you're describing a bug, tell me what should happen -->
-<!--- If you're suggesting a change/improvement, tell me how it should work -->
+<!-- If you're describing a bug, tell us what should happen -->
+<!-- If you're suggesting a change/improvement, tell us how it should work -->
 
 ## Current Behavior
-<!--- If describing a bug, tell me what happens instead of the expected behavior -->
+<!-- If describing a bug, tell us what happens instead of the expected behavior -->
 
 ## Steps to Reproduce
-<!-- Tell me how it happened -->
+<!-- Tell us how it happened. Provide a link to the repo that reproduces this issue if possible -->
 
 ## Environment
 
