@@ -18,7 +18,7 @@ npm install service-mocker-polyfills --save-dev
 
 ## Hello new world
 
-<p class="warning">Before starting, make sure you are using a develop server (e.g. `webpack-dev-server`) to serve your static assets. Assuming we are hosting our app in `http://localhost:3000`:</p>
+<p class="warning">Before starting, make sure you are using a develop server (e.g. <code>webpack-dev-server</code>) to serve your static assets. Assuming we are hosting our app in <code>http://localhost:3000</code>:</p>
 
 A typical mocker includes two parts: `client` and `server`. First, let's create a server script named `server.js`:
 
@@ -179,4 +179,4 @@ module.exports = {
 };
 ```
 
-<p class="danger">If you are already using the `json-loader` but still getting this error, please add `node_modules` to the `include` array.</p>
+<p class="danger">If you are already using the <code>json-loader</code> but still getting this error, please add <code>node_modules</code> to the <code>include</code> array.</p>
