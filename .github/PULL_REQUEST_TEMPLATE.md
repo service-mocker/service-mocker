@@ -1,14 +1,8 @@
-**Please fill in this template**
-<!-- Put an `x` in all the boxes that apply: -->
-
-- [ ] Make your PR against the develop branch.
-- [ ] Use a clear and descriptive title for the pull request.
-- [ ] Test the changes in your own code.
-
 ## Description
 <!-- Describe your changes in detail -->
 
 ## Types of changes
+<!-- Put an `x` in all the boxes that apply -->
 
 - [ ] Bug fix
 - [ ] New feature
