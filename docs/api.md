@@ -1,6 +1,6 @@
 ## Top-level API
 
-<p class="tip">Though there's an `index.js` entry that exports both <a href="#createclient" jump-to-id="createclient"><code>createClient()</code></a> and <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> function, it's recommended to import them separately:</p>
+<p class="tip">Though there's an <code>index.js</code> entry that exports both <a href="#createclient" jump-to-id="createclient"><code>createClient()</code></a> and <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> function, it's recommended to import them separately:</p>
 
 ```js
 // app.js
@@ -165,7 +165,7 @@ client.update().then(() => {
 });
 ```
 
-<p class="warning">The `client.update()` method has no effect in legacy mode.</p>
+<p class="warning">The <code>client.update()</code> method has no effect in legacy mode.</p>
 
 ### client.getRegistration()
 
