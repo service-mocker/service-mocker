@@ -1,6 +1,6 @@
 ## Top-level API
 
-<p class="tip">Though there's an `index.js` entry that exports both <a href="#createclient" jump-to-id="createclient">`createClient()`</a> and <a href="#createserver" jump-to-id="createserver">`createServer()`</a> function, it's recommended to import them separately:</p>
+<p class="tip">Though there's an `index.js` entry that exports both <a href="#createclient" jump-to-id="createclient"><code>createClient()</code></a> and <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> function, it's recommended to import them separately:</p>
 
 ```js
 // app.js
@@ -195,7 +195,7 @@ client.unregister().then(() => {
 });
 ```
 
-<p class="warning">The `client.unregister()` method has no effect in legacy mode.</p>
+<p class="warning">The <code>client.unregister()</code> method has no effect in legacy mode.</p>
 
 ## Server
 
@@ -217,7 +217,7 @@ The `server.isLegacy` property indicates which mode current server is running on
 
 - Type: `Router`
 
-The `server.router` property returns the <a href="#router" jump-to-id="router">`Router`</a> instance of current server.
+The `server.router` property returns the <a href="#router" jump-to-id="router"><code>Router</code></a> instance of current server.
 
 ```js
 console.log(server.router); // Router{}
@@ -225,7 +225,7 @@ console.log(server.router); // Router{}
 
 ## Router
 
-A new `Router` instance is constructed by <a href="#createserver" jump-to-id="createserver">`createServer()`</a> function or <a href="#router-base" jump-to-id="router-base">`router.base()`</a> method.
+A new `Router` instance is constructed by <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> function or <a href="#router-base" jump-to-id="router-base"><code>router.base()</code></a> method.
 
 In Service Mocker, we are using the [express style](http://expressjs.com/en/guide/routing.html) route paths via the [path-to-regexp](https://github.com/pillarjs/path-to-regexp) module. You can visit [express/routing](http://expressjs.com/en/guide/routing.html) for more routing guides.
 
@@ -244,7 +244,7 @@ const remoteServer = createServer('https://a.com/api');
 console.log(remoteServer.router.baseURL); // 'https://a.com/api'
 ```
 
-<p class="warning">The value of `router.baseURL` will always be an **absolute** path.</p>
+<p class="warning">The value of <code>router.baseURL</code> will always be an <i><b>absolute</b></i> path.</p>
 
 ### router.METHOD()
 
