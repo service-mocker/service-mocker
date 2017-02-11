@@ -42,10 +42,15 @@ export default function() {
 
     describe('with a relative path', () => {
       it('should resolve to current origin', () => {
-        const origin = 'http://a.com';
-        const rr = router.base(origin);
+        const rr = router.base('/whatever');
 
-        expect(rr.base('/whatever').baseURL).to.equal(origin + '/whatever');
+        expect(rr.baseURL).to.equal(new URL('/whatever', location.href).href);
+      });
+
+      it('should resolve against current baseURL', () => {
+        const rr = router.base('/what').base('/ever');
+
+        expect(new URL(rr.baseURL).pathname).to.equal('/what/ever');
       });
     });
 
@@ -55,6 +60,12 @@ export default function() {
         const rr = router.base(baseURL);
 
         expect(rr.baseURL).to.equal(baseURL);
+      });
+
+      it('should resolve against current baseURL', () => {
+        const rr = router.base('http://a.com/api').base('/whatever');
+
+        expect(new URL(rr.baseURL).pathname).to.equal('/api/whatever');
       });
     });
   });

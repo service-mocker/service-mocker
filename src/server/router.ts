@@ -119,9 +119,18 @@ export class MockerRouter implements IMockerRouter {
 
   /**
    * Create a new router with the given baseURL,
-   * relative `baseURL` will be resolved to current origin
+   * the path will be resolved against current baseURL.
+   *
+   * Example:
+   *   router.base('/api');
+   *   router.base('http://a.com/api');
    */
   base(baseURL: string = this.baseURL): MockerRouter {
+    // resolve relative paths to current base path
+    if (baseURL[0] === '/') {
+      baseURL = this._basePath + baseURL;
+    }
+
     const url = new URL(baseURL, this._origin);
 
     return new MockerRouter(url.href);
