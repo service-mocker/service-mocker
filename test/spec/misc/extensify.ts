@@ -3,11 +3,17 @@ import { extensify } from 'service-mocker/utils';
 
 export default function() {
   describe('extensify', () => {
-    it('should copy all properties from native', () => {
-      const RR = extensify(Request);
+    it('should be a subclass of the native one', () => {
+      const XHR = extensify(XMLHttpRequest);
 
-      const native = new Request(('/'));
-      const ext = new RR(('/'));
+      expect(new XHR()).to.be.an.instanceof(XMLHttpRequest);
+    });
+
+    it('should copy all properties from native', () => {
+      const XHR = extensify(XMLHttpRequest);
+
+      const native = new XMLHttpRequest();
+      const ext = new XHR();
 
       for (let prop in native) {
         expect(ext).to.have.property(prop);
