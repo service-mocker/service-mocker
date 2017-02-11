@@ -34,19 +34,23 @@
  */
 export function extensify<T>(Native: T): T;
 export function extensify(Native) {
-  function Extendable(...args) {
-    this._native = initNative(...args);
+  class Extendable {
+    protected _native;
 
-    checkLack(this._native);
+    constructor(...args) {
+      this._native = initNative(...args);
+
+      checkLack(this._native);
+    }
   }
 
+  /* istanbul ignore next: safari specfic cases */
   function initNative(...args) {
     if (typeof Native === 'function') {
       return new Native(...args);
     }
 
     // avoid `XMLHttpRequest.bind` is undefined in safari 9-
-    /* istanbul ignore next: safari specfic cases */
     return new Native();
   }
 
@@ -75,17 +79,6 @@ export function extensify(Native) {
       }
     }
   }
-
-  // inhertit from Native classes
-  // make sure `extendableInstance instanceof Native === true`
-  Extendable.prototype = Object.create(Native.prototype, {
-    constructor: {
-      value: Extendable,
-      enumerable: false,
-      writable: true,
-      configurable: true,
-    },
-  });
 
   // copy all static properties
   // safari 9- will include a "prototype" property on XMLHttpRequest

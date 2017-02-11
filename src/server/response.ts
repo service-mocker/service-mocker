@@ -6,6 +6,8 @@ import {
   Defer,
 } from '../utils/';
 
+import { MockerRequest } from './request';
+
 const responseLog = debug.scope('response');
 const IS_IE_EDGE = /Edge/.test(navigator.userAgent);
 
@@ -193,12 +195,17 @@ export class MockerResponse implements IMockerResponse {
    * @param input Destination URL or a Request object or MockerRequest
    * @param init Fetch request init
    */
-  async forward(input: RequestInfo, init?: RequestInit): Promise<void> {
+  async forward(input: RequestInfo, init?: RequestInit): Promise<void>;
+  async forward(input: MockerRequest, init?: RequestInit): Promise<void>;
+  async forward(input: any, init?: RequestInit) {
     let request: Request;
 
     if (input instanceof Request) {
       // forward native Request
       request = new Request(input, init);
+    } else if (input instanceof MockerRequest) {
+      // forward MockerRequest
+      request = new Request((input as any)._native, init);
     } else {
       // create new Request
       request = await concatRequest(this._event.request, input, init);
