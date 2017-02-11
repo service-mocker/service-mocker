@@ -1,4 +1,4 @@
-# [1.0.4](https://github.com/service-mocker/service-mocker/compare/v1.0.3...v1.0.4)
+# [1.0.4](https://github.com/service-mocker/service-mocker/compare/v1.0.3...v1.0.4) (2017-02-11)
 
 ### Bug Fixes
 
