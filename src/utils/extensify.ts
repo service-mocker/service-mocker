@@ -126,6 +126,9 @@ export function extensify(Native) {
         };
       }
 
+      // enable overriding
+      descriptor.configurable = true;
+
       Object.defineProperty(target, prop, descriptor);
     });
 

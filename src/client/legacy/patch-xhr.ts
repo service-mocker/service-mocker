@@ -182,7 +182,7 @@ class MockerXHR extends ExtandableXHR {
   }
 
   private _setProperty(name: string, value?: any): void {
-    // in IE & Safari, those property are unconfigurable
+    // in IE & Safari, these property are internally read-only on native XHR instance
     // assign to patched XHR, as a trade-off
     Object.defineProperty(this, name, {
       value,
