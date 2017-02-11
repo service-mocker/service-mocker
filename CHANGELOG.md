@@ -1,4 +1,4 @@
-# [Next](https://github.com/service-mocker/service-mocker/compare/v1.0.3...develop)
+# [1.0.4](https://github.com/service-mocker/service-mocker/compare/v1.0.3...v1.0.4)
 
 ### Bug Fixes
 
