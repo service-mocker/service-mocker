@@ -44,18 +44,16 @@ export function extensify(Native) {
     }
   }
 
-  /* istanbul ignore next: safari specfic cases */
   function initNative(...args) {
-    if (typeof Native === 'function') {
-      return new Native(...args);
+    if (args.length === 0) {
+      return new Native();
     }
 
-    // avoid `XMLHttpRequest.bind` is undefined in safari 9-
-    return new Native();
+    return new Native(...args);
   }
 
   let checked = false;
-  /* istanbul ignore next */
+  /* istanbul ignore next: safari only */
   function checkLack(instance) {
     if (checked) {
       return;
