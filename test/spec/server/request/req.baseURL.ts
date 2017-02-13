@@ -20,7 +20,7 @@ export default function() {
       });
     });
 
-    describe('with `router.base(relative)', () => {
+    describe('with `router.base(path)', () => {
       it('should equal to the given relative path', async () => {
         const baseURL = '/api/v1';
         const path = uniquePath();
@@ -34,23 +34,6 @@ export default function() {
         await sendRequest(baseURL + path);
 
         expect(request.baseURL).to.equal(new URL(baseURL, location.href).href);
-      });
-    });
-
-    describe('with `router.base(absolute)', () => {
-      it('should equal to the remote address', async () => {
-        const remote = 'https://a.com/api';
-        const path = uniquePath();
-        let request: any;
-
-        router.base(remote).get(path, (req, res) => {
-          request = req;
-          res.end();
-        });
-
-        await sendRequest(remote + path);
-
-        expect(request.baseURL).to.equal(remote);
       });
     });
   });

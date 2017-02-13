@@ -11,9 +11,9 @@ export default function() {
 
   describe('router.base(undefined)', () => {
     it('should set to current baseURL when not given', () => {
-      const rr = router.base('http://a.com/api');
+      const rr = router.base();
 
-      expect(rr.base().baseURL).to.equal(rr.baseURL);
+      expect(rr.baseURL).to.equal(router.baseURL);
     });
   });
 
@@ -23,10 +23,9 @@ export default function() {
     });
 
     it('should strip the trailing slash', () => {
-      const baseURL = 'http://a.com/api/v1';
-      const rr = router.base(baseURL + '/');
+      const rr = router.base('/api/');
 
-      expect(rr.baseURL).to.equal(baseURL);
+      expect(rr.baseURL).to.equal(router.baseURL + '/api');
     });
 
     it('should match baseURL from begining', async () => {
@@ -55,17 +54,16 @@ export default function() {
     });
 
     describe('with an absolute path', () => {
-      it('should resolve to the given path', () => {
-        const baseURL = 'http://a.com/api';
-        const rr = router.base(baseURL);
+      it('should abort processing', () => {
+        let err: any;
 
-        expect(rr.baseURL).to.equal(baseURL);
-      });
+        try {
+          router.base('http://a.com');
+        } catch (e) {
+          err = e;
+        }
 
-      it('should resolve against current baseURL', () => {
-        const rr = router.base('http://a.com/api').base('/whatever');
-
-        expect(new URL(rr.baseURL).pathname).to.equal('/api/whatever');
+        expect(err).to.exist;
       });
     });
   });

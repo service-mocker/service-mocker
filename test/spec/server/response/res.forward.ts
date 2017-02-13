@@ -29,7 +29,9 @@ export default function() {
       const baseURL = 'https://api.spotify.com';
       const requsetInfo = `${baseURL}/albums/3oTKl46yD2fsb1dtUYq6Nn`;
 
-      router.base(baseURL).get('/albums/:id', (req, res) => {
+      const { router } = createServer(baseURL);
+
+      router.get('/albums/:id', (req, res) => {
         res.forward(`${req.baseURL}/v1${req.path}`);
       });
 
