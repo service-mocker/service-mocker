@@ -357,37 +357,24 @@ With this router, you will get the following results:
 ### router.base()
 
 ```js
-router.base(baseURL?): Router
+router.base(path?): Router
 ```
 
 | Param | Type | Description |
 | --- | :-: | --- |
-| `baseURL` | string | The base URL of the new router. |
+| `path` | string | The path prefix of the new router. |
 
-This method creates a **new router** which will be mounted on the given `baseURL`. A base URL can be either an absolute or a relative path:
+This method creates a **new router** which will be mounted on the given `path`. You can regard the base paths as **a chain of path prefixes**.
 
 ```js
 // router.baseURL = 'http://localhost:3000'
 
-// when giving a relative path
 const apiRouter = router.base('/api');
 
 console.log(apiRouter === router); // false
 console.log(apiRouter.baseURL); // http://localhost:3000/api
 
-// when giving an absolute path
-const remoteRouter = router.base('https://a.com');
-
-console.log(remoteRouter.baseURL); // https://a.com
-```
-
-If the `baseURL` is provided with a relative path, it will be resolved against current mount path. You can regard the base URLs as a chain of path prefixes:
-
-```js
-const { router: apiRouter } = createServer('/api');
-
-console.log(apiRouter.baseURL); // http://localhost:3000/api
-
+// chain base paths
 const v1 = apiRouter.base('/v1');
 
 console.log(v1.baseURL); // http://localhost:3000/api/v1
@@ -397,11 +384,17 @@ v1.get('/users/:id', (req, res) => {
 });
 ```
 
-<p class="danger">The relative path here refers to the <strong>mount-path</strong> of your router. It should always start with a leading slash <code>'/'</code>, for example: <code>'/api'</code> is good but <code>'./api'</code> is bad.</p>
-
-When the base URL of a router is specified, all routes will base on the given `baseURL`:
+<p class="danger">Unlike the <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> method, the <code>path</code> here should always be a relative one:</p>
 
 ```js
+router.base('/api'); // OK
+router.base('http://a.com/api'); // Error: not sharing same origin
+```
+
+When the base URL of a router is specified, all routes will base on it:
+
+```js
+const { router } = createServer();
 const apiRouter = router.base('/api');
 
 apiRouter.get('/greet', 'Hello new world');
