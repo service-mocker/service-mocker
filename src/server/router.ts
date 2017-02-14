@@ -1,7 +1,13 @@
 import * as pathToRegExp from 'path-to-regexp';
 
+import {
+  debug,
+} from '../utils/';
+
 import { MockerRequest } from './request';
 import { MockerResponse } from './response';
+
+const routerLog = debug.scope('router');
 
 // bacic HTTP request methods in fetch standard, see
 // https://fetch.spec.whatwg.org/#concept-method
@@ -118,23 +124,26 @@ export class MockerRouter implements IMockerRouter {
   }
 
   /**
-   * Create a new router with the given path,
-   * the path will be resolved against current baseURL.
+   * Create a new router with the given path as scope.
    */
-  base(path: string = this.baseURL): MockerRouter {
-    // resolve relative paths to current base path
-    if (path[0] === '/') {
-      path = this._basePath + path;
+  scope(path?: string): MockerRouter {
+    // in case of falsy values
+    if (!path) {
+      path = '/';
     }
 
-    const url = new URL(path, this._origin);
-
-    if (url.origin !== this._origin) {
-      // tslint:disable-next-line max-line-length
-      throw new Error(`the given path (${path}) is not sharing the same origin with current baseURL (${this.baseURL})`);
+    if (path[0] !== '/') {
+      throw new TypeError(`the scope of router should be started with "/", got ${path}`);
     }
 
-    return new MockerRouter(url.href);
+    return new MockerRouter(this.baseURL + path);
+  }
+
+  /* istanbul ignore next */
+  base(path?: string): MockerRouter {
+    routerLog.warn('`router.base()` is deprecated, use `router.scope()` instead.');
+
+    return this.scope(path);
   }
 
   /**

@@ -28,7 +28,7 @@ export default function() {
         const path = uniquePath();
         const baseURL = '/api/v1';
 
-        router.base(baseURL).get(path, (req, res) => {
+        router.scope(baseURL).get(path, (req, res) => {
           request = req;
           res.end();
         });

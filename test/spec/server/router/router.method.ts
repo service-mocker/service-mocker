@@ -71,7 +71,7 @@ export default function() {
   describe('when matching multiple rules', () => {
     it('should only invoke the first matched route', async () => {
       const path = uniquePath();
-      const rr = router.base();
+      const rr = router.scope();
 
       let id = 0;
 
