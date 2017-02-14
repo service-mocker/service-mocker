@@ -225,7 +225,7 @@ console.log(server.router); // Router{}
 
 ## Router
 
-A new `Router` instance is constructed by <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> function or <a href="#router-base" jump-to-id="router-base"><code>router.base()</code></a> method.
+A new `Router` instance is constructed by <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> function or <a href="#router-scope" jump-to-id="router-scope"><code>router.scope()</code></a> method.
 
 In Service Mocker, we are using the [express style](http://expressjs.com/en/guide/routing.html) route paths via the [path-to-regexp](https://github.com/pillarjs/path-to-regexp) module. You can visit [express/routing](http://expressjs.com/en/guide/routing.html) for more routing guides.
 
@@ -354,48 +354,56 @@ With this router, you will get the following results:
 ❌  GET  https://a.com/whatever
 ```
 
-### router.base()
+### router.scope()
 
 ```js
-router.base(path?): Router
+router.scope(path?): Router
 ```
 
 | Param | Type | Description |
 | --- | :-: | --- |
-| `path` | string | The path prefix of the new router. |
+| `path` | string | The scope path of the new router. |
 
-This method creates a **new router** which will be mounted on the given `path`. You can regard the base paths as **a chain of path prefixes**.
+This method creates a **new router** which will be shrinked within the given `path`. The `path` acts like a prefix for routes:
 
 ```js
 // router.baseURL = 'http://localhost:3000'
 
-const apiRouter = router.base('/api');
+const apiRouter = router.scope('/api');
 
 console.log(apiRouter === router); // false
 console.log(apiRouter.baseURL); // http://localhost:3000/api
 
-// chain base paths
-const v1 = apiRouter.base('/v1');
+// GET /api/greet
+apiRouter.get('/greet', 'Hello new world!');
+```
+
+The `path` will be resolved against current router's `baseURL`:
+
+```js
+const { router } = createServer('/api');
+const v1 = router.scope('/v1');
 
 console.log(v1.baseURL); // http://localhost:3000/api/v1
 
+// GET /api/v1/users/:id
 v1.get('/users/:id', (req, res) => {
-  // matches /api/v1/users/:id
+  ...
 });
 ```
 
-<p class="danger">Unlike the <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> method, the <code>path</code> here should always be a relative one:</p>
+<p class="danger">The <code>path</code> should always start with a leading slash <code>"/"</code>:</p>
 
 ```js
-router.base('/api'); // OK
-router.base('http://a.com/api'); // Error: not sharing same origin
+router.scope('/api'); // OK
+router.scope('http://a.com/api'); // TypeError: ...
 ```
 
-When the base URL of a router is specified, all routes will base on it:
+When the scope of a router is specified, all routes will base on it:
 
 ```js
 const { router } = createServer();
-const apiRouter = router.base('/api');
+const apiRouter = router.scope('/api');
 
 apiRouter.get('/greet', 'Hello new world');
 ```
@@ -457,14 +465,10 @@ The Request object is inherited from the [native Request object](https://develop
 The `req.baseURL` property is literally equivalent to <a href="#router-baseurl" jump-to-id="router-baseurl">`router.baseURL`</a> property of current router.
 
 ```js
-// assuming you are running on http://localhost:3000
-router.base('/api').get('/whatever', (req, res) => {
+// router.baseURL = http://localhost:3000
+router.scope('/api').get('/whatever', (req, res) => {
   console.log(req.baseURL); // 'http://localhost:3000/api'
   console.log(req.baseURL === router.baseURL); // true
-});
-
-router.base('https://a.com/api').get('/whatever', (req, res) => {
-  console.log(req.baseURL); // 'https://a.com/api'
 });
 ```
 
@@ -475,13 +479,21 @@ router.base('https://a.com/api').get('/whatever', (req, res) => {
 The `req.path` property contains the path part of the current request.
 
 ```js
-// GET /api/users/1
-router.base('/api').get('/users/:id', (req, res) => {
-  console.log(req.path); // '/user/1'
-});
+// router.baseURL = http://localhost:3000
 
-router.base('/').get('/api/users/:id', (req, res) => {
+// GET /api/users/1
+router.get('/api/users/:id', (req, res) => {
   console.log(req.path); // '/api/users/1'
+});
+```
+
+<p class="danger">The pathname of current <code>router.baseURL</code> will be stripped from <code>req.path</code>:</p>
+
+```js
+// GET /api/users/1
+router.scope('/api').get('/users/:id', (req, res) => {
+  console.log(req.path); // '/users/1'
+  console.log(new URL(req.url).pathname); // '/api/users/1'
 });
 ```
 
@@ -498,7 +510,7 @@ router.get('/users/:id', (req, res) => {
 });
 
 // GET /api/users/1/videos/1024
-router.base('api').get('/users/:userID/videos/:videoID', function (req, res) {
+router.scope('/api').get('/users/:userID/videos/:videoID', function (req, res) {
   res.send(req.params); // { userID: '1', videoID: '1024' }
 });
 ```
