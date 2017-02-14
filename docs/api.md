@@ -416,7 +416,7 @@ apiRouter.get('/greet', 'Hello new world');
 ### router.route()
 
 ```js
-router.route(path?): ScopedRouter
+router.route(path?): SubRouter
 ```
 
 | Param | Type | Description |

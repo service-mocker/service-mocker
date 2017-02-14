@@ -42,7 +42,7 @@ export interface IRouterMatcher<T> {
   (path: RoutePath, responseBody: any): T;
 }
 
-export interface IScopedRouterMatcher<T> {
+export interface ISubRouterMatcher<T> {
   /**
    * Register a routing to current scope
    *
@@ -63,7 +63,7 @@ export interface IScopedRouterMatcher<T> {
 export interface IMockerRouter {
   readonly baseURL: string;
   scope(path?: string): IMockerRouter;
-  route(path: RoutePath): IScopedRouter;
+  route(path: RoutePath): ISubRouter;
 
   // routings
   all: IRouterMatcher<this>;
@@ -76,15 +76,15 @@ export interface IMockerRouter {
 }
 /* tslint:enable member-ordering */
 
-export interface IScopedRouter {
+export interface ISubRouter {
   // routings
-  all: IScopedRouterMatcher<this>;
-  get: IScopedRouterMatcher<this>;
-  post: IScopedRouterMatcher<this>;
-  put: IScopedRouterMatcher<this>;
-  head: IScopedRouterMatcher<this>;
-  delete: IScopedRouterMatcher<this>;
-  options: IScopedRouterMatcher<this>;
+  all: ISubRouterMatcher<this>;
+  get: ISubRouterMatcher<this>;
+  post: ISubRouterMatcher<this>;
+  put: ISubRouterMatcher<this>;
+  head: ISubRouterMatcher<this>;
+  delete: ISubRouterMatcher<this>;
+  options: ISubRouterMatcher<this>;
 }
 
 type RouteRule = {
@@ -150,8 +150,8 @@ export class MockerRouter implements IMockerRouter {
    * Create a scoped router with the given path as
    * route path for every routing method.
    */
-  route(path: RoutePath): ScopedRouter {
-    return new ScopedRouter(this, path);
+  route(path: RoutePath): SubRouter {
+    return new SubRouter(this, path);
   }
 
   /**
@@ -231,9 +231,9 @@ export class MockerRouter implements IMockerRouter {
   }
 }
 
-export interface ScopedRouter extends IScopedRouter {}
+export interface SubRouter extends ISubRouter {}
 
-export class ScopedRouter implements IScopedRouter {
+export class SubRouter implements ISubRouter {
   constructor(
     private _router: MockerRouter,
     private _path: RoutePath,
@@ -265,7 +265,7 @@ allMethods.forEach(method => {
 });
 
 allMethods.forEach(method => {
-  ScopedRouter.prototype[method] = function(callback) {
+  SubRouter.prototype[method] = function(callback) {
     return this.register(method, callback);
   };
 });
