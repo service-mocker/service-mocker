@@ -62,7 +62,7 @@ export interface IScopedRouterMatcher<T> {
 /* tslint:disable member-ordering */
 export interface IMockerRouter {
   readonly baseURL: string;
-  base(baseURL: string): IMockerRouter;
+  scope(path?: string): IMockerRouter;
   route(path: RoutePath): IScopedRouter;
 
   // routings
