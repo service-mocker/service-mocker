@@ -133,7 +133,7 @@ export class MockerRouter implements IMockerRouter {
     }
 
     if (path[0] !== '/') {
-      throw new TypeError(`the scope of router should be started with "/", got ${path}`);
+      throw new TypeError(`the scope of router should start with "/", got ${path}`);
     }
 
     return new MockerRouter(this.baseURL + path);
