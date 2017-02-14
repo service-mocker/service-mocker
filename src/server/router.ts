@@ -118,11 +118,21 @@ export class MockerRouter implements IMockerRouter {
   }
 
   /**
-   * Create a new router with the given baseURL,
-   * relative `baseURL` will be resolved to current origin
+   * Create a new router with the given path,
+   * the path will be resolved against current baseURL.
    */
-  base(baseURL: string = this.baseURL): MockerRouter {
-    const url = new URL(baseURL, this._origin);
+  base(path: string = this.baseURL): MockerRouter {
+    // resolve relative paths to current base path
+    if (path[0] === '/') {
+      path = this._basePath + path;
+    }
+
+    const url = new URL(path, this._origin);
+
+    if (url.origin !== this._origin) {
+      // tslint:disable-next-line max-line-length
+      throw new Error(`the given path (${path}) is not sharing the same origin with current baseURL (${this.baseURL})`);
+    }
 
     return new MockerRouter(url.href);
   }

@@ -357,33 +357,44 @@ With this router, you will get the following results:
 ### router.base()
 
 ```js
-router.base(baseURL?): Router
+router.base(path?): Router
 ```
 
 | Param | Type | Description |
 | --- | :-: | --- |
-| `baseURL` | string | The base URL of the new router. |
+| `path` | string | The path prefix of the new router. |
 
-This method creates a **new router** with the given `baseURL`. A base URL can be either an absolute or a relative path, the relative `baseURL` will be resolved to current origin.
+This method creates a **new router** which will be mounted on the given `path`. You can regard the base paths as **a chain of path prefixes**.
 
 ```js
 // router.baseURL = 'http://localhost:3000'
 
-// when giving a relative path
 const apiRouter = router.base('/api');
 
 console.log(apiRouter === router); // false
 console.log(apiRouter.baseURL); // http://localhost:3000/api
 
-// when giving an absolute path
-const remoteRouter = router.base('https://a.com');
+// chain base paths
+const v1 = apiRouter.base('/v1');
 
-console.log(remoteRouter.baseURL); // https://a.com
+console.log(v1.baseURL); // http://localhost:3000/api/v1
+
+v1.get('/users/:id', (req, res) => {
+  // matches /api/v1/users/:id
+});
 ```
 
-When the base URL of a router is specified, all routes will base on the given `baseURL`:
+<p class="danger">Unlike the <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> method, the <code>path</code> here should always be a relative one:</p>
 
 ```js
+router.base('/api'); // OK
+router.base('http://a.com/api'); // Error: not sharing same origin
+```
+
+When the base URL of a router is specified, all routes will base on it:
+
+```js
+const { router } = createServer();
 const apiRouter = router.base('/api');
 
 apiRouter.get('/greet', 'Hello new world');
