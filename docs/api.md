@@ -262,7 +262,7 @@ If the second argument is provided with a non-function value, then the value wil
 
 | Param | Type | Description |
 | --- | :-: | --- |
-| `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path. |
+| `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path pattern. |
 | `responseBody` | any | The body to be sent. This can be one of [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob), [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), [Array](https://developer.mozilla.org/en-US/docs/Glossary/array), [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), and [Primitives](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) except `Symbol`. |
 
 Call `router.METHOD()` method to intercept HTTP requests by matching the given path pattern. The `METHOD` refers to a HTTP method of the request, such as `GET`, `POST` and so on, in **lowercase**. Thus, the actual routing methods are `router.get()`, `router.post()`, etc. See the <a href="#routing-methods" jump-to-id="routing-methods">Routing methods</a> below for the complete list.
@@ -322,14 +322,14 @@ router.all(path, responseBody): this
 
 | Param | Type | Description |
 | --- | :-: | --- |
-| `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path. |
+| `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path pattern. |
 | `callback` | (req, res) => void | A Routing handler which will be executed when the route is matched. The `callback` function receives two parameters:<br> <ol><li>`req`: A <a href="#request" jump-to-id="request">`Request()`</a> object.</li><li>`res`: A <a href="#response" jump-to-id="response">`Response()`</a> object.</li></ol> |
 
 If the second argument is provided with a non-function value, then the value will be regarded as response body:
 
 | Param | Type | Description |
 | --- | :-: | --- |
-| `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path. |
+| `path` | string &#124; RegExp | An [express style](http://expressjs.com/en/guide/routing.html) route path pattern. |
 | `responseBody` | any | The body to be sent. This can be one of [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob), [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), [Array](https://developer.mozilla.org/en-US/docs/Glossary/array), [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), and [Primitives](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) except `Symbol`. |
 
 This method like the <a href="#router-method" jump-to-id="router-method">`router.METHOD()`</a> method but for **all types of HTTP requests**.
@@ -421,9 +421,9 @@ router.route(path?): SubRouter
 
 | Param | Type | Description |
 | --- | :-: | --- |
-| `path` | string | The route path for this sub router. |
+| `path` | string &#124; RegExp | The route path pattern for this sub router. |
 
-`router.route()` method creates a sub router of which all route paths are bound with the given `path`. The sub router contains all routing methods from <a href="#router" jump-to-id="router">`Router`</a>, use this method to avoid duplicate route naming and thus typing errors:
+`router.route()` method creates a sub router of which all route paths are bound with the given `path` pattern. The sub router contains all routing methods from <a href="#router" jump-to-id="router">`Router`</a>, use this method to avoid duplicate route naming and thus typing errors:
 
 ```js
 router.route('/post/:id')
