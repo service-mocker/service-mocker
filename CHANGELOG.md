@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/service-mocker/service-mocker/compare/v1.0.4...v1.1.0)(2017-02-15)
+
+### Bug Fixes
+
+- **router**: support chainable base URLs. ([#23](https://github.com/service-mocker/service-mocker/pull/23))
+
+### Features
+
+- **router**: add `router.scope()` method for route prefixes.
+
+### Minor Changes
+
+- **router**: deprecate `router.base()` method.
+
+
 # [1.0.4](https://github.com/service-mocker/service-mocker/compare/v1.0.3...v1.0.4) (2017-02-11)
 
 ### Bug Fixes
@@ -17,7 +32,7 @@
 
 - **router**: intercept all requests in spite of the potential non-mockers, fix [#14](https://github.com/service-mocker/service-mocker/issues/14) ([#17](https://github.com/service-mocker/service-mocker/pull/17))
 
-### Non-breaking changes
+### Minor Changes
 
 - **server**: remove `clientManager` module ([0fbcc3d](https://github.com/service-mocker/service-mocker/commit/0fbcc3d7b5a6be40053610e62bc2a5d26dbc8399))
 
