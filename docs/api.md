@@ -364,7 +364,9 @@ router.scope(path?): Router
 | --- | :-: | --- |
 | `path` | string | The scope path of the new router. |
 
-This method creates a **new router** which will be shrinked within the given `path`. The `path` acts like a prefix for routes:
+<p class="warning">This method is supported since <strong>v1.1.0</strong>.</p>
+
+This method creates a **new router** which will be shrinked within the given `path`. The `path` acts like a prefix for routes, and it will be matched literally:
 
 ```js
 // router.baseURL = 'http://localhost:3000'
