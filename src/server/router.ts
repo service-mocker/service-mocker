@@ -1,7 +1,13 @@
 import * as pathToRegExp from 'path-to-regexp';
 
+import {
+  debug,
+} from '../utils/';
+
 import { MockerRequest } from './request';
 import { MockerResponse } from './response';
+
+const routerLog = debug.scope('router');
 
 // bacic HTTP request methods in fetch standard, see
 // https://fetch.spec.whatwg.org/#concept-method
@@ -36,7 +42,7 @@ export interface IRouterMatcher<T> {
   (path: RoutePath, responseBody: any): T;
 }
 
-export interface IScopedRouterMatcher<T> {
+export interface ISubRouterMatcher<T> {
   /**
    * Register a routing to current scope
    *
@@ -56,8 +62,8 @@ export interface IScopedRouterMatcher<T> {
 /* tslint:disable member-ordering */
 export interface IMockerRouter {
   readonly baseURL: string;
-  base(baseURL: string): IMockerRouter;
-  route(path: RoutePath): IScopedRouter;
+  scope(path?: string): IMockerRouter;
+  route(path: RoutePath): ISubRouter;
 
   // routings
   all: IRouterMatcher<this>;
@@ -70,15 +76,15 @@ export interface IMockerRouter {
 }
 /* tslint:enable member-ordering */
 
-export interface IScopedRouter {
+export interface ISubRouter {
   // routings
-  all: IScopedRouterMatcher<this>;
-  get: IScopedRouterMatcher<this>;
-  post: IScopedRouterMatcher<this>;
-  put: IScopedRouterMatcher<this>;
-  head: IScopedRouterMatcher<this>;
-  delete: IScopedRouterMatcher<this>;
-  options: IScopedRouterMatcher<this>;
+  all: ISubRouterMatcher<this>;
+  get: ISubRouterMatcher<this>;
+  post: ISubRouterMatcher<this>;
+  put: ISubRouterMatcher<this>;
+  head: ISubRouterMatcher<this>;
+  delete: ISubRouterMatcher<this>;
+  options: ISubRouterMatcher<this>;
 }
 
 type RouteRule = {
@@ -118,31 +124,34 @@ export class MockerRouter implements IMockerRouter {
   }
 
   /**
-   * Create a new router with the given path,
-   * the path will be resolved against current baseURL.
+   * Create a new router with the given path as scope.
    */
-  base(path: string = this.baseURL): MockerRouter {
-    // resolve relative paths to current base path
-    if (path[0] === '/') {
-      path = this._basePath + path;
+  scope(path?: string): MockerRouter {
+    // in case of falsy values
+    if (!path) {
+      path = '/';
     }
 
-    const url = new URL(path, this._origin);
-
-    if (url.origin !== this._origin) {
-      // tslint:disable-next-line max-line-length
-      throw new Error(`the given path (${path}) is not sharing the same origin with current baseURL (${this.baseURL})`);
+    if (path[0] !== '/') {
+      throw new TypeError(`the scope of router should start with "/", got ${path}`);
     }
 
-    return new MockerRouter(url.href);
+    return new MockerRouter(this.baseURL + path);
+  }
+
+  /* istanbul ignore next */
+  base(path?: string): MockerRouter {
+    routerLog.warn('`router.base()` is deprecated, use `router.scope()` instead.');
+
+    return this.scope(path);
   }
 
   /**
    * Create a scoped router with the given path as
    * route path for every routing method.
    */
-  route(path: RoutePath): ScopedRouter {
-    return new ScopedRouter(this, path);
+  route(path: RoutePath): SubRouter {
+    return new SubRouter(this, path);
   }
 
   /**
@@ -222,9 +231,9 @@ export class MockerRouter implements IMockerRouter {
   }
 }
 
-export interface ScopedRouter extends IScopedRouter {}
+export interface SubRouter extends ISubRouter {}
 
-export class ScopedRouter implements IScopedRouter {
+export class SubRouter implements ISubRouter {
   constructor(
     private _router: MockerRouter,
     private _path: RoutePath,
@@ -256,7 +265,7 @@ allMethods.forEach(method => {
 });
 
 allMethods.forEach(method => {
-  ScopedRouter.prototype[method] = function(callback) {
+  SubRouter.prototype[method] = function(callback) {
     return this.register(method, callback);
   };
 });

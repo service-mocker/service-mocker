@@ -11,7 +11,7 @@ export default function() {
   const { router } = createServer();
 
   describe('req.baseURL', () => {
-    describe('with `router.base()` unset', () => {
+    describe('with `router.scope()` unset', () => {
       it('should equal to local machine', async () => {
         const request = await requestToPromise();
 
@@ -20,13 +20,13 @@ export default function() {
       });
     });
 
-    describe('with `router.base(path)', () => {
-      it('should equal to the given relative path', async () => {
+    describe('with `router.scope(path)', () => {
+      it('should equal to the given scope path', async () => {
         const baseURL = '/api/v1';
         const path = uniquePath();
         let request: any;
 
-        router.base(baseURL).get(path, (req, res) => {
+        router.scope(baseURL).get(path, (req, res) => {
           request = req;
           res.end();
         });
