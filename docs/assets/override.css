@@ -35,6 +35,14 @@ body {
   border-bottom: none;
 }
 
+.header {
+  border-bottom: none;
+}
+
+.header .header-container {
+  border-bottom: 1px solid #f2f2f2;
+}
+
 #nprogress .bar {
   background: #3292ab;
 }
