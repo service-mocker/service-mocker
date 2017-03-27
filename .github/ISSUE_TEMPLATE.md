@@ -1,5 +1,7 @@
-## Issue Summary
-<!-- A summary of the issue and the browser environment in which it occurs.  -->
+## Environment
+
+- Browser:
+- Version of service-mocker:
 
 ## Expected Behavior
 <!-- If you're describing a bug, tell us what should happen -->
@@ -10,8 +12,3 @@
 
 ## Steps to Reproduce
 <!-- Tell us how it happened. Provide a link to the repo that reproduces this issue if possible -->
-
-## Environment
-
-- Browser:
-- Version of service-mocker:
