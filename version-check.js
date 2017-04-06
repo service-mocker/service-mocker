@@ -4,8 +4,9 @@ const exec = require('child_process').exec;
 // TODO: switch to develop branch
 const mappingsSrc = 'https://raw.githubusercontent.com/service-mocker/service-mocker/ts-compatibility-check/ts-version-map.json';
 
-const MOCKER_MATCHED = 1 << 0;
-const TS_MATCHED = 1 << 1;
+const MOCKER_MATCHED = 1 << 0;                   // 01
+const TS_MATCHED = 1 << 1;                       // 10
+const ALL_MATCHED = MOCKER_MATCHED | TS_MATCHED; // 11
 
 function installDeps() {
   const deps = Array.prototype.slice.call(arguments);
@@ -78,7 +79,7 @@ function compareVer(versions) {
         }
 
         switch (state) {
-          case MOCKER_MATCHED & TS_MATCHED:
+          case ALL_MATCHED:
             return true;
 
           case TS_MATCHED:
