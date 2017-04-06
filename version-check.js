@@ -7,24 +7,8 @@ const mappingsSrc = 'https://raw.githubusercontent.com/service-mocker/service-mo
 const MOCKER_MATCHED = 1 << 0;
 const TS_MATCHED = 1 << 1;
 
-function execToPromise(cmd) {
-  return new Promise((resolve, reject) => {
-    exec(cmd, (err, stdout, stderr) => {
-      if (err || stderr) {
-        reject(err || stderr);
-      } else {
-        resolve(stdout);
-      }
-    });
-  });
-}
-
-function argsToArray(args) {
-  return Array.prototype.slice.call(args);
-}
-
 function installDeps() {
-  const deps = argsToArray(arguments);
+  const deps = Array.prototype.slice.call(arguments);
   const missed = [];
 
   deps.forEach((pkg) => {
@@ -39,28 +23,15 @@ function installDeps() {
     return Promise.resolve();
   }
 
-  return execToPromise(`npm install ${missed.join(' ')}`);
-}
-
-function getInstalled() {
-  const pkgs = argsToArray(arguments);
-
-  return execToPromise(`npm ls ${pkgs.join(' ')} --depth=0`)
-    .then((stdout) => {
-      const versions = {};
-
-      pkgs.forEach((pkg) => {
-        const regex = new RegExp(`${pkg}@([\\S]+)`);
-
-        const matched = stdout.match(regex);
-
-        if (matched) {
-          versions[pkg] = matched[1].trim();
-        }
-      });
-
-      return versions;
+  return new Promise((resolve, reject) => {
+    exec(`npm install ${missed.join(' ')}`, (err, stdout, stderr) => {
+      if (err || stderr) {
+        reject(err || stderr);
+      } else {
+        resolve(stdout);
+      }
     });
+  });
 }
 
 function fetchRemote() {
@@ -84,9 +55,8 @@ function fetchRemote() {
 }
 
 function compareVer(versions) {
-  if (!versions['typescript']) {
-    return Promise.resolve();
-  }
+  const mockerVersion = require('./package.json').version;
+  const tsVersion = require('typescript').version;
 
   return fetchRemote()
     .then((data) => {
@@ -100,12 +70,12 @@ function compareVer(versions) {
       data.mappings.some((mapping) => {
         let state = 0;
 
-        if (semver.satisfies(versions['service-mocker'], mapping['service-mocker'])) {
+        if (semver.satisfies(mockerVersion, mapping['service-mocker'])) {
           state |= MOCKER_MATCHED;
           finalState |= MOCKER_MATCHED;
         }
 
-        if (semver.satisfies(versions['typescript'], mapping['typescript'])) {
+        if (semver.satisfies(tsVersion, mapping['typescript'])) {
           state |= TS_MATCHED;
           finalState |= TS_MATCHED;
         }
@@ -118,13 +88,13 @@ function compareVer(versions) {
             return false; // next
 
           case TS_MATCHED:
-            error = new Error(`service-mocker@${versions['service-mocker']} is not compatible with typescript@${versions['typescript']}, please use service-mocker@${mapping['service-mocker']}`);
+            error = new Error(`service-mocker@${mockerVersion} is not compatible with typescript@${tsVersion}, please use service-mocker@${mapping['service-mocker']}`);
             return true;
         }
       });
 
       if ((finalState & TS_MATCHED) === 0) {
-        error = new Error(`service-mocker@${versions['service-mocker']} is not compatible with typescript@${versions['typescript']}, please file an issue at https://github.com/service-mocker/service-mocker/issues.`);
+        error = new Error(`service-mocker dose not support typescript@${tsVersion} yet, please file an issue on https://github.com/service-mocker/service-mocker/issues.`);
       }
 
       if (error !== null) {
@@ -133,12 +103,17 @@ function compareVer(versions) {
     });
 }
 
-console.log('Checking service-mocker compatibility...');
+try {
+  // check ts existence
+  require.resolve('typescript');
 
-installDeps('semver')
-  .then(() => getInstalled('typescript', 'service-mocker'))
-  .then(compareVer)
-  .catch((error) => {
-    console.error(`\x1b[31m${error.message}\x1b[0m`);
-    process.exit(1);
-  });
+  console.log('Checking service-mocker compatibility...');
+  console.log(process.cwd());
+
+  installDeps('semver')
+    .then(compareVer)
+    .catch((error) => {
+      console.error(`\x1b[31m${error.message}\x1b[0m`);
+      process.exit(1);
+    });
+} catch (e) {}
