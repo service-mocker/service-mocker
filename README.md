@@ -88,6 +88,19 @@ Now navigate your browser to your local dev server (e.g. `http://localhost:3000`
 
 Welcome to the future :clap:.
 
+## Working with webpack
+
+While using webpack, it's recommended to use [sw-loader](https://github.com/idiotWu/sw-loader) to create a standalone server script:
+
+```js
+import scriptURL from 'sw-loader!path/to/server.js';
+import { createClient } from 'service-mocker/client';
+
+const client = createClient(scriptURL);
+
+client.ready.then(...);
+```
+
 ## Docs & Demos
 
 - [Documentation](https://service-mocker.js.org)

@@ -66,6 +66,19 @@ Now navigate your browser to `http://localhost:3000`. Open the console and you w
 > Hello new world!
 ```
 
+## Working with webpack
+
+While using webpack, it's recommended to use [sw-loader](https://github.com/idiotWu/sw-loader) to create a standalone server script:
+
+```js
+import scriptURL from 'sw-loader!path/to/server.js';
+import { createClient } from 'service-mocker/client';
+
+const client = createClient(scriptURL);
+
+client.ready.then(...);
+```
+
 ### Non-root registrations
 
 When you are serving server script from a non-root path (e.g. `'/assets/js/server.js'`), you may need to add a `Service-Worker-Allowed` header to it. The following is an example of [webpack-dev-server](https://github.com/webpack/webpack-dev-server):
