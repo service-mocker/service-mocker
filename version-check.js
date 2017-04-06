@@ -64,36 +64,33 @@ function compareVer(versions) {
 
       console.log('Compatibility List:', JSON.stringify(data.mappings, null, 2));
 
-      let finalState = 0;
       let error = null;
 
-      data.mappings.some((mapping) => {
+      const tsVersionFound = data.mappings.some((mapping) => {
         let state = 0;
 
         if (semver.satisfies(mockerVersion, mapping['service-mocker'])) {
           state |= MOCKER_MATCHED;
-          finalState |= MOCKER_MATCHED;
         }
 
         if (semver.satisfies(tsVersion, mapping['typescript'])) {
           state |= TS_MATCHED;
-          finalState |= TS_MATCHED;
         }
 
         switch (state) {
           case MOCKER_MATCHED & TS_MATCHED:
             return true;
 
-          case MOCKER_MATCHED:
-            return false; // next
-
           case TS_MATCHED:
             error = new Error(`service-mocker@${mockerVersion} is not compatible with typescript@${tsVersion}, please use service-mocker@${mapping['service-mocker']}`);
             return true;
+
+          case MOCKER_MATCHED:
+            return false; // next
         }
       });
 
-      if ((finalState & TS_MATCHED) === 0) {
+      if (!tsVersionFound) {
         error = new Error(`service-mocker dose not support typescript@${tsVersion} yet, please file an issue on https://github.com/service-mocker/service-mocker/issues.`);
       }
 
