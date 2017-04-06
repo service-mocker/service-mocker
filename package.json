@@ -5,6 +5,7 @@
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
+    "postinstall": "node version-check.js",
     "lint": "eslint . && tslint -t stylish {src,test}/**/*.ts",
     "clean:compile": "rimraf ./build",
     "clean:release": "rimraf ./dist",

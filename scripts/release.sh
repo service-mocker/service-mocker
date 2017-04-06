@@ -70,6 +70,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo "Copying files to $DIST_DIR"
   mkdir -p $DIST_DIR
   cp -r build/* $DIST_DIR
+  cp version-check.js $DIST_DIR
   cp package.json $DIST_DIR
   cp README.md $DIST_DIR
   cp LICENSE $DIST_DIR
