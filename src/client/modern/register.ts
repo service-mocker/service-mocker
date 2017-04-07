@@ -2,7 +2,7 @@ import { connect } from './connect';
 
 export async function register(
   scriptURL: string,
-  options?: ServiceWorkerRegisterOptions,
+  options?: RegistrationOptions,
 ): Promise<ServiceWorkerRegistration> {
   const {
     serviceWorker,

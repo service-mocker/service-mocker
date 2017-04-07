@@ -20,7 +20,7 @@ export class ModernClient implements IMockerClient {
     /* istanbul ignore next */
     this.ready = this._init(scriptURL)
       .then(registration => {
-        this.controller = registration.active;
+        this.controller = registration.active as ServiceWorker;
         return registration;
       })
       .catch(error => {
@@ -71,7 +71,7 @@ export class ModernClient implements IMockerClient {
     serviceWorker.addEventListener('controllerchange', async () => {
       try {
         const registration = await connect();
-        this.controller = registration.active;
+        this.controller = registration.active as ServiceWorker;
 
         updateLog.color('crimson')
           .warn('mocker updated, reload your requests to take effect');

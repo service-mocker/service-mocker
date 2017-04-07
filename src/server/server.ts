@@ -1,3 +1,4 @@
+import  "./missing-service-worker-typing.d";
 import { MockerRouter } from './router';
 import { ACTION } from '../constants/';
 
@@ -7,7 +8,7 @@ export interface IMockerServer {
 }
 
 export class MockerServer implements IMockerServer {
-  readonly isLegacy = self === self.window;
+  readonly isLegacy = 'window' in self;
   readonly router: MockerRouter;
 
   constructor(baseURL?: string) {
@@ -23,7 +24,7 @@ self.addEventListener('message', async (event: ExtendableMessageEvent) => {
     ports,
   } = event;
 
-  if (!data || !ports.length) {
+  if (!data || ports === null || ports.length === 0) {
     return;
   }
 
@@ -37,7 +38,7 @@ self.addEventListener('message', async (event: ExtendableMessageEvent) => {
       });
 
     case ACTION.REQUEST_CLAIM:
-      await self.clients.claim();
+      await clients.claim();
       return port.postMessage({
         action: ACTION.ESTABLISHED,
       });
@@ -52,12 +53,12 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 
 // IE will somehow fires `activate` event on form elements
 /* istanbul ignore if: unable to report coverage from sw context */
-if (self !== self.window) {
-  self.addEventListener('install', (event: InstallEvent) => {
-    event.waitUntil(self.skipWaiting());
+if ('window' in self) {
+  self.addEventListener('install', (event: ExtendableEvent) => {
+    event.waitUntil(skipWaiting());
   });
 
   self.addEventListener('activate', (event: ExtendableEvent) => {
-    event.waitUntil(self.clients.claim());
+    event.waitUntil(clients.claim());
   });
 }

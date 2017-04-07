@@ -1,13 +1,15 @@
 // Client => Server
 export async function sendMessageRequest(
-  target: ServiceWorker | Window /* legacy mode */,
+  // target: ServiceWorker | Window /* legacy mode */,
+  target: any,
   message: any,
   timeout?: number,
 ): Promise<any>;
 
 // Server => Client
 export async function sendMessageRequest(
-  target: ServiceWorkerClient | Window /* legacy mode */,
+  // target: ServiceWorker | Window /* legacy mode */,
+  target: any,
   message: any,
   timeout?: number,
 ): Promise<any>;
@@ -46,7 +48,7 @@ export async function sendMessageRequest(
       }
     };
 
-    if (target === self.window) {
+    if (target === (self as any).window) {
       // posting message to self => legacy mode
       // add `origin` param to `window.postMessage(message, targetOrigin, [transfer])`
       target.postMessage(message, '*', [port2]);
