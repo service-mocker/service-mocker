@@ -63,8 +63,6 @@ function compareVer(versions) {
     .then((data) => {
       const semver = require('semver');
 
-      console.log('Compatibility List:', JSON.stringify(data.mappings, null, 2));
-
       let error = null;
 
       const tsVersionFound = data.mappings.some((mapping) => {
@@ -96,6 +94,7 @@ function compareVer(versions) {
       }
 
       if (error !== null) {
+        console.info('Compatibility List:', JSON.stringify(data.mappings, null, 2));
         throw error;
       }
     });
