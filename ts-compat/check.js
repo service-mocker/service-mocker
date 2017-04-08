@@ -56,7 +56,7 @@ function fetchRemote() {
 }
 
 function compareVer(versions) {
-  const mockerVersion = require('./package.json').version;
+  const mockerVersion = require('../package.json').version;
   const tsVersion = require('typescript').version;
 
   return fetchRemote()
