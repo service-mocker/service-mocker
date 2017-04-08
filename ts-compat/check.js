@@ -2,7 +2,7 @@ const https = require('https');
 const exec = require('child_process').exec;
 
 // TODO: switch to develop branch
-const mappingsSrc = 'https://raw.githubusercontent.com/service-mocker/service-mocker/ts-compatibility-check/ts-version-map.json';
+const mappingsSrc = 'https://raw.githubusercontent.com/service-mocker/service-mocker/ts-compatibility-check/ts-compat/versions.json';
 
 const MOCKER_MATCHED = 1 << 0;                   // 01
 const TS_MATCHED = 1 << 1;                       // 10
