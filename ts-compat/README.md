@@ -6,7 +6,7 @@ ts-compat
 └── versions.json
 ```
 
-Check if `service-mocker` is compatible with current installed `typescript`.
+Check if `service-mocker` is compatible with currently installed `typescript`.
 
 ## Version Mappings
 
