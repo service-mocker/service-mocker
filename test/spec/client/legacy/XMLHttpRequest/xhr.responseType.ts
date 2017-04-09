@@ -50,7 +50,8 @@ export default function() {
       });
 
       if (!xhr.responseType) {
-        return this.skip();
+        this.skip();
+        return;
       }
 
       expect(xhr.response).to.be.an('object');

@@ -7,7 +7,8 @@ export default function() {
     it('should get contentType "text/plain"', async function() {
       // overrideMimeType is only supported on IE11+
       if (!(XMLHttpRequest as any).native.prototype.overrideMimeType) {
-        return this.skip();
+        this.skip();
+        return;
       }
 
       const { xhr } = await fakeRequest({

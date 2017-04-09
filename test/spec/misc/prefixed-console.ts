@@ -68,7 +68,8 @@ export default function() {
 
       it('should be logged with color', function() {
         if (isIE) {
-          return this.skip();
+          this.skip();
+          return;
         }
 
         let logColor: any;
@@ -88,7 +89,8 @@ export default function() {
 
       it('should reset color for message body', function() {
         if (isIE) {
-          return this.skip();
+          this.skip();
+          return;
         }
 
         let logReset: any;
@@ -108,7 +110,8 @@ export default function() {
 
       it('should not override given styles', function() {
         if (isIE) {
-          return this.skip();
+          this.skip();
+          return;
         }
 
         let logMsg: any;

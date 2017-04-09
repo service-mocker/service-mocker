@@ -42,7 +42,8 @@ export default function() {
     it('should throw an error to console', async function () {
       if (/Edge|Trident/.test(navigator.userAgent)) {
         // bad URI can't be sent in IE
-        return this.skip();
+        this.skip();
+        return;
       }
 
       const { router } = createServer();
