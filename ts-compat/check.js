@@ -104,8 +104,6 @@ try {
   // check ts existence
   require.resolve('typescript');
 
-  console.log('Checking service-mocker compatibility...');
-
   installDeps('semver')
     .then(compareVer)
     .catch((error) => {
