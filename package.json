@@ -5,6 +5,7 @@
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
+    "postinstall": "node ts-compat/check.js",
     "lint": "eslint . && tslint -t stylish {src,test}/**/*.ts",
     "clean:compile": "rimraf ./build",
     "clean:release": "rimraf ./dist",
@@ -84,7 +85,7 @@
     "tslint": "^4.0.2",
     "tslint-config-standard": "^2.0.0",
     "tslint-loader": "^3.3.0",
-    "typescript": "^2.1.4",
+    "typescript": "~2.1.4",
     "uuid": "^3.0.1",
     "webpack": "^2.2.0",
     "webpack-dev-server": "^2.2.0"
