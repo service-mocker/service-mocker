@@ -1,7 +1,6 @@
 const https = require('https');
 const exec = require('child_process').exec;
 
-// TODO: switch to develop branch
 const mappingsSrc = 'https://raw.githubusercontent.com/service-mocker/service-mocker/develop/ts-compat/versions.json';
 
 const MOCKER_MATCHED = 1 << 0;                   // 01
