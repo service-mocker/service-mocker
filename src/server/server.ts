@@ -1,4 +1,5 @@
-import  "./missing-service-worker-typing.d";
+/// <reference path="./missing-service-worker-typing" />
+
 import { MockerRouter } from './router';
 import { ACTION } from '../constants/';
 
