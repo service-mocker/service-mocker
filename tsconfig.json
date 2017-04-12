@@ -14,10 +14,7 @@
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-        "service-mocker/*": [ "src/*" ]
-    }
+    "baseUrl": "."
   },
   "exclude": [
     "node_modules",
