@@ -1,6 +1,4 @@
 const ACTION = {
-  PING: 'ping',
-  PONG: 'pong',
   ESTABLISHED: 'established',
   REQUEST_CLAIM: 'request_claim',
 };

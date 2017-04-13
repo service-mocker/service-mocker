@@ -33,11 +33,6 @@ self.addEventListener('message', async (event: ExtendableMessageEvent) => {
 
   // handle connections
   switch (data.action) {
-    case ACTION.PING:
-      return port.postMessage({
-        action: ACTION.PONG,
-      });
-
     case ACTION.REQUEST_CLAIM:
       await clients.claim();
       return port.postMessage({

@@ -35,10 +35,6 @@ async function handshake(registration: ServiceWorkerRegistration): Promise<Servi
     });
   }
 
-  await sendMessageRequest(controller, {
-    action: ACTION.PING,
-  });
-
   debug.scope('modern').info('connection established');
 
   return registration;

@@ -31,7 +31,8 @@ export async function getNewestReg(): Promise<ServiceWorkerRegistration> {
 
     // wait until worker is activated
     await eventWaitUntil(
-      newWorker, 'statechange',
+      newWorker,
+      'statechange',
       () => newWorker.state === 'activated',
     );
   } else {

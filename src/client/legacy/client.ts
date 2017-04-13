@@ -4,12 +4,7 @@ import {
 
 import {
   debug,
-  sendMessageRequest,
 } from '../../utils/';
-
-import {
-  ACTION,
-} from '../../constants/';
 
 import { patchXHR } from './patch-xhr';
 import { patchFetch } from './patch-fetch';
@@ -46,11 +41,7 @@ export class LegacyClient implements IMockerClient {
     }
 
     /* istanbul ignore next */
-    this.ready = promise.then(() => {
-        return sendMessageRequest(window, {
-          action: ACTION.PING,
-        });
-      })
+    this.ready = promise
       .then(() => {
         clientLog.info('connection established');
         return this._registration;
