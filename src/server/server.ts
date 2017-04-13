@@ -49,7 +49,7 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 
 // IE will somehow fires `activate` event on form elements
 /* istanbul ignore if: unable to report coverage from sw context */
-if ('window' in self) {
+if (!('window' in self)) {
   self.addEventListener('install', (event: ExtendableEvent) => {
     event.waitUntil(skipWaiting());
   });
