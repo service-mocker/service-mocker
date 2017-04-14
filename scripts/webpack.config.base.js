@@ -14,10 +14,33 @@ module.exports = {
   module: {
     rules: [{
       test: /\.ts$/,
-      use: [ 'ts-loader' ],
+      use: [{
+        loader: 'ts-loader',
+        options: {
+          configFileName: joinRoot('test/server/tsconfig.json'),
+          instance: 'server-instance',
+        },
+      }],
+      include: [
+        joinRoot('src/server'),
+        joinRoot('test/server'),
+      ],
+    }, {
+      test: /\.ts$/,
+      use: [{
+        loader: 'ts-loader',
+        options: {
+          configFileName: joinRoot('test/client/tsconfig.json'),
+          instance: 'client-instance',
+        },
+      }],
       include: [
         joinRoot('src'),
         joinRoot('test'),
+      ],
+      exclude: [
+        joinRoot('src/server'),
+        joinRoot('test/server'),
       ],
     }],
   },

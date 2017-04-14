@@ -10,10 +10,10 @@ module.exports = Object.assign(baseConfig, {
   entry: {
     client: [
       `webpack-dev-server/client?http://${ip.address()}:3000`,
-      joinRoot('test/client.ts'),
+      joinRoot('test/client/index.ts'),
     ],
     server: [
-      joinRoot('test/server.ts'),
+      joinRoot('test/server/index.ts'),
     ],
   },
   output: {

@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "lib": [
+      "es2017",
+      "webworker"
+    ],
+    "paths": {
+        "service-mocker/*": [ "../../src/*" ]
+    }
+  }
+}

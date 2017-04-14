@@ -8,15 +8,15 @@ module.exports = {
 
   basePath: '..',
   files: [
-    'test/client.ts',
+    'test/client/index.ts',
     {
-      pattern: 'test/server.ts',
+      pattern: 'test/server/index.ts',
       included: false,
     },
   ],
 
   preprocessors: {
-    'test/{client,server}.ts': ['webpack', 'sourcemap'],
+    'test/{client,server}/index.ts': ['webpack', 'sourcemap'],
   },
 
   webpack: webpackConfig,
@@ -33,7 +33,7 @@ module.exports = {
 
   // proxy server script to root path
   proxies: {
-    '/server.js': '/base/test/server.ts',
+    '/server.js': '/base/test/server/index.ts',
   },
 
   // disable logs
