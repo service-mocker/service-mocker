@@ -65,6 +65,16 @@ interface ObjectURLOptions {
   oneTimeOnly?: boolean;
 }
 
+interface FormData {
+  append(name: any, value: any, blobName?: string): void;
+}
+
+declare var FormData: {
+  prototype: FormData;
+  // new (form?: HTMLFormElement): FormData;
+  new (form?: any): FormData;
+};
+
 // ==============================================
 // Missing serviceworker interface in typescript webworker.lib.ts
 // See more at: <https://github.com/Microsoft/TypeScript/issues/14877>
