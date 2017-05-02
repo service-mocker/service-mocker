@@ -1,0 +1,17 @@
+{
+  "plugins": [
+    "transform-class-properties",
+    ["transform-runtime", {
+      "helpers": true,
+      "polyfill": false,
+      "regenerator": true
+    }]
+  ],
+  "presets": [
+    ["env", {
+      "targets": {
+        "browsers": ["> 1%", "last 2 versions", "safari >= 8", "IE >= 10"]
+      }
+    }]
+  ]
+}

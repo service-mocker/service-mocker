@@ -6,15 +6,14 @@ const joinRoot = path.join.bind(path, __dirname, '..');
 module.exports = {
   devtool: 'cheap-module-source-map',
   resolve: {
-    extensions: ['.js', '.ts', '.css'],
     alias: {
       'service-mocker': joinRoot('src'),
     },
   },
   module: {
     rules: [{
-      test: /\.ts$/,
-      use: [ 'ts-loader' ],
+      test: /\.js$/,
+      use: [ 'babel-loader' ],
       include: [
         joinRoot('src'),
         joinRoot('test'),

@@ -10,10 +10,10 @@ module.exports = Object.assign(baseConfig, {
   entry: {
     client: [
       `webpack-dev-server/client?http://${ip.address()}:3000`,
-      joinRoot('test/client.ts'),
+      joinRoot('test/client.js'),
     ],
     server: [
-      joinRoot('test/server.ts'),
+      joinRoot('test/server.js'),
     ],
   },
   output: {
@@ -23,23 +23,20 @@ module.exports = Object.assign(baseConfig, {
 
   module: {
     rules: baseConfig.module.rules.concat([{
-      test: /\.ts$/,
+      test: /\.js$/,
       enforce: 'pre',
       include: [
         joinRoot('src'),
         joinRoot('test'),
       ],
       use: [{
-        loader: 'tslint-loader',
-        options: {
-          formatter: 'stylish',
-        },
+        loader: 'eslint-loader',
       }],
     }, {
-      test: /\.ts$/,
+      test: /\.js$/,
       enforce: 'post',
       use: [ 'mocha-loader' ],
-      include: joinRoot('test/client.ts'),
+      include: joinRoot('test/client.js'),
     }]),
   },
 

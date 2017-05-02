@@ -1,0 +1,11 @@
+{
+  "globals": {
+    "after": true,
+    "before": true,
+    "describe": true,
+    "it": true,
+    "mocha": true,
+    "Mocha": true,
+    "run": true
+  }
+}
