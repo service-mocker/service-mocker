@@ -29,13 +29,9 @@ export default function () {
       expect(await request.blob()).to.be.an.instanceof(Blob);
     });
 
-    it('should have `.formData()` method', async function () {
-      // no `res.formData()` method in some browsers
-      // fetch polyfill bug: https://github.com/github/fetch/issues/460
-      if (!('formData' in new Response()) || fetch.polyfill) {
-        this.skip();
-      }
-
+    // no `res.formData()` method in some browsers
+    // fetch polyfill bug: https://github.com/github/fetch/issues/460
+    it.skip('should have `.formData()` method', async function () {
       const request = await requestToPromise({
         init: {
           method: 'POST',
