@@ -4,7 +4,7 @@ const baseConfig = require('./karma.config.base');
 module.exports = function (config) {
   // instrument only testing sources with Istanbul
   baseConfig.webpack.module.rules.push({
-    test: /\.ts$/,
+    test: /\.js$/,
     enforce: 'post',
     use: [ 'istanbul-instrumenter-loader' ],
     include: path.join(__dirname, '..', 'src'),
@@ -24,7 +24,7 @@ module.exports = function (config) {
     browsers: ['Chrome'],
     reporters: ['mocha', 'karma-remap-istanbul'],
     preprocessors: {
-      '**/*.ts': ['webpack', 'sourcemap'],
+      '**/*.js': ['webpack', 'sourcemap'],
     },
     remapIstanbulReporter: {
       reports: istanbulReports,
