@@ -2,13 +2,14 @@
   "plugins": [
     "transform-class-properties",
     ["transform-runtime", {
-      "helpers": true,
+      "helpers": false,
       "polyfill": false,
       "regenerator": true
     }]
   ],
   "presets": [
     ["env", {
+      "loose": true,
       "targets": {
         "browsers": ["> 1%", "last 2 versions", "safari >= 8", "IE >= 10"]
       }
