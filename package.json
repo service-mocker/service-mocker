@@ -58,6 +58,7 @@
     "docute-cli": "^0.4.0",
     "eslint": "^3.12.2",
     "eslint-config-standard": "^6.2.1",
+    "eslint-loader": "^1.7.1",
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
     "html-webpack-plugin": "^2.26.0",
