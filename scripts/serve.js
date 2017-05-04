@@ -5,6 +5,7 @@ const Server = require('webpack-dev-server');
 const config = require('./webpack.config.dev');
 
 new Server(webpack(config), {
+  disableHostCheck: true,
   contentBase: path.join(__dirname, '..', 'test'),
   publicPath: config.output.publicPath,
   stats: {
