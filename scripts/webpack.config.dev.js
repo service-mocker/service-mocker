@@ -7,6 +7,7 @@ const baseConfig = require('./webpack.config.base');
 const joinRoot = path.join.bind(path, __dirname, '..');
 
 module.exports = Object.assign(baseConfig, {
+  devtool: 'cheap-module-source-map',
   entry: {
     client: [
       `webpack-dev-server/client?http://${ip.address()}:3000`,

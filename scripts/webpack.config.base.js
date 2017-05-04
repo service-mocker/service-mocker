@@ -4,7 +4,6 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 const joinRoot = path.join.bind(path, __dirname, '..');
 
 module.exports = {
-  devtool: 'cheap-module-source-map',
   resolve: {
     alias: {
       'service-mocker': joinRoot('src'),
@@ -22,7 +21,6 @@ module.exports = {
   },
   plugins: [
     new CircularDependencyPlugin({
-      // exclude detection of files based on a RegExp
       exclude: /node_modules/,
       failOnError: true,
     }),

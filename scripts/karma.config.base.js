@@ -16,7 +16,7 @@ module.exports = {
   ],
 
   preprocessors: {
-    'test/{client,server}.js': ['webpack', 'sourcemap'],
+    '**/*.js': ['webpack', 'sourcemap'],
   },
 
   webpack: webpackConfig,
