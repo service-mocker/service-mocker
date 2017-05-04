@@ -12,9 +12,10 @@ import { getNewestReg } from './get-newest-reg';
 /**
  * Connect to service worker
  *
+ * @param  {boolean} [skipUpdate=false] Set to `true` to bypass auto update
  * @return {Promise<ServiceWorkerRegistration>}
  */
-export async function connect() {
+export async function connect(skipUpdate = false) {
   const {
     serviceWorker,
   } = navigator;
@@ -26,7 +27,7 @@ export async function connect() {
   // delay all actions until sw is ready
   await serviceWorker.ready;
 
-  const reg = hasController
+  const reg = (!skipUpdate && hasController)
               ? await getNewestReg()
               : await serviceWorker.getRegistration();
 
