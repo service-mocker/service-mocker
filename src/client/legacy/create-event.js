@@ -1,11 +1,11 @@
-/* istanbul ignore next */
 /**
  * Create custom event
  *
  * @param  {string} name event name
  * @return {Event}
  */
-export function createEvent(name) {
+/* istanbul ignore next */
+function createEvent(name) {
   try {
     return new Event(name);
   } catch (e) {
@@ -14,3 +14,8 @@ export function createEvent(name) {
     return event;
   }
 }
+
+// Don't use `export function createEvent() {}`
+// because `istanbul ignore next` has issue with ES6 exports
+// <https://github.com/gotwarlost/istanbul/issues/762>
+export { createEvent };

@@ -14,5 +14,10 @@
         "browsers": ["> 1%", "last 2 versions", "safari >= 8", "IE >= 10"]
       }
     }]
-  ]
+  ],
+  "env": {
+    "cover": {
+      "plugins": ["istanbul"]
+    }
+  }
 }

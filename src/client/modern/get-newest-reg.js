@@ -5,13 +5,13 @@ import {
 
 const updateLog = debug.scope('update');
 
-/* istanbul ignore next: unable to test it on single run */
 /**
  * Get newest service worker registration
  *
  * @return {Promise<ServiceWorkerRegistration>}
  */
-export async function getNewestReg() {
+/* istanbul ignore next: unable to test it on single run */
+async function getNewestReg() {
   const {
     serviceWorker,
   } = navigator;
@@ -45,3 +45,5 @@ export async function getNewestReg() {
 
   return registration;
 }
+
+export { getNewestReg };
