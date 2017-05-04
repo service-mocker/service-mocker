@@ -1,17 +1,17 @@
 module.exports = {
-  "env": {
-    "mocha": true
+  env: {
+    mocha: true,
   },
-  "globals": {
+  globals: {
     // Set each global variable name equal to true to
     // allow the variable to be overwritten or false to
     // disallow overwriting
     // <http://eslint.org/docs/user-guide/configuring#specifying-globals>
-    "Mocha": false
+    Mocha: false
   },
-  "rules": {
-    // We will see lots of unused-exporessions when using chai
+  rules: {
+    // We will see lots of unused-expressions when using chai
     // like: expect(err).not.to.be.null
-    "no-unused-expressions": 0
+    'no-unused-expressions': 0,
   }
 }
