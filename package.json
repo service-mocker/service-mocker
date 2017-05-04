@@ -13,14 +13,14 @@
     "copy": "cpx './src/**' ./build/src",
     "precompile": "npm-run-all lint clean copy",
     "compile": "babel ./build/src -s -d ./build",
-    "release": "FORCE_MOBILE_TEST=true ./scripts/release.sh",
+    "release": "cross-env FORCE_MOBILE_TEST=true ./scripts/release.sh",
     "start": "node ./scripts/serve.js",
     "pretest": "npm run lint",
     "test": "karma start ./scripts/karma.config.unit.js",
     "test:full": "karma start ./scripts/karma.config.full.js",
     "test:sauce": "karma start ./scripts/karma.config.sauce.js",
     "precover": "npm run clean:cover",
-    "cover": "cross-env NODE_ENV=cover karma start ./scripts/karma.config.cover.js",
+    "cover": "cross-env BABEL_ENV=cover karma start ./scripts/karma.config.cover.js",
     "doc": "docute -w ./docs"
   },
   "repository": {
