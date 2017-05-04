@@ -40,6 +40,7 @@ async function handshake(registration) {
 
   // uncontrolled
   // possibly a newly install
+  /* istanbul ignore if */
   if (!navigator.serviceWorker.controller) {
     await sendMessageRequest(controller, {
       action: ACTION.REQUEST_CLAIM,
