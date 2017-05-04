@@ -19,7 +19,16 @@ export async function connect() {
     serviceWorker,
   } = navigator;
 
-  const reg = serviceWorker.controller ? await getNewestReg() : await serviceWorker.ready;
+  // controller may be set when sw is ready
+  const hasController = !!serviceWorker.controller;
+
+  // chrome will sometimes be hanging after reloading page
+  // delay all actions until sw is ready
+  await serviceWorker.ready;
+
+  const reg = hasController
+              ? await getNewestReg()
+              : await serviceWorker.getRegistration();
 
   return handshake(reg);
 }
