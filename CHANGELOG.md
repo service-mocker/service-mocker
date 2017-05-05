@@ -1,10 +1,21 @@
-# [1.1.1](https://github.com/service-mocker/service-mocker/compare/v1.1.0...v1.1.1)(2017-04-09)
+# [1.1.2](https://github.com/service-mocker/service-mocker/compare/v1.1.1...08d1e09)(2017-05-05)
+
+### Bug Fixes
+
+- **client**: Fix occasionally hanging in Chrome. ([7e507a8](https://github.com/service-mocker/service-mocker/commit/7e507a8163226d20016f2fd8cc67a3fd397b0dd8))
+
+## Minor Changes
+
+- v1.x is now maintenanced in [1.x](https://github.com/service-mocker/service-mocker/tree/1.x) branch.
+
+
+# [1.1.1](https://github.com/service-mocker/service-mocker/compare/v1.1.0...v1.1.1) (2017-04-09)
 
 ### Features
 
 - Add TypeScript compatibility check. ([#28](https://github.com/service-mocker/service-mocker/pull/28))
 
-# [1.1.0](https://github.com/service-mocker/service-mocker/compare/v1.0.4...v1.1.0)(2017-02-15)
+# [1.1.0](https://github.com/service-mocker/service-mocker/compare/v1.0.4...v1.1.0) (2017-02-15)
 
 ### Bug Fixes
 
