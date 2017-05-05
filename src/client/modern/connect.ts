@@ -9,12 +9,21 @@ import {
 
 import { getNewestReg } from './get-newest-reg';
 
-export async function connect(): Promise<ServiceWorkerRegistration> {
+/**
+ * Connect to service worker
+ *
+ * @param [skipUpdate] Set to `true` to bypass auto update
+ */
+export async function connect(
+  skipUpdate = false,
+): Promise<ServiceWorkerRegistration> {
   const {
     serviceWorker,
   } = navigator;
 
-  const reg = serviceWorker.controller ? await getNewestReg() : await serviceWorker.ready;
+  const reg = (!skipUpdate && serviceWorker.controller)
+              ? await getNewestReg()
+              : await serviceWorker.ready;
 
   return handshake(reg);
 }
