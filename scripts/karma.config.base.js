@@ -8,15 +8,15 @@ module.exports = {
 
   basePath: '..',
   files: [
-    'test/client.ts',
+    'test/client.js',
     {
-      pattern: 'test/server.ts',
+      pattern: 'test/server.js',
       included: false,
     },
   ],
 
   preprocessors: {
-    'test/{client,server}.ts': ['webpack', 'sourcemap'],
+    '**/*.js': ['webpack', 'sourcemap'],
   },
 
   webpack: webpackConfig,
@@ -26,14 +26,9 @@ module.exports = {
     stats: 'errors-only',
   },
 
-  // override MIME for ts
-  mime: {
-    'application/javascript': ['ts', 'tsx'],
-  },
-
   // proxy server script to root path
   proxies: {
-    '/server.js': '/base/test/server.ts',
+    '/server.js': '/base/test/server.js',
   },
 
   // disable logs

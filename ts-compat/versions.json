@@ -1,6 +1,0 @@
-{
-  "mappings": [{
-    "typescript": "~2.1.0",
-    "service-mocker": "~1.1.0"
-  }]
-}
