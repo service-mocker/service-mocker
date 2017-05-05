@@ -9,8 +9,10 @@ NC='\033[0m' # No Color
 # dist directory
 DIST_DIR="dist"
 
-if [[ `git rev-parse --abbrev-ref HEAD` != "master" ]]; then
-  echo "${RED}Please run release script in master branch.${NC}"
+echo "====== Release Script for v1.x ======"
+
+if [[ `git rev-parse --abbrev-ref HEAD` != "1.x" ]]; then
+  echo "${RED}Please run release script in 1.x branch.${NC}"
   exit 1
 fi
 
@@ -77,7 +79,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
   echo "Publishing $NPM_VERSION"
   git push
-  git push --tags
+  # git push --tags
+  git tag -d $NPM_VERSION
 
   cd $DIST_DIR
   npm publish
