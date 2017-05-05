@@ -6,6 +6,12 @@ const {
   FORCE_MOBILE_TEST,
 } = process.env;
 
+const fullTestBranch = [
+  'master',
+  'develop',
+  '1.x',
+];
+
 const customLaunchers = {
   sl_chrome: {
     base: 'SauceLabs',
@@ -60,7 +66,7 @@ const customLaunchers = {
 
 // mobile emulators are really really slow
 // only run them on develop/master branch
-if (CIRCLE_BRANCH === 'develop' || CIRCLE_BRANCH === 'master' || FORCE_MOBILE_TEST) {
+if (fullTestBranch.indexOf(CIRCLE_BRANCH) !== -1 || FORCE_MOBILE_TEST) {
   Object.assign(customLaunchers, {
     sl_ios_9: {
       base: 'SauceLabs',
