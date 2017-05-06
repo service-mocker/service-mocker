@@ -3,6 +3,7 @@
   "version": "1.1.1",
   "description": "The next generation front-end API mocking framework.",
   "main": "index.js",
+  "typings": "index.d.ts",
   "scripts": {
     "lint": "eslint .",
     "clean:compile": "rimraf ./build",
@@ -11,7 +12,7 @@
     "clean": "npm-run-all clean:compile clean:release clean:cover",
     "precopy": "npm run clean:compile",
     "copy": "cpx './src/**' ./build/src",
-    "precompile": "npm-run-all lint clean copy",
+    "precompile": "npm-run-all clean copy",
     "compile": "babel ./build/src -s -d ./build",
     "release": "cross-env FORCE_MOBILE_TEST=true ./scripts/release.sh",
     "start": "node ./scripts/serve.js",
@@ -19,6 +20,7 @@
     "test": "karma start ./scripts/karma.config.unit.js",
     "test:full": "karma start ./scripts/karma.config.full.js",
     "test:sauce": "karma start ./scripts/karma.config.sauce.js",
+    "test:typings": "tsc -p ./typings/test",
     "precover": "npm run clean:cover",
     "cover": "cross-env BABEL_ENV=cover karma start ./scripts/karma.config.cover.js",
     "doc": "docute -w ./docs"
@@ -82,6 +84,7 @@
     "rimraf": "^2.5.4",
     "service-mocker-polyfills": "^1.0.0",
     "source-map-support": "git+https://github.com/service-mocker/node-source-map-support.git",
+    "typescript": "^2.3.2",
     "uuid": "^3.0.1",
     "webpack": "^2.2.0",
     "webpack-dev-server": "^2.2.0"

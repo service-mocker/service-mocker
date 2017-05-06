@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+        "dom",
+        "es2017"
+    ],
+    "noEmit": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "moduleResolution": "node"
+  }
+}
