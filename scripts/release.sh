@@ -76,8 +76,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   cp LICENSE $DIST_DIR
 
   echo "Generate typings"
-  cat typings/client.d.ts > $DIST_DIR/client/index.d.ts
-  cat typings/server.d.ts > $DIST_DIR/server/index.d.ts
+  cp typings/client.d.ts $DIST_DIR/client/index.d.ts
+  cp typings/server.d.ts $DIST_DIR/server/index.d.ts
   cat typings/client.d.ts typings/server.d.ts > $DIST_DIR/index.d.ts
   find $DIST_DIR -name '*.d.ts'
 
