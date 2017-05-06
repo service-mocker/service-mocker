@@ -164,8 +164,8 @@ interface MockerRouter {
   get: RouterMatcher<this>;
   post: RouterMatcher<this>;
   put: RouterMatcher<this>;
-  head: RouterMatcher<this>;
   delete: RouterMatcher<this>;
+  head: RouterMatcher<this>;
   options: RouterMatcher<this>;
 }
 

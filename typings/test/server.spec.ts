@@ -43,9 +43,10 @@ router.all('/', (req, res) => {
 
 router.get('/', {});
 router.post('/', {});
-router.head('/', {});
 router.put('/', {});
 router.delete('/', {});
+router.head('/', {});
+router.options('/', {});
 
 console.log(router.scope('/api').baseURL);
 
@@ -53,6 +54,7 @@ router.route('/api')
   .all({})
   .get({})
   .post({})
-  .head({})
   .put({})
-  .delete({});
+  .delete({})
+  .head({})
+  .options({});
