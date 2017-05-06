@@ -113,7 +113,7 @@ export class ModernClient {
     /* istanbul ignore next: won't occur in tests */
     serviceWorker.addEventListener('controllerchange', async () => {
       try {
-        const registration = await connect();
+        const registration = await connect(true);
         this.controller = registration.active;
 
         updateLog.color('crimson')
