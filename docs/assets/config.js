@@ -1,4 +1,4 @@
-self.$config = {
+docute.init({
   landing: true,
   tocVisibleDepth: 2,
   repo: 'service-mocker/service-mocker',
@@ -15,13 +15,13 @@ self.$config = {
   }],
   plugins: [
     landingScriptsPlugin([
-      'https://unpkg.com/webfontloader@latest',
+      'https://cdn.jsdelivr.net/npm/webfontloader@latest',
       'assets/twitter-widget.js',
       'assets/stroke.js',
     ]),
     footerPlugin(),
   ],
-};
+});
 
 function landingScriptsPlugin(scripts) {
   var caches = {};
