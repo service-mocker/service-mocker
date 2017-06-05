@@ -26,13 +26,13 @@ export default function () {
     });
 
     it('should forward a remote address', async () => {
-      const baseURL = 'https://api.spotify.com';
-      const requsetInfo = `${baseURL}/albums/3oTKl46yD2fsb1dtUYq6Nn`;
+      const baseURL = 'https://api.github.com';
+      const requsetInfo = `${baseURL}/organizations/service-mocker`;
 
       const { router } = createServer(baseURL);
 
-      router.get('/albums/:id', (req, res) => {
-        res.forward(`${req.baseURL}/v1${req.path}`);
+      router.get('/organizations/:org', (req, res) => {
+        res.forward(`${req.baseURL}/orgs/${req.params.org}`);
       });
 
       const { body } = await sendRequest(requsetInfo);
