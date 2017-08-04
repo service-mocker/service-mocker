@@ -128,6 +128,10 @@ export class MockerRequest extends ExtandableRequest {
  * @return {string}
  */
 function decodeParam(value) {
+  if (typeof value !== 'string' || value.length === 0) {
+    return value;
+  }
+
   try {
     return decodeURIComponent(value);
   } catch (err) {
