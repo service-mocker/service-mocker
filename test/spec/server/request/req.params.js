@@ -69,5 +69,16 @@ export default function () {
       expect(error).to.include(`decode param: ${badURI} failed`);
       expect(body).to.equal(JSON.stringify(null));
     });
+
+    it('should be undefined', async () => {
+      const path = uniquePath();
+
+      const { params } = await requestToPromise({
+        route: `${path}/:empty*`,
+        requestURL: `${path}/`,
+      });
+
+      expect(params.empty).to.be.undefined;
+    });
   });
 }
