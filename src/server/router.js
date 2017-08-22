@@ -189,7 +189,7 @@ export class MockerRouter {
    *
    * @private
    * @param {FetchEvent} event Fetch event
-   * @return {Promise<boolean>}
+   * @return {boolean}
    */
   _match(event) {
     const {
@@ -215,7 +215,7 @@ export class MockerRouter {
       } = rule;
 
       if (regex.test(path) && (request.method === method || rule.isAll)) {
-        //! Response object must be construct synchronously
+        //! Response object must be constructed synchronously
         const request = new MockerRequest(event, rule);
         const response = new MockerResponse(event);
 
