@@ -519,6 +519,21 @@ fetch('/sub/yeah').then((res) => {
 });
 ```
 
+You can even add **asynchronous middleware** by returning a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise):
+
+```js
+// server(routing handlers are omitted)
+router.use(async (req, res) => {
+  await asyncStuff();
+  res.headers.set('X-Middleware', 'Async');
+});
+
+// client
+fetch('/path').then((res) => {
+  console.log(res.headers.get('X-Middleware')); // > 'Async'
+});
+```
+
 Middleware can be inherited from upstream:
 
 ```js
