@@ -189,7 +189,7 @@ export class MockerRouter {
    *
    * @private
    * @param {FetchEvent} event Fetch event
-   * @return {boolean}
+   * @return {Promise<boolean>}
    */
   _match(event) {
     const {
@@ -215,15 +215,19 @@ export class MockerRouter {
       } = rule;
 
       if (regex.test(path) && (request.method === method || rule.isAll)) {
+        //! Response object must be construct synchronously
         const request = new MockerRequest(event, rule);
         const response = new MockerResponse(event);
 
-        // apply middleware
-        this._middleware.forEach((fn) => {
-          fn.call(event, request, response);
+        // apply (async) middleware
+        Promise.all(
+          this._middleware.map((fn) => {
+            return fn.call(event, request, response);
+          })
+        ).then(() => {
+          callback.call(event, request, response);
         });
 
-        callback.call(event, request, response);
         return true;
       }
     }

@@ -54,6 +54,22 @@ export default function () {
       expect(headers.get('X-Middleware')).to.equal('10');
     });
 
+    it('should be able to accept asynchronous middleware', async () => {
+      const { router } = createServer();
+      const path = uniquePath();
+
+      router.use(async (req, res) => {
+        await Promise.resolve(null);
+        res.headers.set('X-Middleware', '11');
+      });
+
+      router.get(path, 'Hello world');
+
+      const { headers } = await sendRequest(path);
+
+      expect(headers.get('X-Middleware')).to.equal('11');
+    });
+
     it('should inherit middleware from upstream', async () => {
       const { router } = createServer();
       const path = uniquePath();
