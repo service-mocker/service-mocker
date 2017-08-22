@@ -223,6 +223,18 @@ The `server.router` property returns the <a href="#router" jump-to-id="router"><
 console.log(server.router); // Router{}
 ```
 
+### server.use
+
+```js
+server.use(fn?): this
+```
+
+| Param | Type | Description |
+| --- | :-: | --- |
+| `fn` | (req, res) => void | A middleware function. |
+
+See <a href="#router-use" jump-to-id="router-use"><code>router.use()</code></a>.
+
 ## Router
 
 A new `Router` instance is constructed by <a href="#createserver" jump-to-id="createserver"><code>createServer()</code></a> function or <a href="#router-scope" jump-to-id="router-scope"><code>router.scope()</code></a> method.
@@ -454,6 +466,82 @@ router.route('/post/:id')
 
     res.sendStatus(200);
   });
+```
+
+### router.use()
+
+```js
+router.use(fn?): this
+```
+
+| Param | Type | Description |
+| --- | :-: | --- |
+| `fn` | (req, res) => void | A middleware function. |
+
+Attaches middleware functions to current router.
+
+_Middleware_ are functions that pre-process <a href="#request" jump-to-id="request">`Request`</a> objects and <a href="#response" jump-to-id="response">`Reponse`</a> objects before they are sending to routing handlers.
+
+You can add **top-level middleware** to current <a href="#server" jump-to-id="server">`Server`</a> object:
+
+```js
+// server
+const server = createServer();
+
+server.use((req, res) => {
+  res.headers.set('X-Server', 'Mocker');
+});
+
+server.router.get('/greet', 'Hello world');
+
+// client
+fetch('/greet').then((res) => {
+  console.log(res.headers.get('X-Server')); // > 'Mocker'
+});
+```
+
+Or mount **scoped middleware** to specific <a href="#router" jump-to-id="router">`Routers`</a>:
+
+```js
+// server(routing handlers are omitted)
+router.scope('/sub')
+  .use((req, res) => {
+    res.headers.set('X-Server', 'Mocker');
+  });
+
+// client
+fetch('/yooo').then((res) => {
+  console.log(res.headers.get('X-Server')); // > null
+});
+
+fetch('/sub/yeah').then((res) => {
+  console.log(res.headers.get('X-Server')); // > 'Mocker'
+});
+```
+
+Middleware can be inherited from upstream:
+
+```js
+// server(routing handlers are omitted)
+router.use((req, res) => {
+  res.headers.set('X-Server', 'Mocker');
+});
+
+router.scope('/checkpoint')
+  .use((req, res) => {
+    res.headers.set('X-CheckPoint', '1');
+  });
+
+// client
+fetch('/checkpoint/').then((res) => {
+  console.log(res.headers.get('X-Server')); // > 'Mocker'
+  console.log(res.headers.get('X-CheckPoint')); // > '1'
+});
+
+fetch('/others/').then((res) => {
+  console.log(res.headers.get('X-Server')); // > 'Mocker'
+  console.log(res.headers.get('X-CheckPoint')); // > null
+});
 ```
 
 ## Request
