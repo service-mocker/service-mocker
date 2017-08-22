@@ -26,6 +26,18 @@ export class MockerServer {
   constructor(baseURL = '/') {
     this.router = new MockerRouter(baseURL);
   }
+
+  /**
+   * Attach middleware to current server
+   *
+   * @param  {MiddlewareFn} fn Middleware function
+   * @return {this}
+   */
+  use(fn) {
+    this.router.use(fn);
+
+    return this;
+  }
 }
 
 // Event listeners MUST be added on the initial evaluation of worker scripts.
