@@ -480,7 +480,7 @@ router.use(fn?): this
 
 Attaches middleware functions to current router.
 
-_Middleware_ are functions that pre-process <a href="#request" jump-to-id="request">`Request`</a> objects and <a href="#response" jump-to-id="response">`Reponse`</a> objects before they are sending to routing handlers.
+_Middleware_ functions are functions that pre-process <a href="#request" jump-to-id="request">`Request`</a> objects and <a href="#response" jump-to-id="response">`Reponse`</a> objects before they are sending to routing handlers.
 
 You can add **top-level middleware** to current <a href="#server" jump-to-id="server">`Server`</a> object:
 
