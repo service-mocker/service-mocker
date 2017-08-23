@@ -231,7 +231,7 @@ server.use(fn?): this
 
 | Param | Type | Description |
 | --- | :-: | --- |
-| `fn` | (req, res) => void|Promise<void> | A middleware function. |
+| `fn` | (req, res) => void&#124;Promise<void> | A middleware function. |
 
 See <a href="#router-use" jump-to-id="router-use"><code>router.use()</code></a>.
 
@@ -476,7 +476,7 @@ router.use(fn?): this
 
 | Param | Type | Description |
 | --- | :-: | --- |
-| `fn` | (req, res) => void|Promise<void> | A middleware function. |
+| `fn` | (req, res) => void&#124;Promise<void> | A middleware function. |
 
 Attaches middleware functions to current router.
 
