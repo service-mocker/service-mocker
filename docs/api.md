@@ -534,7 +534,7 @@ fetch('/path').then((res) => {
 });
 ```
 
-Middleware can be inherited from upstream:
+Middleware will be inherited from upstream:
 
 ```js
 // server(routing handlers are omitted)
