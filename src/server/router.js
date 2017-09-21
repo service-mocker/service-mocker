@@ -62,12 +62,23 @@ export class MockerRouter {
   _rules = [];
 
   /**
+   * A collection of all middleware
+   *
+   * @private
+   * @type {Array<MiddlewareFn>}
+   */
+  _middleware = [];
+
+  /**
    * Constructs a new router object
    *
    * @param {string} [baseURL='/'] The base url of this router
+   * @param {Array<MiddlewareFn>} [middleware=[]] Middleware that are attached to this router
    */
-  constructor(baseURL = '/') {
+  constructor(baseURL = '/', middleware = []) {
     MockerRouter.routers.push(this);
+
+    this._middleware.push(...middleware);
 
     // resolve url based on current origin for relative path
     // `location.origin` is not supported in IE
@@ -95,7 +106,10 @@ export class MockerRouter {
       throw new TypeError(`the scope of router should start with "/", got ${path}`);
     }
 
-    return new MockerRouter(this.baseURL + path);
+    return new MockerRouter(
+      this.baseURL + path,
+      this._middleware, // inherit middleware from upstream
+    );
   }
 
   /* istanbul ignore next */
@@ -114,6 +128,22 @@ export class MockerRouter {
    */
   route(path) {
     return new SubRouter(this, path);
+  }
+
+  /**
+   * Attach middleware to current router
+   *
+   * @param  {MiddlewareFn} fn Middleware function
+   * @return {this}
+   */
+  use(fn) {
+    if (typeof fn !== 'function') {
+      throw new TypeError('Middleware is expected to be a function');
+    }
+
+    this._middleware.push(fn);
+
+    return this;
   }
 
   /**
@@ -185,10 +215,19 @@ export class MockerRouter {
       } = rule;
 
       if (regex.test(path) && (request.method === method || rule.isAll)) {
+        //! Response object must be constructed synchronously
         const request = new MockerRequest(event, rule);
         const response = new MockerResponse(event);
 
-        callback.call(event, request, response);
+        // apply (async) middleware
+        Promise.all(
+          this._middleware.map((fn) => {
+            return fn.call(event, request, response);
+          })
+        ).then(() => {
+          callback.call(event, request, response);
+        });
+
         return true;
       }
     }
