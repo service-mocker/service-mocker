@@ -2,7 +2,7 @@
 
 ### Features
 
-- **server**: support middleware. (#40)
+- **server**: support middleware. ([#40](https://github.com/service-mocker/service-mocker/pull/40)) 
 
 # [2.0.1](https://github.com/service-mocker/service-mocker/compare/v2.0.0...v2.0.1) (2017-08-05)
 
