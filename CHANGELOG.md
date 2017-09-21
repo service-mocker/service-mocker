@@ -1,3 +1,9 @@
+# [2.1.0](https://github.com/service-mocker/service-mocker/compare/v2.0.1...v2.1.0) (2017-09-21)
+
+### Features
+
+- **server**: support middleware. (#40)
+
 # [2.0.1](https://github.com/service-mocker/service-mocker/compare/v2.0.0...v2.0.1) (2017-08-05)
 
 ### Bug Fixes
