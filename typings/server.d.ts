@@ -141,6 +141,7 @@ interface SubRouter {
   head: SubRouterMatcher<this>;
   delete: SubRouterMatcher<this>;
   options: SubRouterMatcher<this>;
+  patch: SubRouterMatcher<this>;
 }
 
 interface MockerRouter {
@@ -167,6 +168,7 @@ interface MockerRouter {
   delete: RouterMatcher<this>;
   head: RouterMatcher<this>;
   options: RouterMatcher<this>;
+  patch: RouterMatcher<this>;
 }
 
 // MockerServer

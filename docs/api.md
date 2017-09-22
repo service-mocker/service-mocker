@@ -324,6 +324,7 @@ Up to now, we support the following routing methods:
 - head
 - delete
 - options
+- patch
 
 ### router.all()
 
