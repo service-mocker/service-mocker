@@ -31,7 +31,7 @@ We want to fix all the issues as soon as possible, but we can't make guarantees 
 ### 1. Make your changes in a new git branch
 
 ```
-git checkout -b my-fix-branch develop
+$ git checkout -b my-fix-branch develop
 ```
 
 ### 2. Follow the code style
@@ -68,13 +68,13 @@ Before starting, make sure you are using [Node.js](http://nodejs.org/) 6+.
 After cloning the repo, run:
 
 ```bash
-npm install
+$ npm install
 ```
 
 Then run:
 
 ```bash
-npm start
+$ npm start
 ```
 
 to start a dev server at `http://localhost:3000`.
@@ -82,7 +82,7 @@ to start a dev server at `http://localhost:3000`.
 If you are editing the documentations, run:
 
 ```bash
-npm run doc
+$ npm run doc
 ```
 
 The docs will be served at `http://localhost:8080`.
@@ -91,20 +91,40 @@ The docs will be served at `http://localhost:8080`.
 
 To run unit tests in browser with live reloading, simply run `npm start` then navigate your browser to `http://localhost:3000`.
 
-To run unit tests with karma, use:
+Other commonly used test scripts:
 
 ```bash
-npm run test
+# run unit tests in Chrome
+$ npm run test:unit
+
+# run tests in Chrome, Firefox and Safari
+$ npm run test:full
+
+# test typings
+$ npm run test:typings
+
+# linting + unit tests + typing tests
+$ npm run test
 ```
-
-This task will lint your code and start a session with chrome.
-
-To run cross browser tests with karma, use:
-
-```bash
-npm run test:full
-```
-
-This task will run tests in Chrome, Firefox and Safari.
 
 It's recommended to **run tests locally before you submit a pull request**, though all the tests will be executed again on the CI server.
+
+# Project Structure
+
+- `docs/`:
+    - `*.md`: documantation files.
+
+- `src/`: contains the source code of service mocker
+    - `client/`: client side code, including patches for legacy browsers and bootstrap for modern browsers.
+    - `server/`: server side code, including `Router`, `Request` and `Response` modules.
+    - `constants/`: contains some configuration variables.
+    - `utils/`: small helpers that power the project.
+
+- `test/`: contains unit tests
+    - `runner/`: test runner wrappings. We made some small patches to [mocha](https://github.com/mochajs/mocha) to support service worker context.
+    - `helpers/`: small helper functions for tests.
+    - `spec/`: specific test cases.
+
+- `typings/`: type definitions for TypeScript users. **If you are adding new features to this project, don't forget to update typings too.**
+
+

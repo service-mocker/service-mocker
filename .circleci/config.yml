@@ -1,0 +1,70 @@
+version: 2
+
+references:
+  container_config: &container_config
+    working_directory: ~/project/service-mocker
+    docker:
+      - image: circleci/node:6-browsers
+
+  workspace_root: &workspace_root
+    ~/project
+
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+
+  cache_key: &cache_key
+    key: service-mocker-{{ .Branch }}-{{ checksum "package-lock.json" }}
+
+  require_install: &require_install
+    requires:
+      - install
+
+jobs:
+  install:
+    <<: *container_config
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *cache_key
+      - run: npm install
+      - save_cache:
+          <<: *cache_key
+          paths:
+            - node_modules/
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - service-mocker
+
+  lint:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+      - run: npm run lint
+
+  typings:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+      - run: npm run test:typings
+
+  coverage:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+      - run: npm run cover
+      - run: ./node_modules/.bin/codecov
+
+workflows:
+  version: 2
+  basic-tests:
+    jobs:
+      - install
+      - lint:
+          <<: *require_install
+      - typings:
+          <<: *require_install
+      - coverage:
+          <<: *require_install
+

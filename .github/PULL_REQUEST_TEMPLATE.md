@@ -13,7 +13,8 @@
 
 **If adding new features:**
 
-- [ ] Docs have been added / updated.
+- [ ] Docs have been added/updated.
+- [ ] Typings have been added/updated
 
 ## Does this PR introduce a breaking change?
 
