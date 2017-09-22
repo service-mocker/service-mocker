@@ -91,7 +91,7 @@ module.exports = function (config) {
     captureTimeout: 300000,
     browserNoActivityTimeout: 300000,
     sauceLabs: {
-      testName: `Service Mocker Tests #${buildNum}`,
+      testName: `Service Mocker Tests ${buildNum}`,
       recordScreenshots: false,
       build: `service-mocker-${buildNum}`,
     },
