@@ -62,20 +62,15 @@ const customLaunchers = {
 // only run them on develop/master branch
 if (TRAVIS_BRANCH === 'develop' || TRAVIS_BRANCH === 'master' || FORCE_MOBILE_TEST) {
   Object.assign(customLaunchers, {
-    sl_ios_9: {
+    sl_ios: {
       base: 'SauceLabs',
       browserName: 'iphone',
-      version: '9.3',
+      version: '10.3',
     },
-    sl_ios_10: {
-      base: 'SauceLabs',
-      browserName: 'iphone',
-      version: '10.0',
-    },
-    sl_android_5: {
+    sl_android: {
       base: 'SauceLabs',
       browserName: 'android',
-      version: '5.1',
+      version: '6.0',
     },
   });
 }
