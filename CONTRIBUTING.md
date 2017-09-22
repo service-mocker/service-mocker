@@ -125,6 +125,6 @@ It's recommended to **run tests locally before you submit a pull request**, thou
     - `helpers/`: small helper functions for tests.
     - `spec/`: specific test cases.
 
-- `typins/`: type definitions for TypeScript users. **If you are adding new features to this project, don't forget to update typings too.**
+- `typings/`: type definitions for TypeScript users. **If you are adding new features to this project, don't forget to update typings too.**
 
 
