@@ -47,6 +47,7 @@ router.put('/', {});
 router.delete('/', {});
 router.head('/', {});
 router.options('/', {});
+router.patch('/', {});
 
 console.log(router.scope('/api').baseURL);
 
@@ -57,4 +58,5 @@ router.route('/api')
   .put({})
   .delete({})
   .head({})
-  .options({});
+  .options({})
+  .patch({});

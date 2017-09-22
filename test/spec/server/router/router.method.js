@@ -8,7 +8,7 @@ import {
 
 export default function () {
   const { router } = createServer();
-  const methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
+  const methods = ['get', 'post', 'put', 'head', 'delete', 'options', 'patch'];
 
   describe('router.METHOD()', () => {
     it('should have bacic HTTP request methods defined in fetch standard', () => {

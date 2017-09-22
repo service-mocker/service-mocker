@@ -18,6 +18,7 @@ const methods = [
   'head',
   'delete',
   'options',
+  'patch',
 ];
 
 export class MockerRouter {
