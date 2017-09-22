@@ -1,8 +1,8 @@
 const baseConfig = require('./karma.config.base');
 
 const {
-  CIRCLE_BRANCH,
-  CIRCLE_BUILD_NUM,
+  TRAVIS_BRANCH,
+  TRAVIS_BUILD_NUMBER,
   FORCE_MOBILE_TEST,
 } = process.env;
 
@@ -60,7 +60,7 @@ const customLaunchers = {
 
 // mobile emulators are really really slow
 // only run them on develop/master branch
-if (CIRCLE_BRANCH === 'develop' || CIRCLE_BRANCH === 'master' || FORCE_MOBILE_TEST) {
+if (TRAVIS_BRANCH === 'develop' || TRAVIS_BRANCH === 'master' || FORCE_MOBILE_TEST) {
   Object.assign(customLaunchers, {
     sl_ios_9: {
       base: 'SauceLabs',
@@ -80,7 +80,7 @@ if (CIRCLE_BRANCH === 'develop' || CIRCLE_BRANCH === 'master' || FORCE_MOBILE_TE
   });
 }
 
-const buildNum = CIRCLE_BUILD_NUM ? `#${CIRCLE_BUILD_NUM}` : `@${Date.now()}`;
+const buildNum = TRAVIS_BUILD_NUMBER ? `#${TRAVIS_BUILD_NUMBER}` : `@${Date.now()}`;
 
 module.exports = function (config) {
   config.set(Object.assign(baseConfig, {
