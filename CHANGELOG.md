@@ -1,8 +1,14 @@
+# [2.1.1](https://github.com/service-mocker/service-mocker/compare/v2.1.0...v2.1.1) (2017-09-23)
+
+### Minor Changes
+
+- **server/router**: add `router.patch` method. ([#42](https://github.com/service-mocker/service-mocker/pull/42))
+
 # [2.1.0](https://github.com/service-mocker/service-mocker/compare/v2.0.1...v2.1.0) (2017-09-21)
 
 ### Features
 
-- **server**: support middleware. ([#40](https://github.com/service-mocker/service-mocker/pull/40)) 
+- **server**: support middleware. ([#40](https://github.com/service-mocker/service-mocker/pull/40))
 
 # [2.0.1](https://github.com/service-mocker/service-mocker/compare/v2.0.0...v2.0.1) (2017-08-05)
 
