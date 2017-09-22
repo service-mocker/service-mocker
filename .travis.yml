@@ -7,9 +7,11 @@ cache:
   directories:
     - node_modules
 
+env:
+  global:
+    - SAUCE_USERNAME=Service_Mocker
+
 addons:
-  sauce_connect:
-    username: Service_Mocker
   jwt:
     # SAUCE_ACCESS_KEY
     secure: qBv6RA3NphnOjBajL3c3bMn+FB34Nf/E8sNmDmyY6aPZR1VS8Yt8xbrkccAvwgEf5Mq7lf2O+AVyBTUSdWbzzuFcQmi9p27Tl9jjiUTGRG4NhTatCQzLRklZro6n75Op6Z0cxKBmDMit8lzTYFdeIVz0LLTZYSP4WGpSVSaJEPa7X81AKfKIZXRaDhAQoBadxUfJYO6KhS+pr7Fi0FSGX8L0/oo/B5max6YSANGO8mIpP6td1+tmRRidNYv2xtUy19P881DCTYAdmELK6xTLuC6Hx+LdYLnZ8ooihCRNW2fX3zB5JT4jciuPoqNPu5Fp6nKXoVpFXDjSOQ0Km50iM+uQF7qN8ZdsMuGU99oAzM0SBx/iCKajW3x2MBXTHzjC8RGW9il0pDUVJ+XKzAYnyJGGYRgXDT9MR96e67cPqqkFqX73e1K+iwFt1rAl8Qbh/GYEWSDrJfcSLe1SOWpOOeh50T/3fikvhmgzz8Nm8pFhTDZBYo41OViG9qVLlsB9hd5NePdFrXd3o6b8D8oJyfZySfhgY4lBVCxn/h9ZggDxQaiCQVN+qFuAYtfUtdERh4SlzMpFTxPlg3PQ+Qk98eFzRtAyN4o9ilwjRwt1tksfFZzP6SirHA+iZT/0jNAOiaLZvtCrpgHxD38uhtPrTvZU6u6/5+L9BUW4YVhmFfM=
