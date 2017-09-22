@@ -1,7 +1,7 @@
 # Service Mocker
 
 [![Travis CI](https://travis-ci.org/service-mocker/service-mocker.svg?branch=develop)](https://travis-ci.org/service-mocker/service-mocker)
-[![CircleCI](https://img.shields.io/circleci/project/github/service-mocker/service-mocker/develop.svg)](https://circleci.com/gh/service-mocker/service-mocker)
+[![CircleCI](https://circleci.com/gh/service-mocker/service-mocker/tree/develop.svg?style=shield)](https://circleci.com/gh/service-mocker/service-mocker/tree/develop)
 [![Coverage](https://img.shields.io/codecov/c/github/service-mocker/service-mocker/develop.svg)](https://codecov.io/gh/service-mocker/service-mocker/branch/develop)
 [![Version](https://img.shields.io/npm/v/service-mocker.svg)](https://www.npmjs.com/package/service-mocker)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
