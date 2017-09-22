@@ -60,9 +60,9 @@ workflows:
     jobs:
       - install
       - lint:
-        <<: *require_install
+          <<: *require_install
       - typings:
-        <<: *require_install
+          <<: *require_install
       - coverage:
-        <<: *require_install
+          <<: *require_install
 
