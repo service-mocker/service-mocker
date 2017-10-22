@@ -572,8 +572,8 @@ The `req.baseURL` property is literally equivalent to <a href="#router-baseurl" 
 
 ```js
 // router.baseURL = http://localhost:3000
-router.scope('/api').get('/whatever', (req, res) => {
-  console.log(req.baseURL); // 'http://localhost:3000/api'
+router.get('/whatever', (req, res) => {
+  console.log(req.baseURL); // 'http://localhost:3000'
   console.log(req.baseURL === router.baseURL); // true
 });
 ```
