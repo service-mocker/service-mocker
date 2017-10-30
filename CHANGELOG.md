@@ -1,3 +1,9 @@
+# [2.1.2](https://github.com/service-mocker/service-mocker/compare/v2.1.1...v2.1.2) (2017-10-30)
+
+### Bug Fixes
+
+- **server**: check `ports != null` in message events. ([#45](https://github.com/service-mocker/service-mocker/pull/45))
+
 # [2.1.1](https://github.com/service-mocker/service-mocker/compare/v2.1.0...v2.1.1) (2017-09-23)
 
 ### Minor Changes
