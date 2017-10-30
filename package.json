@@ -1,6 +1,6 @@
 {
   "name": "service-mocker",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "The next generation front-end API mocking framework.",
   "main": "index.js",
   "typings": "index.d.ts",
