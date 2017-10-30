@@ -48,7 +48,7 @@ self.addEventListener('message', async (event) => {
     ports,
   } = event;
 
-  if (!data || !ports.length) {
+  if (!data || !ports || !ports.length) {
     return;
   }
 
