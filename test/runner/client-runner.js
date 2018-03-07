@@ -46,7 +46,7 @@ export async function clientRunner() {
 
   registerTest(res.suites);
 
-  // imporve layout :)
+  // improve layout :)
   mocha.suite.suites.sort((a, b) => {
     return a.title.charCodeAt(0) < b.title.charCodeAt(0);
   });

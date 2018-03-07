@@ -11,7 +11,7 @@ export default function () {
   const methods = ['get', 'post', 'put', 'head', 'delete', 'options', 'patch'];
 
   describe('router.METHOD()', () => {
-    it('should have bacic HTTP request methods defined in fetch standard', () => {
+    it('should have basic HTTP request methods defined in fetch standard', () => {
       for (let method of methods) {
         expect(router).to.have.property(method)
           .and.that.is.a('function');
@@ -71,7 +71,6 @@ export default function () {
   describe('when matching multiple rules', () => {
     it('should only invoke the first matched route', async () => {
       const path = uniquePath();
-      const rr = router.scope();
 
       let id = 0;
 
@@ -85,6 +84,7 @@ export default function () {
         res.end();
       });
 
+      const rr = router.scope();
       rr.get(path, (_req, res) => {
         id = 3;
         res.end();
@@ -93,6 +93,18 @@ export default function () {
       await sendRequest(path);
 
       expect(id).to.equal(1);
+    });
+
+    it('should support setting a catch all route', async () => {
+      const scopePath = uniquePath();
+      const scopeRouter = router.scope(scopePath);
+
+      scopeRouter.get('/greet', 'Hello world');
+      scopeRouter.get('/*', 'Not found');
+
+      const { body } = await sendRequest(scopePath + '/lol');
+
+      expect(body).to.equal('Not found');
     });
   });
 }

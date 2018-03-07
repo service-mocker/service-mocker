@@ -47,7 +47,7 @@ function runTests(register) {
   mocha.suite.emit('pre-require', self, null, mocha);
 
   // remove previous routers
-  server.router.constructor.routers.length = 0;
+  server.constructor.routers.length = 0;
 
   register();
 

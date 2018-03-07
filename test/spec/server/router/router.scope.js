@@ -28,7 +28,7 @@ export default function () {
       expect(rr.baseURL).to.equal(router.baseURL + '/api');
     });
 
-    it('should match baseURL from begining', async () => {
+    it('should match baseURL from beginning', async () => {
       const path = uniquePath();
 
       router.scope('/api').get('/greet' + path, 'Something is wrong');
@@ -50,6 +50,17 @@ export default function () {
         const rr = router.scope('/what').scope('/ever');
 
         expect(new URL(rr.baseURL).pathname).to.equal('/what/ever');
+      });
+
+      it('should only match path start with scope path', async () => {
+        const path = uniquePath();
+
+        router.scope('/api').get('/greet' + path, 'Something is wrong');
+        router.get('/greet' + path, 'Hello world');
+
+        const { body } = await sendRequest('/greet' + path);
+
+        expect(body).to.equal('Hello world');
       });
     });
 
