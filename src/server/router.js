@@ -9,7 +9,7 @@ import { MockerResponse } from './response';
 
 const routerLog = debug.scope('router');
 
-// bacic HTTP request methods in fetch standard, see
+// basic HTTP request methods in fetch standard, see
 // https://fetch.spec.whatwg.org/#concept-method
 const methods = [
   'get',
@@ -22,14 +22,6 @@ const methods = [
 ];
 
 export class MockerRouter {
-  /**
-   * save all routers for lazy evaluations
-   *
-   * @static
-   * @type {Array<MockerRouter>}
-   */
-  static routers = [];
-
   /**
    * A parsed base URL
    *
@@ -58,9 +50,9 @@ export class MockerRouter {
    * A collection of all routings
    *
    * @private
-   * @type {Array<RouteRule>}
+   * @type {Array<RouteRule | MockerRouter>}
    */
-  _rules = [];
+  _ruleOrScopeRouters = [];
 
   /**
    * A collection of all middleware
@@ -77,8 +69,6 @@ export class MockerRouter {
    * @param {Array<MiddlewareFn>} [middleware=[]] Middleware that are attached to this router
    */
   constructor(baseURL = '/', middleware = []) {
-    MockerRouter.routers.push(this);
-
     this._middleware.push(...middleware);
 
     // resolve url based on current origin for relative path
@@ -107,10 +97,12 @@ export class MockerRouter {
       throw new TypeError(`the scope of router should start with "/", got ${path}`);
     }
 
-    return new MockerRouter(
+    const scopeRouter = new MockerRouter(
       this.baseURL + path,
       this._middleware, // inherit middleware from upstream
     );
+    this._ruleOrScopeRouters.push(scopeRouter);
+    return scopeRouter;
   }
 
   /* istanbul ignore next */
@@ -172,7 +164,7 @@ export class MockerRouter {
       };
     }
 
-    this._rules.push({
+    this._ruleOrScopeRouters.push({
       method,
       path,
       regex,
@@ -204,20 +196,34 @@ export class MockerRouter {
       return false;
     }
 
-    // strip router's base path
-    const re = new RegExp(`^${this._basePath}`);
-    const path = url.pathname.replace(re, '');
+    // match router's base path first
+    const re = new RegExp(`^${this._basePath}(.*)`);
+    const match = re.exec(url.pathname);
+    if (!match) {
+      return false;
+    }
 
-    for (let rule of this._rules) {
+    const path = match[1];
+
+    for (let ruleOrScopeRouter of this._ruleOrScopeRouters) {
+      if (ruleOrScopeRouter instanceof MockerRouter) {
+        const matched = ruleOrScopeRouter._match(event);
+        if (matched) {
+          return true;
+        }
+
+        continue;
+      }
+
       const {
         method,
         regex,
         callback,
-      } = rule;
+      } = ruleOrScopeRouter;
 
-      if (regex.test(path) && (request.method === method || rule.isAll)) {
+      if (regex.test(path) && (request.method === method || ruleOrScopeRouter.isAll)) {
         //! Response object must be constructed synchronously
-        const request = new MockerRequest(event, rule);
+        const request = new MockerRequest(event, ruleOrScopeRouter);
         const response = new MockerResponse(event);
 
         // apply (async) middleware

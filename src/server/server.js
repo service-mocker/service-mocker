@@ -3,6 +3,14 @@ import { ACTION } from '../constants/';
 
 export class MockerServer {
   /**
+   * save all routers for lazy evaluations
+   *
+   * @static
+   * @type {Array<MockerRouter>}
+   */
+  static routers = [];
+
+  /**
    * Indicates which mode current server is running on
    *
    * @readonly
@@ -25,6 +33,7 @@ export class MockerServer {
    */
   constructor(baseURL = '/') {
     this.router = new MockerRouter(baseURL);
+    MockerServer.routers.push(this.router);
   }
 
   /**
@@ -70,7 +79,7 @@ self.addEventListener('message', async (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  MockerRouter.routers.some((router) => {
+  MockerServer.routers.some((router) => {
     return router._match(event);
   });
 });

@@ -379,7 +379,7 @@ router.scope(path?): Router
 
 <p class="warning">This method is available since version <strong>1.1.0</strong>.</p>
 
-This method creates a **new router** which will be shrinked within the given `path`. The `path` acts like a prefix for routes, and it will be matched literally:
+This method creates a **new router** which will be shrunk within the given `path`. The `path` acts like a prefix for routes, and it will be matched literally:
 
 ```js
 // router.baseURL = 'http://localhost:3000'
@@ -426,6 +426,30 @@ apiRouter.get('/greet', 'Hello new world');
 ```md
 ✅  GET  /api/greet
 ❌  GET  /greet
+```
+
+The router match order will be set once `router.scope()` is called:
+
+```js
+const { router } = createServer();
+
+const apiRouter = router.scope('/api');
+
+router.get('/api/user', 'outer router user'); // This won't be matched
+
+apiRouter.get('/user', 'scope router user'); // This will be matched
+```
+
+If you want to match outer router first, you should call `router.scope('/api')` after `router.get('/api/user', '...')`.
+
+```js
+const { router } = createServer();
+
+router.get('/api/user', 'outer router user'); // This will be matched
+
+const apiRouter = router.scope('/api');
+
+apiRouter.get('/user', 'scope router user'); // This won't be matched
 ```
 
 ### router.route()
@@ -481,7 +505,7 @@ router.use(fn?): this
 
 Attaches middleware functions to current router.
 
-_Middleware_ functions are functions that pre-process <a href="#request" jump-to-id="request">`Request`</a> objects and <a href="#response" jump-to-id="response">`Reponse`</a> objects before they are sending to routing handlers.
+_Middleware_ functions are functions that pre-process <a href="#request" jump-to-id="request">`Request`</a> objects and <a href="#response" jump-to-id="response">`Response`</a> objects before they are sending to routing handlers.
 
 You can add **top-level middleware** to current <a href="#server" jump-to-id="server">`Server`</a> object:
 
