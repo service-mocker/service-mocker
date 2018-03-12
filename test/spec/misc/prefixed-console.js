@@ -8,7 +8,12 @@ export default function () {
         const c = new PrefixedConsole();
 
         for (let prop in console) {
-          expect(c).to.have.property(prop);
+          // Accessing the `memory` property of `console` via prototype
+          // will throw an "Invalid calling object" error in Edge 16.
+          // see more at <https://github.com/service-mocker/service-mocker/pull/50>
+          if (prop !== 'memory') {
+            expect(c).to.have.property(prop);
+          }
         }
       });
     });
