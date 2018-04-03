@@ -4,12 +4,12 @@ import { PrefixedConsole } from 'service-mocker/utils';
 export default function () {
   describe('PrefixedConsole', () => {
     describe('inheritance', () => {
-      it('should inherit from `console` object', () => {
+      it('should support basic console logging functions', () => {
         const c = new PrefixedConsole();
 
-        for (let prop in console) {
+        ['log', 'info', 'warn', 'error'].forEach((prop) => {
           expect(c).to.have.property(prop);
-        }
+        });
       });
     });
 
