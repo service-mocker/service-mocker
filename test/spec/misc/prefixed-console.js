@@ -4,17 +4,12 @@ import { PrefixedConsole } from 'service-mocker/utils';
 export default function () {
   describe('PrefixedConsole', () => {
     describe('inheritance', () => {
-      it('should inherit from `console` object', () => {
+      it('should support basic console logging functions', () => {
         const c = new PrefixedConsole();
 
-        for (let prop in console) {
-          // Accessing the `memory` property of `console` via prototype
-          // will throw an "Invalid calling object" error in Edge 16.
-          // see more at <https://github.com/service-mocker/service-mocker/pull/50>
-          if (prop !== 'memory') {
-            expect(c).to.have.property(prop);
-          }
-        }
+        ['log', 'info', 'warn', 'error'].forEach((prop) => {
+          expect(c).to.have.property(prop);
+        });
       });
     });
 
