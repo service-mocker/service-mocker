@@ -83,8 +83,8 @@ export class MockerRequest extends ExtandableRequest {
     const base = new URL(baseURL);
     const requestURL = new URL(request.url, location.href);
     const path = base.pathname === '/'
-                 ? requestURL.pathname
-                 : requestURL.pathname.replace(base.pathname, '');
+      ? requestURL.pathname
+      : requestURL.pathname.replace(base.pathname, '');
 
     const matches = regex.exec(path);
     const params = {};
