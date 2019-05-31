@@ -1,4 +1,3 @@
-const ip = require('ip');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -7,10 +6,10 @@ const baseConfig = require('./webpack.config.base');
 const joinRoot = path.join.bind(path, __dirname, '..');
 
 module.exports = Object.assign(baseConfig, {
+  mode: 'development',
   devtool: 'cheap-module-source-map',
   entry: {
     client: [
-      `webpack-dev-server/client?http://${ip.address()}:3000`,
       joinRoot('test/client.js'),
     ],
     server: [
@@ -18,8 +17,23 @@ module.exports = Object.assign(baseConfig, {
     ],
   },
   output: {
-    path: joinRoot('build/'),
+    path: joinRoot('dist'),
     filename: '[name].js',
+  },
+
+  devServer: {
+    contentBase: false,
+    host: '0.0.0.0',
+    port: 3000,
+  },
+  stats: {
+    colors: true,
+    assets: false,
+    version: false,
+    hash: false,
+    timings: false,
+    chunks: false,
+    chunkModules: false,
   },
 
   module: {
