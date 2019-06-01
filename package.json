@@ -84,7 +84,7 @@
     "rimraf": "^2.5.4",
     "service-mocker-polyfills": "^1.1.3",
     "source-map-support": "git+https://github.com/service-mocker/node-source-map-support.git",
-    "typescript": "^2.3.2",
+    "typescript": "^3.5.1",
     "uuid": "^3.0.1",
     "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2",
