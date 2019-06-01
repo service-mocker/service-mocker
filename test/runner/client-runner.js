@@ -139,11 +139,6 @@ async function sendRequest(event) {
     try {
       await client.ready;
 
-      // convert formData
-      if (data.init.body === 'FORM_DATA') {
-        data.init.body = new FormData();
-      }
-
       const res = await fetch(data.url, data.init);
       const headers = {};
 

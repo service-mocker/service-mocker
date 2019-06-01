@@ -31,6 +31,8 @@ export default function () {
 
     // no `res.formData()` method in some browsers
     // fetch polyfill bug: https://github.com/github/fetch/issues/460
+    // And it seems `FormData` isn't available at service worker env in Edge 18:
+    // https://travis-ci.org/service-mocker/service-mocker/jobs/539948725#L595
     it.skip('should have `.formData()` method', async function () {
       const request = await requestToPromise({
         init: {
