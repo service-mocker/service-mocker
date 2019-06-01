@@ -4,7 +4,7 @@ references:
   container_config: &container_config
     working_directory: ~/project/service-mocker
     docker:
-      - image: circleci/node:6-browsers
+      - image: circleci/node:10-browsers
 
   workspace_root: &workspace_root
     ~/project
