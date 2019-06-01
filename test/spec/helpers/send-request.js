@@ -4,10 +4,6 @@ import { sendMessageRequest } from 'service-mocker/utils/';
  * Request client to send a http request
  */
 export async function sendRequest(url, init = {}) {
-  if (init.body instanceof FormData) {
-    init.body = 'FORM_DATA';
-  }
-
   const message = {
     url,
     init,

@@ -28,8 +28,8 @@ export async function connect(skipUpdate = false) {
   await serviceWorker.ready;
 
   const reg = (!skipUpdate && hasController)
-              ? await getNewestReg()
-              : await serviceWorker.getRegistration();
+    ? await getNewestReg()
+    : await serviceWorker.getRegistration();
 
   return handshake(reg);
 }

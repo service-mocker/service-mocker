@@ -36,6 +36,7 @@ const customLaunchers = {
     base: 'SauceLabs',
     browserName: 'safari',
     platform: 'macOS 10.12',
+    version: '10',
   },
 
   // IE family
