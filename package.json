@@ -56,7 +56,7 @@
     "babel-preset-env": "^1.4.0",
     "chai": "^3.5.0",
     "circular-dependency-plugin": "^3.0.0",
-    "codecov": "^2.1.0",
+    "codecov": "^3.7.1",
     "cpx": "^1.5.0",
     "cross-env": "^4.0.0",
     "docute-cli": "^0.4.0",
